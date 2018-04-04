@@ -1,0 +1,13 @@
+fieldset {
+	padding: 5px;
+	border: solid 3px #CCCCCC;
+	border-radius: 5px;
+}
+
+form div {
+	margin-top: 5px;
+}
+
+#introductory_text {
+	margin-bottom: 20px;
+}

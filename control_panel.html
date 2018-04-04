@@ -1,0 +1,149 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="style.css"> 
+	<link rel="stylesheet" type="text/css" href="control_panel.css"> 
+	 <meta charset="utf-8"></meta>
+</head>
+<body>
+	<div class="container">
+		<header>
+			<h1>Site header</h1>
+		</header>
+
+		<nav>
+			<ul class="horizontal_menu">
+				<li class="horizontal_menu_item">bla</li>
+				<li class="horizontal_menu_item">ble</li>
+				<li class="horizontal_menu_item">bli</li>
+				<li class="horizontal_menu_item">blo</li>
+				<li class="horizontal_menu_item">blu</li>
+				<li class="horizontal_menu_item">asda</li>
+			</ul>
+		</nav>
+
+		<nav>
+			<ul class="side_menu">
+				<li class="side_menu_item">bla</li>
+				<li class="side_menu_item">ble</li>
+				<li class="side_menu_item">bli</li>
+				<li class="side_menu_item">blo</li>
+				<li class="side_menu_item">blu</li>
+				<li class="side_menu_item">asda</li>
+			</ul>
+		</nav>
+
+		<main class="content">
+			<div class="page_title">
+				<h1>Título da página</h1>
+			</div>
+			<div class="work_section">
+				<label for="select_actions"><span>Ação:</span></label>
+				<select id="select_actions" onchange="select_actionChanged()">
+					<option value="agendar_horario">Agendar horário</option>
+					<option value="comprar_produto">Comprar produto</option>
+					<option value="editar_registro">Editar registro</option>
+					<option value="listar_animais">Listar animais</option>
+				</select>
+
+				<div id="selected_action_display">
+
+					<form id="agendar_horario_form">
+						<h2>Agendamento de horário</h1>
+						<!--<fieldset> -->
+						<div>
+							<span>Data:</span>
+							<select id="dia_agendamento"></select>
+							<select id="mes_agendamento"></select>/
+							<select id="ano_agendamento"></select>
+						</div>
+						<div>
+							<label for><span>Horário:</span></label>
+							<select id="select_time">
+								<option value="14h30">14h30</option>
+								<option value="15h00">15h00</option>
+								<option value="15h30">15h30</option>
+								<option value="16h00">16h00</option>
+							</select>
+						</div>
+						<div>
+							<button type="submit">Enviar</div>
+						</div>
+						<!--</fieldset> -->						
+					</form>
+
+					<form id="comprar_produto_form">
+						<h2>Comprar produto</h2>
+						<div>
+
+						</div>
+					</form>
+
+					<form id="editar_registro_form">
+						<h2>Editar registro</h2>
+					</form>
+
+					<form id="gerenciar_animais_form">
+						<h2>Gerenciar animais</h2>
+					</form>
+
+				</div>
+			</div>
+		</main>
+	 	
+	 	<script type="text/javascript">
+
+		(function(window, document, undefined){
+
+			window.onload = init;
+			function init(){	 			
+				document.getElementById("select_actions").selectedIndex = 0;
+				document.getElementById("agendar_horario_form").style.display = "block";
+				document.getElementById("comprar_produto_form").style.display = "none";
+				document.getElementById("editar_registro_form").style.display = "none";
+				document.getElementById("gerenciar_animais_form").style.display = "none";
+			}
+
+		})(window, document, undefined);
+
+	 		function select_actionChanged() {
+	 			var selectedAction = document.getElementById("select_actions").selectedIndex;
+
+	 			switch(selectedAction) {
+	 				case 0:	
+	 					document.getElementById("agendar_horario_form").style.display = "block";
+	 					document.getElementById("comprar_produto_form").style.display = "none";
+	 					document.getElementById("editar_registro_form").style.display = "none";
+	 					document.getElementById("gerenciar_animais_form").style.display = "none";
+	 					break;
+	 				case 1:
+	 					document.getElementById("agendar_horario_form").style.display = "none";
+	 					document.getElementById("comprar_produto_form").style.display = "block";
+	 					document.getElementById("editar_registro_form").style.display = "none";
+	 					document.getElementById("gerenciar_animais_form").style.display = "none";
+	 					break;
+	 				case 2:
+	 					document.getElementById("agendar_horario_form").style.display = "none";
+	 					document.getElementById("comprar_produto_form").style.display = "none";
+	 					document.getElementById("editar_registro_form").style.display = "block";
+	 					document.getElementById("gerenciar_animais_form").style.display = "none";
+	 					break;
+	 				case 3:
+	 					document.getElementById("agendar_horario_form").style.display = "none";
+	 					document.getElementById("comprar_produto_form").style.display = "none";
+	 					document.getElementById("editar_registro_form").style.display = "none";
+	 					document.getElementById("gerenciar_animais_form").style.display = "block";
+	 					break;
+	 				default:
+	 					break;
+	 			}
+	 		}
+ 		
+	 	</script>
+		
+		<footer>
+			Footer Copyright 
+		</footer>
+
+	</div>
+</body>
+</html>

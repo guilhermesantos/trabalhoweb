@@ -1,0 +1,113 @@
+* {
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
+	text-decoration: none;
+	font-family: verdana, sans-serif;
+	background-color: white;
+}
+
+header, footer {
+	float: left;
+	clear: left;
+	width: 100%;
+}
+
+footer {
+	height: 10%;
+	color: white;
+	background-color: purple;
+	text-align: center;
+}
+
+header {
+	height: 20%;
+	background-color: purple;
+	color: white;
+}
+
+header * {
+	background-color: inherit;
+}
+
+.container {
+	height: 640px;
+	width: 100%;
+}
+
+.content {
+	height: 100%;
+	width: 90%;
+	float: left;
+	background-color: white;
+	overflow: hidden;
+}
+
+.side_menu {
+	float: left;
+	clear: left;
+	width: 10%;
+	height: 100%;
+	background-color: white;
+	overflow: hidden;
+}
+
+.side_menu_item {
+	float: left;
+	clear: left;
+	padding: 10px;
+	background-color: white;
+	color: black;
+	width: 85%;
+	border: solid gainsboro 2px;
+	border-radius: 3px;
+}
+
+.side_menu_item:hover {
+	background-color: purple;
+	color: white;
+}
+
+.horizontal_menu {
+	overflow: hidden;
+	float: left;
+	background-color: white;
+	color: black;
+	width: 100%;
+}
+
+.horizontal_menu_item {
+	float: left;
+	padding: 10px;
+	background-color: white;
+	width: 3%;
+}
+
+.horizontal_menu_item:hover {
+	background-color: purple;
+	color: white;
+}
+
+.page_title {
+	margin: 10px;
+	padding: 10px;
+	width: 97%;
+	height: 10%;
+	background-color: white;
+	color: black;
+}
+
+
+.page_title * {
+	background-color: inherit;
+	color: inherit;
+}
+
+.work_section {
+	margin: 10px;
+	padding: 10px;
+	width: 97%;
+	height: 59%;
+	background-color: white;
+	color: black;
+}
