@@ -15,10 +15,11 @@
 	width: 30%;
 	height: 70%;
 	border: solid gainsboro 3px;
+	border-radius: 5px;
 }
 
 #animal_info_text_container {
-	margin-left: 5px;
+	margin-left: 10px;
 	float: left;
 	width: 40%;
 	vertical-align: middle;
