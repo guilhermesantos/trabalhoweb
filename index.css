@@ -11,3 +11,19 @@ form div {
 #introductory_text {
 	margin-bottom: 20px;
 }
+
+.label_container {
+	float: left;
+	clear: left;
+	width: 5%;
+}
+
+.field_container {
+	float: left;
+}
+
+.form_row_container {
+	float: left;
+	clear: left;
+	width: 100%;
+}

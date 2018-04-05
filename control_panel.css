@@ -15,7 +15,6 @@ form div {
 	width: 18%;
 	height: 35%;
 	float: left;
-	/*border: solid gainsboro 2px;*/
 	border-radius: 3px;	
 }
 
@@ -24,7 +23,7 @@ form div {
 	height: 90%;
 }
 
-#register_address_neighborhood_container {
+/*#register_address_neighborhood_container {
 	clear: left;
 	float: left;
 }
@@ -32,7 +31,7 @@ form div {
 #register_address_street_container {
 	float: left;
 	margin-left: 10px;
-}
+}*/
 
 #register_submit_container {
 	float: left;
@@ -41,4 +40,19 @@ form div {
 
 .listed_animal_container {
 	border-bottom: solid gainsboro 2px;
+}
+
+.form_row_container {
+	height: 10%;
+	width: 100%;
+}
+
+.label_container {
+	float: left;
+	clear: left;
+	width: 6%;
+}
+
+.field_container {
+	float: left;
 }
