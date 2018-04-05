@@ -38,10 +38,6 @@ form div {
 	clear: left;
 }
 
-.listed_animal_container {
-	border-bottom: solid gainsboro 2px;
-}
-
 .form_row_container {
 	height: 10%;
 	width: 100%;
@@ -56,3 +52,24 @@ form div {
 .field_container {
 	float: left;
 }
+
+.listed_animal_container {
+	width: 100%;
+	height: 10%;
+	padding-bottom: 16px;
+	border-bottom: solid gainsboro 2px;
+}
+
+.animal_info_container {
+	height: 100%;
+	width: 14%;
+	float: left;
+	margin-top: 1.2%;
+}
+
+.icons_container {
+	float: left;
+	width: 10%
+	height: 100%;
+}
+
