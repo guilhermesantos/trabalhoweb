@@ -34,7 +34,7 @@
 
 		<main class="content">
 			<div class="page_title">
-				<h1>Título da página</h1>
+				<h1>Painel de controle</h1>
 			</div>
 			<div class="work_section">
 				<label for="select_actions"><span>Ação:</span></label>
@@ -51,27 +51,41 @@
 						<h2>Agendamento de horário</h1>
 						<!--<fieldset> -->
 						<div>
-							<label for="select_service"><span>Serviço: </span></label>
-							<select id="select_service">
-								<option>Serviço 1</option>
-								<option>Serviço 2</option>
-								<option>Serviço 3</option>		
-							</select>
+							<div class="label_container">
+								<label for="select_service"><span>Serviço: </span></label>
+							</div>
+							<div class="field_container">
+								<select id="select_service">
+									<option>Serviço 1</option>
+									<option>Serviço 2</option>
+									<option>Serviço 3</option>		
+								</select>
+							</div>
 						</div>
+
 						<div>
-							<label for="data"><span>Data:</span></label>
-							<input type="date"></input>							
+							<div class="label_container">
+								<label for="data"><span>Data:</span></label>
+							</div>
+							<div class="field_container">
+								<input type="date"></input>
+							</div>							
 						</div>
+
 						<div>
-							<label for><span>Horário:</span></label>
-							<select id="select_time">
-								<option value="14h30">14h30</option>
-								<option value="15h00">15h00</option>
-								<option value="15h30">15h30</option>
-								<option value="16h00">16h00</option>
-							</select>
+							<div class="label_container">
+								<label for><span>Horário:</span></label>
+							</div>
+							<div class="field_container">							
+								<select id="select_time">
+									<option value="14h30">14h30</option>
+									<option value="15h00">15h00</option>
+									<option value="15h30">15h30</option>
+									<option value="16h00">16h00</option>
+								</select>
+							</div>
 						</div>
-						<div>
+						<div class="submit_container">
 							<button type="submit">Enviar</div>
 						</div>
 						<!--</fieldset> -->						
@@ -165,7 +179,7 @@
 								<input type="text" id="register_address_street"></input>
 							</div>
 						</div>
-						<div id="register_submit_container">
+						<div class="submit_container">
 							<input type="submit" value="Enviar"></input>
 						</div>
 					</form>

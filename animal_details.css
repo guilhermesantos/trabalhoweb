@@ -4,18 +4,11 @@
 }
 
 #animal_picture {
-	width: 100%;
-	height: 90%;
-	float: left;
-	clear: both;
-}
-
-#animal_picture_container {
-	float: left;
+	display: block;
+	clear: left;
 	width: 30%;
 	height: 70%;
-	border: solid gainsboro 3px;
-	border-radius: 5px;
+	float: left;
 }
 
 #animal_info_text_container {
@@ -23,4 +16,43 @@
 	float: left;
 	width: 40%;
 	vertical-align: middle;
+}
+
+.overlay {
+	position: relative;
+	width: 30%;
+	height: 70%;
+	background-color: #000000;
+	opacity: 0;
+	transition: 0.5s ease;
+}
+
+.overlay:hover {
+	opacity: 0.5;
+}
+
+.overlay_left_button {
+	display: inline-block;
+	position: relative;
+	top: -52%;
+	z-index: 1;
+	padding: 15px 32px;
+	font-size: 50px;
+	background-color: white;
+	color: white;
+	border: none;	
+}
+
+.overlay_right_button {
+	display: inline-block;
+	position: relative;
+	top: -52%;
+	left: 68%;
+	z-index: 1;
+	padding: 15px 32px;
+	font-size: 50px;
+	background-color: white;
+	text-align: center;
+	color: white;
+	border: none;
 }

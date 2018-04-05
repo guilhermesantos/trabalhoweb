@@ -33,7 +33,7 @@ form div {
 	margin-left: 10px;
 }*/
 
-#register_submit_container {
+.submit_container {
 	float: left;
 	clear: left;
 }
