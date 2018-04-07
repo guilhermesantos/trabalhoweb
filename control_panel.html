@@ -7,7 +7,10 @@
 <body>
 	<div class="container">
 		<header>
-			<h1>Site header</h1>
+			<h1 id="site_logo">Site header</h1>
+			<p class="user_login_box">
+				<span>Seja bem vindo, %nome do usuário%.<br/><a id="logout" href="#">Logout</a></span>
+			</p>
 		</header>
 
 		<nav>
@@ -152,7 +155,7 @@
 								<label for="register_address_email"><span>Email: </span></label>
 							</div>
 							<div class="field_container">
-								<input type="text" id="register_address_email"></input>
+								<input type="email" id="register_address_email"></input>
 							</div>							
 						</div>
 						<div class="form_row_container">
@@ -215,6 +218,28 @@
 								<a href="#"><img src="icons/delete.png"></img></a>
 							</div>
 						</div>
+						<input type="button" value="+Cadastrar animal" onClick="showAnimalRegisterForm()"></div>
+
+					</form>
+
+					<form id="animal_register_form">
+						<div class="label_container">
+							<label for="animal_name_field"><span>Nome: </span></label>
+						</div>					
+						<div class="field_container">
+							<input type="text" id="animal_name_field"></input>
+						</div>
+						
+						<div class="label_container">
+							<label for="animal_race_field"><span>Raça: </span></label>
+						</div>
+						<div class="field_container">
+							<input type="text" id="animal_race_field"></input>
+						</div>
+		
+						<div class="submit_container">
+							<input type="submit" value="Enviar" onClick="hideAnimalRegisterForm()"></input>
+						</div>
 					</form>
 
 				</div>
@@ -237,6 +262,14 @@
 
 		})(window, document, undefined);
 
+			function hideAnimalRegisterForm() {
+				document.getElementById("animal_register_form").style.display = "none";				
+			}
+
+			function showAnimalRegisterForm() {
+				document.getElementById("animal_register_form").style.display = "block";
+			}
+
 	 		function select_actionChanged() {
 	 			var selectedAction = document.getElementById("select_actions").selectedIndex;
 
@@ -246,24 +279,28 @@
 	 					document.getElementById("comprar_produto_form").style.display = "none";
 	 					document.getElementById("editar_registro_form").style.display = "none";
 	 					document.getElementById("gerenciar_animais_form").style.display = "none";
+	 					document.getElementById("animal_register_form").style.display = "none";
 	 					break;
 	 				case 1:
 	 					document.getElementById("agendar_horario_form").style.display = "none";
 	 					document.getElementById("comprar_produto_form").style.display = "block";
 	 					document.getElementById("editar_registro_form").style.display = "none";
 	 					document.getElementById("gerenciar_animais_form").style.display = "none";
+	 					document.getElementById("animal_register_form").style.display = "none";
 	 					break;
 	 				case 2:
 	 					document.getElementById("agendar_horario_form").style.display = "none";
 	 					document.getElementById("comprar_produto_form").style.display = "none";
 	 					document.getElementById("editar_registro_form").style.display = "block";
 	 					document.getElementById("gerenciar_animais_form").style.display = "none";
+	 					document.getElementById("animal_register_form").style.display = "none";
 	 					break;
 	 				case 3:
 	 					document.getElementById("agendar_horario_form").style.display = "none";
 	 					document.getElementById("comprar_produto_form").style.display = "none";
 	 					document.getElementById("editar_registro_form").style.display = "none";
 	 					document.getElementById("gerenciar_animais_form").style.display = "block";
+	 					document.getElementById("animal_register_form").style.display = "none";
 	 					break;
 	 				default:
 	 					break;
@@ -273,7 +310,7 @@
 	 	</script>
 		
 		<footer>
-			Footer Copyright
+			Copyright
 			Icons by Freepik of flaticon.com and Alfredo Hernandez of alfredocreates.com
 		</footer>
 

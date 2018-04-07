@@ -7,7 +7,10 @@
 <body>
 	<div class="container">
 		<header>
-			<h1>Site header</h1>
+			<h1 id="site_logo">Site header</h1>
+			<p class="user_login_box">
+				<span>Seja bem vindo, %nome do usuário%.<br/><a id="logout" href="#">Logout</a></span>
+			</p>
 		</header>
 
 		<nav>
@@ -39,17 +42,46 @@
 			<div class="work_section">
 				
 				<div id="animal_info_container">
-
-					<img id="animal_picture" src="doge.jpg"></img>
-					<div class="overlay">
-						<p class="overlay_left_button"><input type="button" value="<"></input></p>
-						<p class="overlay_right_button"><input type="button" value=">"></input></p>
+					<div class="animal_picture_container">
+						<img id="animal_picture" src="doge.jpg"></img>
+						<div class="overlay">
+							<p class="overlay_left_button"><a href=""><</a></p>
+							<p class="overlay_right_button"><a href="">></a></p>
+						</div>
 					</div>
-
-					
-					<div id="animal_info_text_container">
+			
+					<p id="animal_info_text_container">
 						<span id="animal_info_text">"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
 						</span>
+					</p>
+
+					<div class="services_container">
+						<table class="service_table">
+							<tr class="service_table_row">
+								<td class="service_table_data">Servico 1</td>
+								<td>$50.00</td>
+							</tr>
+							<tr class="service_table_row">
+								<td class="service_table_data">Servico 2</td>
+								<td>$50.00</td>
+							</tr>
+							<tr class="service_table_row">
+								<td class="service_table_data">Servico 3</td>
+								<td>$50.00</td>
+							</tr>
+							<tr class="service_table_row">
+								<td class="service_table_data">Servico 4</td>
+								<td>$50.00</td>
+							</tr>
+							<tr class="service_table_row">
+								<td class="service_table_data">Servico 5</td>
+								<td>$50.00</td>
+							</tr>							
+							<tr class="service_table_row">
+								<td class="service_table_data">Total </td>
+								<td>$250.00</td>
+							</tr>							
+						</table>
 					</div>
 
 				</div>
@@ -72,7 +104,7 @@
 	 	</script>
 		
 		<footer>
-			Footer Copyright
+			Copyright
 			Icons by Freepik of flaticon.com and Alfredo Hernandez of alfredocreates.com
 		</footer>
 

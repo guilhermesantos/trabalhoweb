@@ -23,16 +23,6 @@ form div {
 	height: 90%;
 }
 
-/*#register_address_neighborhood_container {
-	clear: left;
-	float: left;
-}
-
-#register_address_street_container {
-	float: left;
-	margin-left: 10px;
-}*/
-
 .submit_container {
 	float: left;
 	clear: left;
@@ -72,4 +62,3 @@ form div {
 	width: 10%
 	height: 100%;
 }
-

@@ -30,6 +30,17 @@ header * {
 	background-color: inherit;
 }
 
+
+#logout{
+	text-decoration: none;
+	color: white;
+	font-style: italic;
+}
+
+.user_login_box {
+	float: left;	
+}
+
 .container {
 	height: 640px;
 	width: 100%;
