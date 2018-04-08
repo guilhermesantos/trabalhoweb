@@ -38,7 +38,9 @@ header * {
 }
 
 .user_login_box {
-	float: left;	
+	float: right;
+	position: relative;
+	top: 20%;
 }
 
 .container {
@@ -49,9 +51,18 @@ header * {
 .content {
 	height: 100%;
 	width: 90%;
+	margin-left: 10%;
 	float: left;
 	background-color: white;
 	overflow: hidden;
+}
+
+.site_header_name {
+	color: white;
+	text-align: center;
+	position:relative;
+	top: 40px;
+	font-size: 50px;
 }
 
 .side_menu {
@@ -82,22 +93,25 @@ header * {
 
 .horizontal_menu {
 	overflow: hidden;
-	float: left;
 	background-color: white;
 	color: black;
 	width: 100%;	
+	display: table;
 	border-bottom: solid gainsboro 3px;
 }
 
 .horizontal_menu_item {
-	float: left;
+
+	text-align: center;
 	padding: 10px;
 	background-color: white;
-	width: 3%;
-	transition: 0.5s ease;	
+	width: auto;
+	transition: 0.5s ease;
+	display: table-cell;	
 }
 
 .horizontal_menu_item:hover {
+	cursor: pointer;
 	background-color: purple;
 	color: white;
 }
