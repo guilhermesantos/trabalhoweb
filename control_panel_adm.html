@@ -277,6 +277,53 @@
 						</div>
 					</form>
 
+					<form id="cadastrar_servico_form">
+						<h2>Cadastro de Serviço</h2>
+						<div class="form_row_container">
+							<div class="label_container">
+								<label for="register_serv_name"><span>Nome: </span></label>
+							</div>
+							<div class="field_container">
+								<input type="text" id="register_serv_name"></input>
+							</div>
+						</div>
+						<div class="form_row_container">
+							<div class="label_container">
+								<label for="register_serv_ID"><span>ID: </span></label>
+							</div>
+							<div class="field_container">
+								<input type="text" id="register_serv_ID"></input>
+							</div>
+						</div>
+						<div class="form_row_container">
+							<div class="label_container">
+								<label for="register_serv_description"><span>Descrição: </span></label>
+							</div>
+							<div class="field_container">
+								<input type="text" id="register_serv_description"></input>
+							</div>
+						</div>
+						<div class="form_row_container">
+							<div class="label_container">
+								<label for="register_serv_price"><span>Preço: </span></label>
+							</div>
+							<div class="field_container">
+								<input type="text" id="register_serv_price"></input>
+							</div>
+						</div>
+						<div class="form_row_container">
+							<div class="label_container">
+								<label for="register_serv_image"><span>Foto: </span></label>
+							</div>
+							<div class="field_container">
+								<button  id="register_serv_image">Selecionar foto</button>
+							</div>							
+						</div>
+						<div class="submit_container">
+							<input type="submit" value="Enviar"></input>
+						</div>
+					</form>
+
 					<form id="gerenciar_estoque_form">
 						<h2>Atualizar Estoque</h2>
 						<p> Digite o nome ou ID do produto:</p>
@@ -370,7 +417,7 @@
 	 					document.getElementById("desagendar_horario_form").style.display = "none";
 	 					document.getElementById("cadastrar_pessoa_form").style.display = "none";
 	 					document.getElementById("cadastrar_produto_form").style.display = "none";
-	 					//document.getElementById("cadastrar_servico_form").style.display = "none";
+	 					document.getElementById("cadastrar_servico_form").style.display = "none";
 	 					document.getElementById("gerenciar_estoque_form").style.display = "none";
 	 					document.getElementById("consultar_estoque_form").style.display = "none";
 	 					break;
@@ -379,7 +426,7 @@
 	 					document.getElementById("desagendar_horario_form").style.display = "block";
 	 					document.getElementById("cadastrar_pessoa_form").style.display = "none";
 	 					document.getElementById("cadastrar_produto_form").style.display = "none";
-	 					//document.getElementById("cadastrar_servico_form").style.display = "none";
+	 					document.getElementById("cadastrar_servico_form").style.display = "none";
 	 					document.getElementById("gerenciar_estoque_form").style.display = "none";
 	 					document.getElementById("consultar_estoque_form").style.display = "none"; 					
 	 					break;
@@ -388,7 +435,7 @@
 	 					document.getElementById("desagendar_horario_form").style.display = "none";
 	 					document.getElementById("cadastrar_pessoa_form").style.display = "block";
 	 					document.getElementById("cadastrar_produto_form").style.display = "none";
-	 					//document.getElementById("cadastrar_servico_form").style.display = "none";
+	 					document.getElementById("cadastrar_servico_form").style.display = "none";
 	 					document.getElementById("gerenciar_estoque_form").style.display = "none";
 	 					document.getElementById("consultar_estoque_form").style.display = "none";	
 	 					break;
@@ -397,7 +444,7 @@
 	 					document.getElementById("desagendar_horario_form").style.display = "none";
 	 					document.getElementById("cadastrar_pessoa_form").style.display = "none";
 	 					document.getElementById("cadastrar_produto_form").style.display = "block";
-	 					//document.getElementById("cadastrar_servico_form").style.display = "none";
+	 					document.getElementById("cadastrar_servico_form").style.display = "none";
 	 					document.getElementById("gerenciar_estoque_form").style.display = "none";
 	 					document.getElementById("consultar_estoque_form").style.display = "none";
 	 					break;
@@ -406,7 +453,7 @@
 	 					document.getElementById("desagendar_horario_form").style.display = "none";
 	 					document.getElementById("cadastrar_pessoa_form").style.display = "none";
 	 					document.getElementById("cadastrar_produto_form").style.display = "none";
-	 					//document.getElementById("cadastrar_servico_form").style.display = "block";
+	 					document.getElementById("cadastrar_servico_form").style.display = "block";
 	 					document.getElementById("gerenciar_estoque_form").style.display = "none";
 	 					document.getElementById("consultar_estoque_form").style.display = "none";	
 	 					break;
@@ -415,7 +462,7 @@
 	 					document.getElementById("desagendar_horario_form").style.display = "none";
 	 					document.getElementById("cadastrar_pessoa_form").style.display = "none";
 	 					document.getElementById("cadastrar_produto_form").style.display = "none";
-	 					//document.getElementById("cadastrar_servico_form").style.display = "none";
+	 					document.getElementById("cadastrar_servico_form").style.display = "none";
 	 					document.getElementById("gerenciar_estoque_form").style.display = "block";
 	 					document.getElementById("consultar_estoque_form").style.display = "none";	 				
 	 					break;
@@ -424,7 +471,7 @@
 	 					document.getElementById("desagendar_horario_form").style.display = "none";
 	 					document.getElementById("cadastrar_pessoa_form").style.display = "none";
 	 					document.getElementById("cadastrar_produto_form").style.display = "none";
-	 					//document.getElementById("cadastrar_servico_form").style.display = "none";
+	 					document.getElementById("cadastrar_servico_form").style.display = "none";
 	 					document.getElementById("gerenciar_estoque_form").style.display = "none";
 	 					document.getElementById("consultar_estoque_form").style.display = "block";	 				
 	 					break;
