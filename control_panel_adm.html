@@ -53,7 +53,7 @@
 
 				<div id="selected_action_display">
 
-	<!--				<form id="agendar_horario_form">
+					<form id="agendar_horario_form">
 						<h2>Criar horário de serviço</h1>
 						<div>
 							<div class="label_container">
@@ -91,7 +91,7 @@
 				
 					</form>
 
-					<form id="retirar_horario_form">
+					<form id="desagendar_horario_form">
 						<h2>Retirar horário de serviço</h1>
 
 						<div>
@@ -275,7 +275,7 @@
 						<div class="submit_container">
 							<input type="submit" value="Enviar"></input>
 						</div>
-					</form>-->
+					</form>
 
 					<form id="gerenciar_estoque_form">
 						<h2>Atualizar Estoque</h2>
@@ -309,7 +309,7 @@
 						</div>
 					</form>
 
-			<!--		<form id="consultar_estoque_form">
+					<form id="consultar_estoque_form">
 						<h2>Consultar Estoque</h2>
 						<p> Digite o nome ou ID do produto:</p>
 						<div class="form_row_container">
@@ -332,7 +332,7 @@
 							<input type="submit" value="Enviar"></input>
 						</div>
 					</form>
--->
+
 				</div>
 			</div>
 		</main>
@@ -370,35 +370,63 @@
 	 					document.getElementById("desagendar_horario_form").style.display = "none";
 	 					document.getElementById("cadastrar_pessoa_form").style.display = "none";
 	 					document.getElementById("cadastrar_produto_form").style.display = "none";
-	 					document.getElementById("cadastrar_servico_form").style.display = "none";
+	 					//document.getElementById("cadastrar_servico_form").style.display = "none";
+	 					document.getElementById("gerenciar_estoque_form").style.display = "none";
+	 					document.getElementById("consultar_estoque_form").style.display = "none";
 	 					break;
 	 				case 1:
 	 					document.getElementById("agendar_horario_form").style.display = "none";
 	 					document.getElementById("desagendar_horario_form").style.display = "block";
 	 					document.getElementById("cadastrar_pessoa_form").style.display = "none";
 	 					document.getElementById("cadastrar_produto_form").style.display = "none";
-	 					document.getElementById("cadastrar_servico_form").style.display = "none";
+	 					//document.getElementById("cadastrar_servico_form").style.display = "none";
+	 					document.getElementById("gerenciar_estoque_form").style.display = "none";
+	 					document.getElementById("consultar_estoque_form").style.display = "none"; 					
 	 					break;
 	 				case 2:
 	 					document.getElementById("agendar_horario_form").style.display = "none";
 	 					document.getElementById("desagendar_horario_form").style.display = "none";
 	 					document.getElementById("cadastrar_pessoa_form").style.display = "block";
 	 					document.getElementById("cadastrar_produto_form").style.display = "none";
-	 					document.getElementById("cadastrar_servico_form").style.display = "none";
+	 					//document.getElementById("cadastrar_servico_form").style.display = "none";
+	 					document.getElementById("gerenciar_estoque_form").style.display = "none";
+	 					document.getElementById("consultar_estoque_form").style.display = "none";	
 	 					break;
 	 				case 3:
 	 					document.getElementById("agendar_horario_form").style.display = "none";
 	 					document.getElementById("desagendar_horario_form").style.display = "none";
 	 					document.getElementById("cadastrar_pessoa_form").style.display = "none";
 	 					document.getElementById("cadastrar_produto_form").style.display = "block";
-	 					document.getElementById("cadastrar_servico_form").style.display = "none";
+	 					//document.getElementById("cadastrar_servico_form").style.display = "none";
+	 					document.getElementById("gerenciar_estoque_form").style.display = "none";
+	 					document.getElementById("consultar_estoque_form").style.display = "none";
 	 					break;
 	 				case 4:
 	 					document.getElementById("agendar_horario_form").style.display = "none";
 	 					document.getElementById("desagendar_horario_form").style.display = "none";
 	 					document.getElementById("cadastrar_pessoa_form").style.display = "none";
 	 					document.getElementById("cadastrar_produto_form").style.display = "none";
-	 					document.getElementById("cadastrar_servico_form").style.display = "block";
+	 					//document.getElementById("cadastrar_servico_form").style.display = "block";
+	 					document.getElementById("gerenciar_estoque_form").style.display = "none";
+	 					document.getElementById("consultar_estoque_form").style.display = "none";	
+	 					break;
+	 				case 5:
+	 					document.getElementById("agendar_horario_form").style.display = "none";
+	 					document.getElementById("desagendar_horario_form").style.display = "none";
+	 					document.getElementById("cadastrar_pessoa_form").style.display = "none";
+	 					document.getElementById("cadastrar_produto_form").style.display = "none";
+	 					//document.getElementById("cadastrar_servico_form").style.display = "none";
+	 					document.getElementById("gerenciar_estoque_form").style.display = "block";
+	 					document.getElementById("consultar_estoque_form").style.display = "none";	 				
+	 					break;
+	 				case 6:
+	 					document.getElementById("agendar_horario_form").style.display = "none";
+	 					document.getElementById("desagendar_horario_form").style.display = "none";
+	 					document.getElementById("cadastrar_pessoa_form").style.display = "none";
+	 					document.getElementById("cadastrar_produto_form").style.display = "none";
+	 					//document.getElementById("cadastrar_servico_form").style.display = "none";
+	 					document.getElementById("gerenciar_estoque_form").style.display = "none";
+	 					document.getElementById("consultar_estoque_form").style.display = "block";	 				
 	 					break;
 	 				default:
 	 					break;
