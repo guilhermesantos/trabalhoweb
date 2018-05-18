@@ -1,0 +1,75 @@
+fieldset {
+	padding: 5px;
+	border: solid 3px #CCCCCC;
+	border-radius: 5px;
+}
+
+form div {
+	margin-top: 5px;
+}
+
+#introductory_text {
+	margin-bottom: 20px;
+}
+
+select {
+	width: 150px;
+}
+
+.submit_container {
+	float: left;
+	clear: left;
+	height: 10%;
+}
+
+.form_row_container {
+	float: left;
+	clear: left;	
+	width: 100%;
+}
+
+.label_container {
+	float: left;
+	clear: left;
+	width: 5%;
+}
+
+.field_container {
+	float: left;
+}
+
+.product {
+	width: 15%;
+	height: 25%;
+	float: left;
+	border-radius: 3px;	
+}
+
+.product_img {
+	width: 100%;
+	height: 90%;
+}
+
+.listed_animal_container {
+	width: 100%;
+	height: 5%;
+	padding-bottom: 16px;
+	border-bottom: solid gainsboro 2px;
+}
+
+.animal_info_container {
+	height: 100%;
+	width: 14%;
+	float: left;
+	margin-top: 1.2%;
+}
+
+.icons_container {
+	float: left;
+	width: 10%
+	height: 100%;
+}
+
+#cadastrar_animal_button {
+	margin-top: 1%;
+}

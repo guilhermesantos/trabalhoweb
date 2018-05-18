@@ -30,22 +30,15 @@ header * {
 	background-color: inherit;
 }
 
+body {
+	height: 640px;
+	width: 100%;
+}
 
 #logout{
 	text-decoration: none;
 	color: white;
 	font-style: italic;
-}
-
-.user_login_box {
-	float: right;
-	position: relative;
-	top: 20%;
-}
-
-.container {
-	height: 640px;
-	width: 100%;
 }
 
 .content {
@@ -57,80 +50,6 @@ header * {
 	overflow: hidden;
 }
 
-.site_header_name {
-	color: white;
-	text-align: center;
-	position:relative;
-	top: 40px;
-	font-size: 50px;
-}
-
-.side_menu {
-	float: left;
-	clear: left;
-	width: 10%;
-	height: 100%;
-	background-color: white;
-	overflow: hidden;
-}
-
-.side_menu_item {
-	float: left;
-	clear: left;
-	padding: 10px;
-	background-color: white;
-	color: black;
-	width: 85%;
-	border: solid gainsboro 2px;
-	border-radius: 3px;
-	transition: 0.5s ease;
-}
-
-.side_menu_item:hover {
-	background-color: purple;
-	color: white;
-}
-
-.horizontal_menu {
-	overflow: hidden;
-	background-color: white;
-	color: black;
-	width: 100%;	
-	display: table;
-	border-bottom: solid gainsboro 3px;
-}
-
-.horizontal_menu_item {
-
-	text-align: center;
-	padding: 10px;
-	background-color: white;
-	width: auto;
-	transition: 0.5s ease;
-	display: table-cell;	
-}
-
-.horizontal_menu_item:hover {
-	cursor: pointer;
-	background-color: purple;
-	color: white;
-}
-
-.page_title {
-	margin: 10px;
-	padding: 10px;
-	width: 97%;
-	height: 10%;
-	background-color: white;
-	color: black;
-}
-
-
-.page_title * {
-	background-color: inherit;
-	color: inherit;
-}
-
 .work_section {
 	margin: 10px;
 	padding: 10px;
@@ -138,4 +57,8 @@ header * {
 	height: 59%;
 	background-color: white;
 	color: black;
+}
+
+#introductory_text {
+	margin-bottom: 20px;
 }

@@ -1,95 +1,88 @@
+
 <html>
 <head>
 	<link rel="stylesheet" type="text/css" href="style.css"> 
-	<link rel="stylesheet" type="text/css" href="index.css"> 
+	<link rel="stylesheet" type="text/css" href="titles.css"> 
+	<link rel="stylesheet" type="text/css" href="menus.css"> 
+	<link rel="stylesheet" type="text/css" href="forms.css"> 
+
+
+	<!--<link rel="stylsheet" type="text/css" href="control_panel.css">-->
 	 <meta charset="utf-8"></meta>
 </head>
 <body>
-	<div class="container">
-		<header>
-			<h1 class="site_header_name" id="site_logo">%Pet Shop Name%</h1>	
-		</header>
+	<header>
+		<h1 class="site_title" id="site_logo">%Pet Shop Name%</h1>	
+	</header>
 
-		<nav>
-			<ul class="horizontal_menu">
-				<li class="horizontal_menu_item">Funcionalidade 1</li>
-				<li class="horizontal_menu_item">Funcionalidade 2</li>
-				<li class="horizontal_menu_item">Funcionalidade 3</li>
-				<li class="horizontal_menu_item">Funcionalidade 4</li>
-				<li class="horizontal_menu_item">Funcionalidade 5</li>
-				<li class="horizontal_menu_item">Funcionalidade 6</li>
-			</ul>
-		</nav>
+	<nav>
+		<ul class="horizontal_menu">
+			<li class="horizontal_menu_item" tab="agendarHorario" onclick="menuClick(this)">Agendar horário</li>
+			<li class="horizontal_menu_item" tab="comprarProduto" onclick="menuClick(this)">Comprar produto</li>
+			<li class="horizontal_menu_item" tab="editarRegistro" onclick="menuClick(this)">Editar registro</li>
+			<li class="horizontal_menu_item" tab="gerenciarAnimais" onclick="menuClick(this)">Gerenciar animais</li>
+		</ul>
+	</nav>
 <!--
-		<nav>
-			<ul class="side_menu">
-				<li class="side_menu_item">Funcionalidade 1</li>
-				<li class="side_menu_item">Funcionalidade 2</li>
-				<li class="side_menu_item">Funcionalidade 3</li>
-				<li class="side_menu_item">Funcionalidade 4</li>
-				<li class="side_menu_item">Funcionalidade 5</li>
-				<li class="side_menu_item">Funcionalidade 6</li>
-			</ul>
-		</nav>
+	<nav>
+		<ul class="side_menu">
+			<li class="side_menu_item">Funcionalidade 1</li>
+			<li class="side_menu_item">Funcionalidade 2</li>
+			<li class="side_menu_item">Funcionalidade 3</li>
+			<li class="side_menu_item">Funcionalidade 4</li>
+			<li class="side_menu_item">Funcionalidade 5</li>
+			<li class="side_menu_item">Funcionalidade 6</li>
+		</ul>
+	</nav>
 -->
-		<main class="content">
-			<div class="page_title">
-				<h1>Autenticação</h1>
-			</div>
-			<div class="work_section">
-				
-				<p id="introductory_text">
-					<span>Seja bem vindo. Para utilizar as funcionalidades e ter acesso ao dados do seu pet, entre abaixo no sistema.</span>
+	<main class="content">
 
-				</p>
-				
-				<form id="login_form">
-					<fieldset>
-						<legend>Autenticação</legend>						
-						<div class="form_row_container">
-							<div class="label_container">
-								<label for="login"><span>Login: </span></label>
-							</div>
-							<div class="field_container">
-								<input type="text"></input>
-							</div>
-						</div>
-						<div class="form_row_container">
-							<div class="label_container">
-								<label for="password"><span>Senha: </span></label>
-							</div>
-							<div class="field_container">
-								<input type="password"></input>
-							</div>							
-						</div>
-						<div class="form_row_container">
-							<input type="submit" value="Enviar"></input>
-						</div>
-					</fieldset>
-				</form>
-			</div>
-		</main>
-	 	
-	 	<script type="text/javascript">
+	</main>
+ 	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="site_content.js"></script>
+	<script src="index.js"></script>
 
-		(function(window, document, undefined){
+ 	<script type="text/javascript">
 
-			window.onload = init;
-			function init(){	 			
-
+ 	let client = false;
+	$(document).ready(
+		function() {
+			if(!client) {
+				$(".horizontal_menu").html(horizontalMenu.index)
+				$(".content").html(siteContent.index);
 			}
+		}
+	);
 
-		})(window, document, undefined);
+	function loginClick() {
+		$(".horizontal_menu").html(horizontalMenu.client);
+		$(".content").html(siteContent.client.agendarHorario);
+	}
 
+	function menuClick(component) {
+		switch(component.attributes.tab.value) {
+			case "agendarHorario":
+				$(".content").html(siteContent.client.agendarHorario);
+				break;
+			case "comprarProduto":
+				$(".content").html(siteContent.client.comprarProduto);
+				break;
+			case "editarRegistro":
+				$(".content").html(siteContent.client.editarRegistro);
+				break;
+			case "gerenciarAnimais":
+				$(".content").html(siteContent.client.gerenciarAnimais);
+				break;
+		}		
+	}
 
- 		
-	 	</script>
-		
-		<footer>
-			Copyright
-			Icons by Freepik of flaticon.com and Alfredo Hernandez of alfredocreates.com
-		</footer>
+ 	</script>
+	
+	<footer>
+		Copyright
+		Icons by Freepik of flaticon.com and Alfredo Hernandez of alfredocreates.com
+	</footer>
 
-	</div>
 </body>
 </html>
