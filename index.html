@@ -5,14 +5,14 @@
 	<link rel="stylesheet" type="text/css" href="titles.css"> 
 	<link rel="stylesheet" type="text/css" href="menus.css"> 
 	<link rel="stylesheet" type="text/css" href="forms.css"> 
-
+	<link rel="stylesheet" type="text/css" href="animal_details.css">
 
 	<!--<link rel="stylsheet" type="text/css" href="control_panel.css">-->
 	 <meta charset="utf-8"></meta>
 </head>
 <body>
 	<header>
-		<h1 class="site_title" id="site_logo">%Pet Shop Name%</h1>	
+		<h1 class="site_title">%Pet Shop Name%</h1>
 	</header>
 
 	<nav>
@@ -38,7 +38,6 @@
  	
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script src="site_content.js"></script>
-	<script src="index.js"></script>
 
  	<script type="text/javascript">
 
@@ -47,7 +46,7 @@
 		function() {
 			if(!client) {
 				$(".horizontal_menu").html(horizontalMenu.index)
-				$(".content").html(siteContent.index);
+				$(".content").html(siteContent.client.visualizarAnimal);
 			}
 		}
 	);
@@ -55,6 +54,7 @@
 	function loginClick() {
 		$(".horizontal_menu").html(horizontalMenu.client);
 		$(".content").html(siteContent.client.agendarHorario);
+		$("header").append(siteContent.logoutBox);
 	}
 
 	function menuClick(component) {
@@ -73,6 +73,36 @@
 				break;
 		}		
 	}
+
+	function logout() {
+		console.log("chamou logout");
+		$("#user_login_box").remove();
+		$(".content").html(siteContent.index);
+		$(".horizontal_menu").html(horizontalMenu.index);
+	}
+
+	function animalDetailsClick() {
+		$(".content").html(siteContent.client.visualizarAnimal);
+	}
+
+	var slideIndex = 1;
+	showDivs(slideIndex);
+
+	function plusDivs(n) {
+	    showDivs(slideIndex += n);
+	}
+
+	function showDivs(n) {
+	    var i;
+	    var x = document.getElementsByClassName("mySlides");
+	    if (n > x.length) {slideIndex = 1}
+	    if (n < 1) {slideIndex = x.length} ;
+	    for (i = 0; i < x.length; i++) {
+	        x[i].style.display = "none";
+	    }
+	    x[slideIndex-1].style.display = "block";
+	}
+
 
  	</script>
 	

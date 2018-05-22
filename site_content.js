@@ -14,9 +14,18 @@ let horizontalMenu = {
 	admin:
 	`
 	`
-}
+};
+
 
 let siteContent = {
+ 	logoutBox : 
+ 	`
+	<p id="user_login_box">
+		<span>Seja bem vindo, %nome do usuário%.<br/><a id="logout" href="#" onclick="logout()">Logout</a></span>
+	</p>
+	`,
+
+
 	index: 
 	`
 		<h3 class="page_title">Página principal</h3>
@@ -211,8 +220,8 @@ let siteContent = {
 					<span>Nome do animal 1</span>
 				</div>
 				<div class="icons_container">
-					<a href="animal_details.html"><img src="icons/clipboard.png"></img></a>
-					<a href="#"><img src="icons/delete.png"></img></a>
+					<a onclick="animalDetailsClick();"><img src="icons/clipboard.png"></img></a>
+					<a href="deleteAnimalClick()"><img src="icons/delete.png"></img></a>
 				</div>
 			</div>
 
@@ -259,6 +268,46 @@ let siteContent = {
 				<input type="submit" value="Enviar" onClick="hideAnimalRegisterForm()"></input>
 			</div>
 		</form>
+		`,
+		visualizarAnimal : 
+		`
+		<div class="animal_picture_container">
+			<img class="animal_picture slides" src="raccoon.jpg" ></img>
+		</div>	
+
+
+		<p id="animal_info_text_container">
+			<span>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+			</span>
+		</p>
+
+		<div class="services_container">
+			<table class="service_table">
+				<tr class="service_table_row">
+					<td class="service_table_data">Serviço 1</td>
+					<td>$50.00</td>
+				</tr>
+				<tr class="service_table_row">
+					<td class="service_table_data">Serviço 2</td>
+					<td>$50.00</td>
+				</tr>
+				<tr class="service_table_row">
+					<td class="service_table_data">Serviço 3</td>
+					<td>$50.00</td>
+				</tr>
+				<tr class="service_table_row">
+					<td class="service_table_data">Serviço 4</td>
+					<td>$50.00</td>
+				</tr>
+				<tr class="service_table_row">
+					<td class="service_table_data">Serviço 5</td>
+					<td>$50.00</td>
+				</tr>							
+				<tr class="service_table_row">
+					<td class="service_table_data">Total </td>
+					<td>$250.00</td>
+				</tr>							
+			</table>
 
 		`,
 	}

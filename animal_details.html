@@ -43,13 +43,31 @@
 				
 				<div id="animal_info_container">
 					<div class="animal_picture_container">
-						<img id="animal_picture" src="doge.jpg"></img>
-						<div class="overlay">
-							<p class="overlay_left_button"><a href=""><</a></p>
-							<p class="overlay_right_button"><a href="">></a></p>
-						</div>
+						<img id="animal_picture" class="slides" src="doge.jpg"></img>
+						<img id="animal_picture2" class="slides" src="raccoon"></img>
+						<button class="w3-button w3-display-left" onclick="plusDivs(-1)">&#10094;</button>
+						<button class="w3-button w3-display-right" onclick="plusDivs(+1)">&#10095;</button>
 					</div>
 			
+				<script>
+					var slideIndex = 1;
+					showDivs(slideIndex);
+
+					function plusDivs(n) {
+					    showDivs(slideIndex += n);
+					}
+
+					function showDivs(n) {
+					    var i;
+					    var x = document.getElementsByClassName("mySlides");
+					    if (n > x.length) {slideIndex = 1}
+					    if (n < 1) {slideIndex = x.length} ;
+					    for (i = 0; i < x.length; i++) {
+					        x[i].style.display = "none";
+					    }
+					    x[slideIndex-1].style.display = "block";
+					}
+				</script>
 					<p id="animal_info_text_container">
 						<span id="animal_info_text">"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
 						</span>

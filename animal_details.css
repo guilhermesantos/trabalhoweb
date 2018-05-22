@@ -1,26 +1,33 @@
-#animal_info_container {
+.animal_picture_container {
 	float: left;
-	clear: left;
-}
-
-#animal_picture {
-	display: block;
 	clear: left;
 	width: 30%;
-	height: 70%;
-	float: left;
+	height: 40%;
+	margin-top: 10px;
+}
+
+.animal_picture 
+{
+	max-width: 100%;
+	max-height: 100%;
+	/*display: block;*/
+	/*clear: left;*/
+	/*float: left;*/
+	/*width: 100%;
+	height: 100%;*/
 }
 
 #animal_info_text_container {
-	margin-left: 10px;
+	margin-top: 10px;
 	float: left;
-	width: 50%;
+	clear: left;
+	width: 49%;
 }
 
 .overlay {
 	position: relative;
 	width: 30%;
-	height: 70%;
+	height: 50%;
 	background-color: #000000;
 	opacity: 0.1;
 	transition: 0.5s ease;
@@ -33,7 +40,7 @@
 .overlay_left_button {
 	display: inline-block;
 	position: relative;
-	top: -27%;
+	top: -200%;
 	padding: 5px 20px;
 	font-size: 50px;
 	background-color: white;
@@ -42,9 +49,9 @@
 .overlay_right_button {
 	display: inline-block;
 	position: relative;
-	top: -27%;
+	top: -275%;
 	padding: 5px 20px;
-	left: 60%;
+	left: 268%;
 	font-size: 50px;
 	background-color: white;
 	text-align: center;
@@ -52,6 +59,7 @@
 
 .service_container {
 	float: left;
+	clear: left;
 }
 
 .service_table {

@@ -39,8 +39,8 @@ body {
 	text-decoration: none;
 	color: white;
 	font-style: italic;
-}
 
+}
 .content {
 	height: 100%;
 	width: 90%;
@@ -61,4 +61,11 @@ body {
 
 #introductory_text {
 	margin-bottom: 20px;
+}
+
+#user_login_box {
+	color: white;
+	float: right;
+	height: 100%
+	width: 20%;
 }
