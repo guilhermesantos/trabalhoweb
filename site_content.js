@@ -55,7 +55,7 @@ let siteContent = {
 					</div>							
 				</div>
 				<div class="form_row_container">
-					<input type="submit" value="Enviar" onclick="loginClick()"></input>
+					<input type="submit" value="Enviar""></input>
 				</div>
 			</fieldset>
 		</form>	

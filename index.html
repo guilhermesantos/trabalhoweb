@@ -137,6 +137,10 @@
 			if(!client) {
 				$(".horizontal_menu").html(horizontalMenu.index)
 				$(".content").html(siteContent.index);
+			$('#login_form').on('submit', function(e){
+				e.preventDefault();
+				loginClick();
+			});
 			}
 		}
 	);
@@ -155,7 +159,7 @@
 				$(".horizontal_menu").html(horizontalMenu.client);
 				$(".content").html(siteContent.client.agendarHorario);
 				$("header").append(siteContent.logoutBox);
-		    	alert("Funcionou?");	
+		    	//alert("Funcionou?");	
 		    }
 	    	//alert(request.result.name);
     		//console.log(request.result.name);
