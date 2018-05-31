@@ -159,37 +159,12 @@
 				$(".horizontal_menu").html(horizontalMenu.client);
 				$(".content").html(siteContent.client.agendarHorario);
 				$("header").append(siteContent.logoutBox);
-		    	//alert("Funcionou?");	
+				$('#logout').click(function(e){
+					e.preventDefault();
+					logout();
+				});
 		    }
-	    	//alert(request.result.name);
-    		//console.log(request.result.name);
-    		/*if(document.getElementById("login_username").value == request.result.name) {
-    			alert("amém deu certo");
-				$(".horizontal_menu").html(horizontalMenu.client);
-				$(".content").html(siteContent.client.agendarHorario);
-				$("header").append(siteContent.logoutBox);	
-			}*/
-			
 		};
-		//var request = indexedDB.open("Database", 2);
-		//console.log(request.result.transaction(["register", "readwrite"]));
-		//var transaction = request.result.transaction(["clientes"]);
-		//var objectStore = transaction.objectStore("clientes");
-		//var request = objectStore.get("444-44-4444");
-		//let request = request.loginObjectStore.get(document.getElementById("login_username").value);
-/*		request.onerror = function(event) {
-			console.log("fk")
-		}
-		request.onsucess = function(event) {
-			//if(document.getElementById("login_password").value == request.result.senha)
-				console.log("wow")
-		}*/
-		//if(document.getElementById("login_username").value == "a") {
-			/*$(".horizontal_menu").html(horizontalMenu.client);
-			$(".content").html(siteContent.client.agendarHorario);
-			$("header").append(siteContent.logoutBox);*/	
-		//}
-		
 	}
 
 	function menuClick(component) {
@@ -214,6 +189,10 @@
 		$("#user_login_box").remove();
 		$(".content").html(siteContent.index);
 		$(".horizontal_menu").html(horizontalMenu.index);
+		$('#login_form').on('submit', function(e){
+			e.preventDefault();
+			loginClick();
+		});
 	}
 
 	function animalDetailsClick() {

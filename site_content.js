@@ -21,7 +21,7 @@ let siteContent = {
  	logoutBox : 
  	`
 	<p id="user_login_box">
-		<span>Seja bem vindo, %nome do usuário%.<br/><a id="logout" href="#" onclick="logout()">Logout</a></span>
+		<span>Seja bem vindo, %nome do usuário%.<br/><a id="logout" href="#">Logout</a></span>
 	</p>
 	`,
 
