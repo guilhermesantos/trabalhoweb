@@ -81,8 +81,8 @@
 
 	const dbName = "clientes";
 	const DadosClientes = [
-	  { ssn: "444-44-4444", nome: "Bill", idade: 35, email: "bill@company.com" },
-	  { ssn: "555-55-5555", nome: "Donna", idade: 32, email: "donna@home.org" }
+		{ ssn: "444-44-4444", nome: "Bill", idade: 35, email: "bill@company.com" },
+		{ ssn: "555-55-5555", nome: "Donna", idade: 32, email: "donna@home.org" }
 	];
 	var request = indexedDB.deleteDatabase(dbName);
 	var request = indexedDB.open(dbName, 2);
@@ -97,7 +97,7 @@
 
 	  // Cria um objectStore para conter a informação sobre nossos clientes. Nós vamos
 	  // usar "ssn" como key path porque sabemos que é único;
-	  var objectStore = db.createObjectStore("clientes", { keyPath: "ssn" });
+	  var objectStore = db.createObjectStore("clientes", { keyPath: 'ssn'});
 
 	  // Cria um índice para buscar clientes pelo nome. Podemos ter nomes
 	  // duplicados, então não podemos usar como índice único.
@@ -116,8 +116,11 @@
 	    var clientesObjectStore = db.transaction("clientes", "readwrite").objectStore("clientes");
 	    for (var i in DadosClientes) {
 	    	var aux = clientesObjectStore.add(DadosClientes[i]);
-			console.log(clientesObjectStore.add(DadosClientes[i]));
 	    }
+	   	clientesObjectStore.index("nome").get("Bill").onsuccess = function(event) {
+	   		console.log(event.target.result.idade);
+	   			//event
+	   	};
 	  }
 	};
 
@@ -125,11 +128,6 @@
 
 		console.log("Conexao obtida com sucesso");
 		connection = event.target.result;
-		var clientesObjectStore = connection.transaction("clientes", "readwrite").objectStore("clientes");
-	    for (var i in DadosClientes) {
-	      clientesObjectStore.add(DadosClientes[i]);
-		  //console.log(clientesObjectStore.get(DadosClientes[i]));
-	    }
 	};
 
 
@@ -146,16 +144,28 @@
 	function loginClick() {
 		var tx = connection.transaction("clientes", "readonly");
     	var objectStore = tx.objectStore("clientes");
-    	var request = objectStore.getAll();
+    	var loginValue = document.getElementById("login_username").value;
+    	//alert(loginValue);
+    	var request = objectStore.index("nome").get(loginValue);
     	request.onsuccess = function(event) {
-    		//alert(request.result.name);
-    		console.log(request.result.name);
+		    if (typeof event.target.result == 'undefined') {
+		        alert("Usuário e/ou senha inválido");
+		        return;
+		    } else {
+				$(".horizontal_menu").html(horizontalMenu.client);
+				$(".content").html(siteContent.client.agendarHorario);
+				$("header").append(siteContent.logoutBox);
+		    	alert("Funcionou?");	
+		    }
+	    	//alert(request.result.name);
+    		//console.log(request.result.name);
     		/*if(document.getElementById("login_username").value == request.result.name) {
     			alert("amém deu certo");
 				$(".horizontal_menu").html(horizontalMenu.client);
 				$(".content").html(siteContent.client.agendarHorario);
 				$("header").append(siteContent.logoutBox);	
 			}*/
+			
 		};
 		//var request = indexedDB.open("Database", 2);
 		//console.log(request.result.transaction(["register", "readwrite"]));
@@ -171,10 +181,11 @@
 				console.log("wow")
 		}*/
 		//if(document.getElementById("login_username").value == "a") {
-			$(".horizontal_menu").html(horizontalMenu.client);
+			/*$(".horizontal_menu").html(horizontalMenu.client);
 			$(".content").html(siteContent.client.agendarHorario);
-			$("header").append(siteContent.logoutBox);	
+			$("header").append(siteContent.logoutBox);*/	
 		//}
+		
 	}
 
 	function menuClick(component) {
