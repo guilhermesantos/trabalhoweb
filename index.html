@@ -41,20 +41,140 @@
 
  	<script type="text/javascript">
 
+ 	const loginData = [
+		{ usuario: "admin", nome: "Bill", senha: "password", email: "bill@company.com", telefone: "9999-9999", cidade:"são carlos", rua: "whatever", bairro: "saida da mat", isAdmin: true },
+		{ usuario: "client", nome: "Bill", senha: "1234", email: "bill@company.com", telefone: "9999-9999", cidade:"são carlos", rua: "whatever", bairro: "saida da mat", isAdmin: false }
+	];
+
+ 	var indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
+ 	 	console.log(indexedDB);
+
+/* 	var request = indexedDB.open("Database", 2);
+ 	console.log(request);
+ 	var loginObjectStore;
+ 	var db;
+ 	var objectStore;
+ 	request.onupgradeneeded = function(event) {
+		let db = event.target.result;
+		console.log("passei aqui 2");
+		let objectStore = db.createObjectStore("accounts", { keyPath: "usuario" });
+
+		objectStore.createIndex("nome", "nome", { unique: false });
+		objectStore.createIndex("senha", "senha", { unique: false });
+		objectStore.createIndex("telefone", "telefone", { unique: false });
+		objectStore.createIndex("email", "email", { unique: true });
+		objectStore.createIndex("cidade", "cidade", { unique: false });
+		objectStore.createIndex("rua", "rua", { unique: false });
+		objectStore.createIndex("bairro", "bairro", { unique: false });
+		objectStore.createIndex("isAdmin", "isAdmin", { unique: false });
+
+		objectStore.transaction.oncomplete = function(event) {
+			// Store values in the newly created objectStore.
+			loginObjectStore = db.transaction("accounts", "readwrite").objectStore("accounts");
+			for (let i in loginData) {
+			  loginObjectStore.add(loginData[i]);
+			}
+		};
+		console.log("passei aqui 3");
+		//db.close();
+	};*/
+
+	const dbName = "clientes";
+	const DadosClientes = [
+	  { ssn: "444-44-4444", nome: "Bill", idade: 35, email: "bill@company.com" },
+	  { ssn: "555-55-5555", nome: "Donna", idade: 32, email: "donna@home.org" }
+	];
+	var request = indexedDB.deleteDatabase(dbName);
+	var request = indexedDB.open(dbName, 2);
+	var connection;
+
+
+	request.onerror = function(event) {
+	  // Tratar erros.
+	};
+	request.onupgradeneeded = function(event) {
+	  var db = event.target.result;
+
+	  // Cria um objectStore para conter a informação sobre nossos clientes. Nós vamos
+	  // usar "ssn" como key path porque sabemos que é único;
+	  var objectStore = db.createObjectStore("clientes", { keyPath: "ssn" });
+
+	  // Cria um índice para buscar clientes pelo nome. Podemos ter nomes
+	  // duplicados, então não podemos usar como índice único.
+	  objectStore.createIndex("nome", "nome", { unique: false });
+
+	  // Cria um índice para buscar clientes por email. Queremos ter certeza
+	  // que não teremos 2 clientes com o mesmo e-mail;
+	  objectStore.createIndex("email", "email", { unique: true });
+
+	  // Usando transação oncomplete para afirmar que a criação do objectStore 
+	  // é terminada antes de adicionar algum dado nele.
+	  console.log("passou aqui");
+	  objectStore.transaction.oncomplete = function(event) {
+	  	console.log("passou aqui tbm");
+	    // Armazenando valores no novo objectStore.
+	    var clientesObjectStore = db.transaction("clientes", "readwrite").objectStore("clientes");
+	    for (var i in DadosClientes) {
+	    	var aux = clientesObjectStore.add(DadosClientes[i]);
+			console.log(clientesObjectStore.add(DadosClientes[i]));
+	    }
+	  }
+	};
+
+	request.onsuccess = function(event) {
+
+		console.log("Conexao obtida com sucesso");
+		connection = event.target.result;
+		var clientesObjectStore = connection.transaction("clientes", "readwrite").objectStore("clientes");
+	    for (var i in DadosClientes) {
+	      clientesObjectStore.add(DadosClientes[i]);
+		  //console.log(clientesObjectStore.get(DadosClientes[i]));
+	    }
+	};
+
+
  	let client = false;
 	$(document).ready(
 		function() {
 			if(!client) {
 				$(".horizontal_menu").html(horizontalMenu.index)
-				$(".content").html(siteContent.client.visualizarAnimal);
+				$(".content").html(siteContent.index);
 			}
 		}
 	);
 
 	function loginClick() {
-		$(".horizontal_menu").html(horizontalMenu.client);
-		$(".content").html(siteContent.client.agendarHorario);
-		$("header").append(siteContent.logoutBox);
+		var tx = connection.transaction("clientes", "readonly");
+    	var objectStore = tx.objectStore("clientes");
+    	var request = objectStore.getAll();
+    	request.onsuccess = function(event) {
+    		//alert(request.result.name);
+    		console.log(request.result.name);
+    		/*if(document.getElementById("login_username").value == request.result.name) {
+    			alert("amém deu certo");
+				$(".horizontal_menu").html(horizontalMenu.client);
+				$(".content").html(siteContent.client.agendarHorario);
+				$("header").append(siteContent.logoutBox);	
+			}*/
+		};
+		//var request = indexedDB.open("Database", 2);
+		//console.log(request.result.transaction(["register", "readwrite"]));
+		//var transaction = request.result.transaction(["clientes"]);
+		//var objectStore = transaction.objectStore("clientes");
+		//var request = objectStore.get("444-44-4444");
+		//let request = request.loginObjectStore.get(document.getElementById("login_username").value);
+/*		request.onerror = function(event) {
+			console.log("fk")
+		}
+		request.onsucess = function(event) {
+			//if(document.getElementById("login_password").value == request.result.senha)
+				console.log("wow")
+		}*/
+		//if(document.getElementById("login_username").value == "a") {
+			$(".horizontal_menu").html(horizontalMenu.client);
+			$(".content").html(siteContent.client.agendarHorario);
+			$("header").append(siteContent.logoutBox);	
+		//}
 	}
 
 	function menuClick(component) {
@@ -83,6 +203,14 @@
 
 	function animalDetailsClick() {
 		$(".content").html(siteContent.client.visualizarAnimal);
+	}
+
+	function showAnimalRegisterForm() {
+		$(".content").html(siteContent.client.gerenciarAnimaisRegisterVisible);
+	}
+
+	function hideAnimalRegisterForm() {
+		$(".content").html(siteContent.client.gerenciarAnimais);
 	}
 
 	var slideIndex = 1;

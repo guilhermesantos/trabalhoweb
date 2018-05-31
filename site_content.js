@@ -43,7 +43,7 @@ let siteContent = {
 						<label for="login"><span>Login: </span></label>
 					</div>
 					<div class="field_container">
-						<input type="text"></input>
+						<input id="login_username" type="text"></input>
 					</div>
 				</div>
 				<div class="form_row_container">
@@ -51,7 +51,7 @@ let siteContent = {
 						<label for="password"><span>Senha: </span></label>
 					</div>
 					<div class="field_container">
-						<input type="password"></input>
+						<input id="login_password" type="password"></input>
 					</div>							
 				</div>
 				<div class="form_row_container">
@@ -210,6 +210,46 @@ let siteContent = {
 		</form>
 		`,
 		gerenciarAnimais:
+		`
+		<h3 class="page_title">Painel de controle</h3>
+
+		<form id="gerenciar_animais_form">
+			<h4 class="section_title">Gerenciar animais</h4>
+			<div class="listed_animal_container">
+				<div class="animal_info_container">
+					<span>Nome do animal 1</span>
+				</div>
+				<div class="icons_container">
+					<a onclick="animalDetailsClick();"><img src="icons/clipboard.png"></img></a>
+					<a href="deleteAnimalClick()"><img src="icons/delete.png"></img></a>
+				</div>
+			</div>
+
+			<div class="listed_animal_container">
+				<div class="animal_info_container">
+					<span>Nome do animal 2</span>
+				</div>
+				<div class="icons_container">
+					<a href="animal_details.html"><img src="icons/clipboard.png"></img></a>
+					<a href="#"><img src="icons/delete.png"></img></a>
+				</div>
+			</div>
+
+			<div class="listed_animal_container">
+				<div class="animal_info_container">
+					<span>Nome do animal 3</span>
+				</div>
+				<div class="icons_container">
+					<a href="animal_details.html"><img src="icons/clipboard.png"></img></a>
+					<a href="#"><img src="icons/delete.png"></img></a>
+				</div>
+			</div>
+		</form>
+		<div id="cadastrar_animal_button">
+			<input type="button" value="+Cadastrar animal" onClick="showAnimalRegisterForm()"></div>
+		</div>
+		`,
+		gerenciarAnimaisRegisterVisible:
 		`
 		<h3 class="page_title">Painel de controle</h3>
 
