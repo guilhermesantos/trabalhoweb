@@ -74,20 +74,17 @@
 		{
 			nome: "Billy",
 			especie: "Cachorro",
-			dono: "client",
-			idade: 5
+			dono: "client"
 		},
 		{
 			nome: "Lua",
 			especie: "Gato",
-			dono: "client",
-			idade: 9
+			dono: "client"
 		},
 		{
 			nome: "Per",
 			especie: "Gato",
-			dono: "client",
-			idade: 1
+			dono: "client"
 		}
 	];
 	var request = indexedDB.deleteDatabase(databaseName);
@@ -364,9 +361,9 @@
 		submitContainerDiv.setAttribute('class', "submit_container");
 
 		let submitInput = document.createElement('input');
+		submitInput.id = "register_animal_input";
 		submitInput.type = "submit";
 		submitInput.value = "Enviar";
-		submitInput.setAttribute('onclick','hideAnimalRegisterForm();');
 
 		let animalsForm = document.getElementById("cadastrar_animal_button");
 		animalsForm.append(form);
@@ -385,6 +382,44 @@
 
 		form.append(submitContainerDiv);
 		submitContainerDiv.append(submitInput);
+
+		$('#register_animal_input').click(function(e){
+			e.preventDefault();
+			didTapRegisterAnimal();
+		});
+	}
+
+	function didTapRegisterAnimal() {
+		let name = document.getElementById("animal_name_field").value;
+		let race = document.getElementById("animal_race_field").value;
+
+		if (name.length > 0 && race.length > 0) {
+			animal = {
+				nome: name,
+				especie: race,
+				dono: connectedUser
+			};
+			let tx = connection.transaction(databasePetsName, "readwrite");
+			let objectStore = tx.objectStore(databasePetsName);
+			let request = objectStore.put(animal);
+			request.onsuccess = function(event) {
+				hideAnimalRegisterForm();
+				getAllUserAnimals();
+				alert("Animal registrado com sucesso");
+			};
+
+			request.onerror = function(event) {
+				alert("Falha ao salvar animal, por favor tente novamente.")
+			};
+		} else if (name.length == 0 && race.length == 0) {
+			hideAnimalRegisterForm();
+		} else if (name.length == 0) {
+			alert("Por favor digite um nome.");
+		} else if (race.length == 0) {
+			alert("Por favor digite uma raça.");
+		} else {
+			hideAnimalRegisterForm();
+		}
 	}
 
 	function hideAnimalRegisterForm() {
