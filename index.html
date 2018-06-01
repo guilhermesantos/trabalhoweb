@@ -42,7 +42,6 @@
  	<script type="text/javascript">
 
  	var indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
- 	 	console.log(indexedDB);
 
 	const dbName = "usuarios";
 	const DadosUsuarios = [
@@ -66,10 +65,7 @@
 
 	  objectStore.createIndex("senha", "senha", { unique: false });
 
-	  console.log("passou aqui");
 	  objectStore.transaction.oncomplete = function(event) {
-	  	console.log("passou aqui tbm");
-	    // Armazenando valores no novo objectStore.
 	    var usuariosObjectStore = db.transaction("usuarios", "readwrite").objectStore("usuarios");
 	    for (var i in DadosUsuarios) {
 	    	var aux = usuariosObjectStore.add(DadosUsuarios[i]);
@@ -78,8 +74,6 @@
 	};
 
 	request.onsuccess = function(event) {
-
-		console.log("Conexao obtida com sucesso");
 		connection = event.target.result;
 	};
 
@@ -102,30 +96,24 @@
 		var tx = connection.transaction("usuarios", "readonly");
     	var objectStore = tx.objectStore("usuarios");
     	var loginValue = document.getElementById("login_username").value;
-    	//alert(loginValue);
+    	var passwordValue = document.getElementById("login_password").value;
     	var request = objectStore.index("usuario").get(loginValue);
     	request.onsuccess = function(event) {
 		    if (typeof event.target.result == 'undefined') {
 		        alert("Usuário e/ou senha inválido");
 		        return;
+		    } else if (event.target.result.senha != passwordValue) {
+		    	alert("Usuário e/ou senha inválido");
+		    	return;
 		    } else {
-		    	var passwordValue = document.getElementById("login_password").value;
-		    	var request2 = objectStore.index("senha").get(passwordValue);
-				request2.onsuccess = function(event) {
-				    if (typeof event.target.result == 'undefined') {
-				        alert("Usuário e/ou senha inválido");
-				        return;
-				    } else {
-				    	connectedUser = loginValue;
-						$(".horizontal_menu").html(horizontalMenu.client);
-						$(".content").html(siteContent.client.agendarHorario);
-						$("header").append(siteContent.logoutBox);
-						$('#logout').click(function(e){
-							e.preventDefault();
-							logout();
-						});
-					}
-				}
+		    	connectedUser = loginValue;
+				$(".horizontal_menu").html(horizontalMenu.client);
+				$(".content").html(siteContent.client.agendarHorario);
+				$("header").append(siteContent.logoutBox);
+				$('#logout').click(function(e){
+					e.preventDefault();
+					logout();
+				});
 		    }
 		};
 	}
@@ -148,12 +136,11 @@
 	}
 
 	function editRegister() {
-		
+
 	}
 
 	function logout() {
 		connectedUser = "";
-		console.log("chamou logout");
 		$("#user_login_box").remove();
 		$(".content").html(siteContent.index);
 		$(".horizontal_menu").html(horizontalMenu.index);
