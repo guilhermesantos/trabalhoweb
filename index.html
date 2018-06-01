@@ -45,8 +45,28 @@
 
 	const dbName = "usuarios";
 	const DadosUsuarios = [
-		{ usuario: "admin", nome: "Bill", senha: "password", email: "bill@company.com", telefone: "9999-9999", cidade:"são carlos", rua: "whatever", bairro: "saida da mat", isAdmin: true },
-		{ usuario: "client", nome: "John", senha: "1234", email: "john@company.com", telefone: "9999-9999", cidade:"são carlos", rua: "whatever", bairro: "saida da mat", isAdmin: false }
+		{
+			usuario: "admin",
+			nome: "Bill",
+			senha: "password",
+			email: "bill@company.com",
+			telefone: "9999-9999",
+			cidade:"são carlos",
+			rua: "whatever",
+			bairro: "saida da mat",
+			isAdmin: true
+		},
+		{
+			usuario: "client",
+			nome: "John",
+			senha: "1234",
+			email: "john@company.com",
+			telefone: "9999-9999",
+			cidade:"são carlos",
+			rua: "whatever",
+			bairro: "saida da mat",
+			isAdmin: false
+		}
 	];
 	var request = indexedDB.deleteDatabase(dbName);
 	var request = indexedDB.open(dbName, 2);
@@ -56,10 +76,11 @@
 	request.onerror = function(event) {
 	  alert("Falha na conexão com o servidor");
 	};
+
 	request.onupgradeneeded = function(event) {
 	  var db = event.target.result;
 
-	  var objectStore = db.createObjectStore("usuarios", { keyPath: 'email'});
+	  var objectStore = db.createObjectStore("usuarios", { keyPath: 'usuario'});
 
 	  objectStore.createIndex("usuario", "usuario", { unique: true });
 
@@ -95,9 +116,9 @@
 	function loginClick() {
 		var tx = connection.transaction("usuarios", "readonly");
     	var objectStore = tx.objectStore("usuarios");
-    	var loginValue = document.getElementById("login_username").value;
+    	var usernameValue = document.getElementById("login_username").value;
     	var passwordValue = document.getElementById("login_password").value;
-    	var request = objectStore.index("usuario").get(loginValue);
+    	var request = objectStore.index("usuario").get(usernameValue);
     	request.onsuccess = function(event) {
 		    if (typeof event.target.result == 'undefined') {
 		        alert("Usuário e/ou senha inválido");
@@ -106,10 +127,11 @@
 		    	alert("Usuário e/ou senha inválido");
 		    	return;
 		    } else {
-		    	connectedUser = loginValue;
+		    	connectedUser = event.target.result.usuario;
 				$(".horizontal_menu").html(horizontalMenu.client);
 				$(".content").html(siteContent.client.agendarHorario);
 				$("header").append(siteContent.logoutBox);
+				$("#welcome_span").html($("#welcome_span").html().replace("user_name", event.target.result.nome));
 				$('#logout').click(function(e){
 					e.preventDefault();
 					logout();
@@ -128,6 +150,36 @@
 				break;
 			case "editarRegistro":
 				$(".content").html(siteContent.client.editarRegistro);
+				var tx = connection.transaction("usuarios", "readonly");
+    			var objectStore = tx.objectStore("usuarios");
+				var request = objectStore.index("usuario").get(connectedUser);
+		    	request.onsuccess = function(event) {
+		    		let userInfo = event.target.result;
+				    if (typeof userInfo != 'undefined') {
+						$("#register_address_phone").val(userInfo.telefone);
+						$("#register_address_email").val(userInfo.email);
+						$("#register_address_city").val(userInfo.cidade);
+						$("#register_address_neighborhood").val(userInfo.bairro);
+						$("#register_address_street").val(userInfo.rua);
+						$("#editar_registro_form").on('submit', function(e){
+							e.preventDefault();
+							userInfo.telefone = $("#register_address_phone").val();
+							userInfo.email = $("#register_address_email").val();
+							userInfo.cidade = $("#register_address_city").val();
+							userInfo.bairro = $("#register_address_neighborhood").val();
+							userInfo.rua = $("#register_address_street").val();
+							let request = connection.transaction("usuarios", "readwrite").objectStore("usuarios").put(userInfo);
+							request.onsuccess = function(e){
+					            alert("Cadastro atualizado!");
+					        };
+					        request.onerror = function(e){
+					            alert("Erro ao atualizar cadastro, tente novamente.");
+					        };
+						});
+				    } else {
+				    	alert("Erro ao recuperar informações do usuário, por favor tente novamente.");
+				    }
+				};
 				break;
 			case "gerenciarAnimais":
 				$(".content").html(siteContent.client.gerenciarAnimais);

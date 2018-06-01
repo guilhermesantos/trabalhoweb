@@ -113,7 +113,7 @@ let siteContent = {
 		<h3 class="page_title">Painel de controle</h3>
 
 		<form id="comprar_produto_form">
-			<h4 class="section_title">Comprar produto</h3>
+			<h4 class="section_title">Comprar produto</h4>
 			<div class="product_grid">
 				<div class="product">
 					<img src="casa_cachorro.jpeg" class="product_img"></img>
@@ -163,13 +163,13 @@ let siteContent = {
 		<h3 class="page_title">Painel de controle</h3>
 
 		<form id="editar_registro_form">
-			<h4 class="section_title">Editar registro</h3>
+			<h4 class="section_title">Editar registro</h4>
 			<div class="form_row_container">
 				<div class="label_container">
 					<label for="register_address_phone"><span>Telefone: </span></label>
 				</div>
 				<div class="field_container">
-					<input type="text" id="register_address_phone"></input>
+					<input type="text" id="register_address_phone" autocomplete="tel"></input>
 				</div>
 			</div>
 			<div class="form_row_container">
@@ -177,7 +177,7 @@ let siteContent = {
 					<label for="register_address_email"><span>Email: </span></label>
 				</div>
 				<div class="field_container">
-					<input type="email" id="register_address_email"></input>
+					<input type="email" id="register_address_email" autocomplete="email"></input>
 				</div>							
 			</div>
 			<div class="form_row_container">
@@ -185,7 +185,7 @@ let siteContent = {
 					<label for="register_address_city"><span>Cidade: </span></label>
 				</div>
 				<div class="field_container">
-					<input type="text" id="register_address_city"></input>
+					<input type="text" id="register_address_city" autocomplete="address-level2"></input>
 				</div>
 			</div>
 			<div class="form_row_container">
@@ -201,7 +201,7 @@ let siteContent = {
 					<label for="register_address_street"><span>Rua: </span></label>
 				</div>
 				<div class="field_container">														
-					<input type="text" id="register_address_street"></input>
+					<input type="text" id="register_address_street" autocomplete="adress-line1"></input>
 				</div>
 			</div>
 			<div class="submit_container">
