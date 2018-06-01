@@ -43,7 +43,9 @@
 
  	var indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
 
-	const dbName = "usuarios";
+	const databaseName = "Database";
+	const databaseUsersName = "Usuarios";
+	const databasePetsName = "Animais";
 	const DadosUsuarios = [
 		{
 			usuario: "admin",
@@ -68,30 +70,53 @@
 			isAdmin: false
 		}
 	];
-	var request = indexedDB.deleteDatabase(dbName);
-	var request = indexedDB.open(dbName, 2);
+	const DadosAnimais =[
+		{
+			nome: "Billy",
+			especie: "Cachorro",
+			dono: "client",
+			idade: 5
+		},
+		{
+			nome: "Lua",
+			especie: "Gato",
+			dono: "client",
+			idade: 9
+		},
+		{
+			nome: "Per",
+			especie: "Gato",
+			dono: "client",
+			idade: 1
+		}
+	];
+	var request = indexedDB.deleteDatabase(databaseName);
+	var request = indexedDB.open(databaseName, 2);
 	var connection;
 	var connectedUser = "";
 
 	request.onerror = function(event) {
-	  alert("Falha na conexão com o servidor");
+		alert("Falha na conexão com o servidor");
 	};
 
 	request.onupgradeneeded = function(event) {
-	  var db = event.target.result;
+		let db = event.target.result;
 
-	  var objectStore = db.createObjectStore("usuarios", { keyPath: 'usuario'});
+		let usuariosObjectStore = db.createObjectStore(databaseUsersName, { keyPath: 'usuario' });
+		usuariosObjectStore.createIndex("usuario", "usuario", { unique: true });
 
-	  objectStore.createIndex("usuario", "usuario", { unique: true });
+		for (let i in DadosUsuarios) {
+			let aux = usuariosObjectStore.put(DadosUsuarios[i]);
+		}
 
-	  objectStore.createIndex("senha", "senha", { unique: false });
+		let animalsObjectStore = db.createObjectStore(databasePetsName,  {keyPath: 'id', autoIncrement: true });
+		animalsObjectStore.createIndex("id", "id", { unique: true });
+		animalsObjectStore.createIndex("nome", "nome", { unique: false });
+		animalsObjectStore.createIndex("dono", "dono", { unique: false });
 
-	  objectStore.transaction.oncomplete = function(event) {
-	    var usuariosObjectStore = db.transaction("usuarios", "readwrite").objectStore("usuarios");
-	    for (var i in DadosUsuarios) {
-	    	var aux = usuariosObjectStore.add(DadosUsuarios[i]);
-	    }
-	  }
+		for (let i in DadosAnimais) {
+			let aux = animalsObjectStore.put(DadosAnimais[i]);
+		}
 	};
 
 	request.onsuccess = function(event) {
@@ -114,8 +139,8 @@
 	);
 
 	function loginClick() {
-		var tx = connection.transaction("usuarios", "readonly");
-    	var objectStore = tx.objectStore("usuarios");
+		var tx = connection.transaction(databaseUsersName, "readonly");
+    	var objectStore = tx.objectStore(databaseUsersName);
     	var usernameValue = document.getElementById("login_username").value;
     	var passwordValue = document.getElementById("login_password").value;
     	var request = objectStore.index("usuario").get(usernameValue);
@@ -135,6 +160,17 @@
 		};
 	}
 
+	function logout() {
+		connectedUser = "";
+		$("#user_login_box").remove();
+		$(".content").html(siteContent.index);
+		$(".horizontal_menu").html(horizontalMenu.index);
+		$('#login_form').on('submit', function(e){
+			e.preventDefault();
+			loginClick();
+		});
+	}
+
 	function menuClick(component) {
 		switch(component.attributes.tab.value) {
 			case "agendarHorario":
@@ -147,7 +183,7 @@
 				editRegister();
 				break;
 			case "gerenciarAnimais":
-				$(".content").html(siteContent.client.gerenciarAnimais);
+				manageAnimals();
 				break;
 		}		
 	}
@@ -164,8 +200,8 @@
 
 	function editRegister() {
 		$(".content").html(siteContent.client.editarRegistro);
-		var tx = connection.transaction("usuarios", "readonly");
-		var objectStore = tx.objectStore("usuarios");
+		var tx = connection.transaction(databaseUsersName, "readonly");
+		var objectStore = tx.objectStore(databaseUsersName);
 		var request = objectStore.index("usuario").get(connectedUser);
     	request.onsuccess = function(event) {
     		let userInfo = event.target.result;
@@ -202,7 +238,7 @@
 						userInfo.senha = senha;
 					}
 
-					let request = connection.transaction("usuarios", "readwrite").objectStore("usuarios").put(userInfo);
+					let request = connection.transaction(databaseUsersName, "readwrite").objectStore(databaseUsersName).put(userInfo);
 					request.onsuccess = function(e){
 			            alert("Cadastro atualizado!");
 			            setWelcomeMessageName(userInfo.nome);
@@ -218,27 +254,142 @@
 		};
 	}
 
-	function logout() {
-		connectedUser = "";
-		$("#user_login_box").remove();
-		$(".content").html(siteContent.index);
-		$(".horizontal_menu").html(horizontalMenu.index);
-		$('#login_form').on('submit', function(e){
-			e.preventDefault();
-			loginClick();
-		});
+	function manageAnimals() {
+		$(".content").html(siteContent.client.gerenciarAnimais);
+		getAllUserAnimals();
 	}
 
-	function animalDetailsClick() {
-		$(".content").html(siteContent.client.visualizarAnimal);
+	function getAllUserAnimals() {
+		var tx = connection.transaction(databasePetsName, "readonly");
+		var objectStore = tx.objectStore(databasePetsName);
+		var request = objectStore.index("dono").getAll(connectedUser);
+		request.onsuccess = function(event) {
+			let animalsData = event.target.result;
+			if (typeof animalsData != 'undefined') {
+				let form = document.getElementById("gerenciar_animais_form");
+				let oldAnimalsList = document.getElementById("gerenciar_animais_list");
+				oldAnimalsList.remove();
+				let animalsList = document.createElement('div');
+				animalsList.id = "gerenciar_animais_list";
+				form.append(animalsList);
+				animalsData.forEach(function (animal) {
+					console.log(animal);
+					let listedAnimalContainerDiv = document.createElement('div');
+					listedAnimalContainerDiv.setAttribute('class', "listed_animal_container");
+
+					let animalInfoContainerDiv = document.createElement('div');
+					animalInfoContainerDiv.setAttribute('class', "animal_info_container");
+
+					let animalNameSpan = document.createElement('span');
+					animalNameSpan.innerHTML = animal.nome;
+
+					let iconsContainerDiv = document.createElement('div');
+					iconsContainerDiv.setAttribute('class', "icons_container");
+
+					let animalDetailsA = document.createElement('a');
+					animalDetailsA.setAttribute('onclick','animalDetailsClick(' + animal.id + ');');
+
+					let animalDetailImage = document.createElement('img');
+					animalDetailImage.src = "icons/clipboard.png";
+
+					let animalDeleteA = document.createElement('a');
+					animalDeleteA.setAttribute('onclick','deleteAnimalClick("' + animal.nome + '", ' + animal.id + ');');
+
+					let animalDeleteImage = document.createElement('img');
+					animalDeleteImage.src = "icons/delete.png";
+
+					animalsList.append(listedAnimalContainerDiv);
+					listedAnimalContainerDiv.append(animalInfoContainerDiv);
+					animalInfoContainerDiv.append(animalNameSpan);
+					listedAnimalContainerDiv.append(iconsContainerDiv);
+					iconsContainerDiv.append(animalDetailsA);
+					animalDetailsA.append(animalDetailImage);
+					iconsContainerDiv.append(animalDeleteA);
+					animalDeleteA.append(animalDeleteImage);
+				});
+			}
+		};
+	}
+
+	function animalDetailsClick(animalId) {
+		console.log(e);
+	}
+
+	function deleteAnimalClick(animalName, animalId) {
+		if(window.confirm("Deseja remover " + animalName + "?")) {
+			var tx = connection.transaction(databasePetsName, "readwrite");
+			var objectStore = tx.objectStore(databasePetsName);
+			let request = objectStore.delete(animalId);
+			request.onsuccess = function(e) {
+				getAllUserAnimals();
+			};
+		}
 	}
 
 	function showAnimalRegisterForm() {
-		$(".content").html(siteContent.client.gerenciarAnimaisRegisterVisible);
+		let form = document.createElement('form');
+		form.id = "animal_register_form";
+
+		let nameLabelContainerDiv = document.createElement('div');
+		nameLabelContainerDiv.setAttribute('class', "label_container");
+
+		let nameLabel = document.createElement('label');
+		nameLabel.for = "animal_name_field";
+
+		let nameSpan = document.createElement('span');
+		nameSpan.innerHTML = "Nome: ";
+
+		let nameFieldContainer = document.createElement('div');
+		nameFieldContainer.setAttribute('class', "field_container");
+
+		let nameInput = document.createElement('input');
+		nameInput.id = "animal_name_field";
+
+		let speciesLabelContainerDiv = document.createElement('div');
+		speciesLabelContainerDiv.setAttribute('class', "label_container");
+
+		let speciesLabel = document.createElement('label');
+		speciesLabel.for = "animal_race_field";
+
+		let speciesSpan = document.createElement('span');
+		speciesSpan.innerHTML = "Espécie: ";
+
+		let speciesFieldContainer = document.createElement('div');
+		speciesFieldContainer.setAttribute('class', "field_container");
+
+		let speciesInput = document.createElement('input');
+		speciesInput.id = "animal_race_field";
+
+		let submitContainerDiv = document.createElement('div');
+		submitContainerDiv.setAttribute('class', "submit_container");
+
+		let submitInput = document.createElement('input');
+		submitInput.type = "submit";
+		submitInput.value = "Enviar";
+		submitInput.setAttribute('onclick','hideAnimalRegisterForm();');
+
+		let animalsForm = document.getElementById("cadastrar_animal_button");
+		animalsForm.append(form);
+		
+		form.append(nameLabelContainerDiv);
+		nameLabelContainerDiv.append(nameLabel);
+		nameLabel.append(nameSpan);
+		form.append(nameFieldContainer);
+		nameFieldContainer.append(nameInput);
+
+		form.append(speciesLabelContainerDiv);
+		speciesLabelContainerDiv.append(speciesLabel);
+		speciesLabel.append(speciesSpan);
+		form.append(speciesFieldContainer);
+		speciesFieldContainer.append(speciesInput);
+
+		form.append(submitContainerDiv);
+		submitContainerDiv.append(submitInput);
 	}
 
 	function hideAnimalRegisterForm() {
-		$(".content").html(siteContent.client.gerenciarAnimais);
+		let form = document.getElementById("animal_register_form");
+		form.remove();
 	}
 
 	var slideIndex = 1;
