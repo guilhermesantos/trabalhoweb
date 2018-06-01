@@ -41,86 +41,39 @@
 
  	<script type="text/javascript">
 
- 	const loginData = [
-		{ usuario: "admin", nome: "Bill", senha: "password", email: "bill@company.com", telefone: "9999-9999", cidade:"são carlos", rua: "whatever", bairro: "saida da mat", isAdmin: true },
-		{ usuario: "client", nome: "Bill", senha: "1234", email: "bill@company.com", telefone: "9999-9999", cidade:"são carlos", rua: "whatever", bairro: "saida da mat", isAdmin: false }
-	];
-
  	var indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
  	 	console.log(indexedDB);
 
-/* 	var request = indexedDB.open("Database", 2);
- 	console.log(request);
- 	var loginObjectStore;
- 	var db;
- 	var objectStore;
- 	request.onupgradeneeded = function(event) {
-		let db = event.target.result;
-		console.log("passei aqui 2");
-		let objectStore = db.createObjectStore("accounts", { keyPath: "usuario" });
-
-		objectStore.createIndex("nome", "nome", { unique: false });
-		objectStore.createIndex("senha", "senha", { unique: false });
-		objectStore.createIndex("telefone", "telefone", { unique: false });
-		objectStore.createIndex("email", "email", { unique: true });
-		objectStore.createIndex("cidade", "cidade", { unique: false });
-		objectStore.createIndex("rua", "rua", { unique: false });
-		objectStore.createIndex("bairro", "bairro", { unique: false });
-		objectStore.createIndex("isAdmin", "isAdmin", { unique: false });
-
-		objectStore.transaction.oncomplete = function(event) {
-			// Store values in the newly created objectStore.
-			loginObjectStore = db.transaction("accounts", "readwrite").objectStore("accounts");
-			for (let i in loginData) {
-			  loginObjectStore.add(loginData[i]);
-			}
-		};
-		console.log("passei aqui 3");
-		//db.close();
-	};*/
-
-	const dbName = "clientes";
-	const DadosClientes = [
-		{ ssn: "444-44-4444", nome: "Bill", idade: 35, email: "bill@company.com" },
-		{ ssn: "555-55-5555", nome: "Donna", idade: 32, email: "donna@home.org" }
+	const dbName = "usuarios";
+	const DadosUsuarios = [
+		{ usuario: "admin", nome: "Bill", senha: "password", email: "bill@company.com", telefone: "9999-9999", cidade:"são carlos", rua: "whatever", bairro: "saida da mat", isAdmin: true },
+		{ usuario: "client", nome: "John", senha: "1234", email: "john@company.com", telefone: "9999-9999", cidade:"são carlos", rua: "whatever", bairro: "saida da mat", isAdmin: false }
 	];
 	var request = indexedDB.deleteDatabase(dbName);
 	var request = indexedDB.open(dbName, 2);
 	var connection;
-
+	var connectedUser = "";
 
 	request.onerror = function(event) {
-	  // Tratar erros.
+	  alert("Falha na conexão com o servidor");
 	};
 	request.onupgradeneeded = function(event) {
 	  var db = event.target.result;
 
-	  // Cria um objectStore para conter a informação sobre nossos clientes. Nós vamos
-	  // usar "ssn" como key path porque sabemos que é único;
-	  var objectStore = db.createObjectStore("clientes", { keyPath: 'ssn'});
+	  var objectStore = db.createObjectStore("usuarios", { keyPath: 'email'});
 
-	  // Cria um índice para buscar clientes pelo nome. Podemos ter nomes
-	  // duplicados, então não podemos usar como índice único.
-	  objectStore.createIndex("nome", "nome", { unique: false });
+	  objectStore.createIndex("usuario", "usuario", { unique: true });
 
-	  // Cria um índice para buscar clientes por email. Queremos ter certeza
-	  // que não teremos 2 clientes com o mesmo e-mail;
-	  objectStore.createIndex("email", "email", { unique: true });
+	  objectStore.createIndex("senha", "senha", { unique: false });
 
-	  // Usando transação oncomplete para afirmar que a criação do objectStore 
-	  // é terminada antes de adicionar algum dado nele.
 	  console.log("passou aqui");
 	  objectStore.transaction.oncomplete = function(event) {
 	  	console.log("passou aqui tbm");
 	    // Armazenando valores no novo objectStore.
-	    var clientesObjectStore = db.transaction("clientes", "readwrite").objectStore("clientes");
-	    for (var i in DadosClientes) {
-	    	var aux = clientesObjectStore.add(DadosClientes[i]);
+	    var usuariosObjectStore = db.transaction("usuarios", "readwrite").objectStore("usuarios");
+	    for (var i in DadosUsuarios) {
+	    	var aux = usuariosObjectStore.add(DadosUsuarios[i]);
 	    }
-	   	clientesObjectStore.index("nome").get("Bill").onsuccess = function(event) {
-	   		console.log(event.target.result.idade);
-	   			//event
-	   	};
 	  }
 	};
 
@@ -137,32 +90,42 @@
 			if(!client) {
 				$(".horizontal_menu").html(horizontalMenu.index)
 				$(".content").html(siteContent.index);
-			$('#login_form').on('submit', function(e){
-				e.preventDefault();
-				loginClick();
-			});
+				$('#login_form').on('submit', function(e){
+					e.preventDefault();
+					loginClick();
+				});
 			}
 		}
 	);
 
 	function loginClick() {
-		var tx = connection.transaction("clientes", "readonly");
-    	var objectStore = tx.objectStore("clientes");
+		var tx = connection.transaction("usuarios", "readonly");
+    	var objectStore = tx.objectStore("usuarios");
     	var loginValue = document.getElementById("login_username").value;
     	//alert(loginValue);
-    	var request = objectStore.index("nome").get(loginValue);
+    	var request = objectStore.index("usuario").get(loginValue);
     	request.onsuccess = function(event) {
 		    if (typeof event.target.result == 'undefined') {
 		        alert("Usuário e/ou senha inválido");
 		        return;
 		    } else {
-				$(".horizontal_menu").html(horizontalMenu.client);
-				$(".content").html(siteContent.client.agendarHorario);
-				$("header").append(siteContent.logoutBox);
-				$('#logout').click(function(e){
-					e.preventDefault();
-					logout();
-				});
+		    	var passwordValue = document.getElementById("login_password").value;
+		    	var request2 = objectStore.index("senha").get(passwordValue);
+				request2.onsuccess = function(event) {
+				    if (typeof event.target.result == 'undefined') {
+				        alert("Usuário e/ou senha inválido");
+				        return;
+				    } else {
+				    	connectedUser = loginValue;
+						$(".horizontal_menu").html(horizontalMenu.client);
+						$(".content").html(siteContent.client.agendarHorario);
+						$("header").append(siteContent.logoutBox);
+						$('#logout').click(function(e){
+							e.preventDefault();
+							logout();
+						});
+					}
+				}
 		    }
 		};
 	}
@@ -184,7 +147,12 @@
 		}		
 	}
 
+	function editRegister() {
+		
+	}
+
 	function logout() {
+		connectedUser = "";
 		console.log("chamou logout");
 		$("#user_login_box").remove();
 		$(".content").html(siteContent.index);
