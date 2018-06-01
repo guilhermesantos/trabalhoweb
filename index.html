@@ -46,6 +46,8 @@
 	const databaseName = "Database";
 	const databaseUsersName = "Usuarios";
 	const databasePetsName = "Animais";
+	const databaseServiceTypesName = "TiposServicos";
+	const databaseScheduledServicesName = "ServicosAgendados";
 	const DadosUsuarios = [
 		{
 			usuario: "admin",
@@ -70,7 +72,7 @@
 			isAdmin: false
 		}
 	];
-	const DadosAnimais =[
+	const DadosAnimais = [
 		{
 			nome: "Billy",
 			especie: "Cachorro",
@@ -85,6 +87,38 @@
 			nome: "Per",
 			especie: "Gato",
 			dono: "client"
+		}
+	];
+	const DadosTiposServicos = [
+		{
+			nome: "Consulta",
+			preco: 150
+		},
+		{
+			nome: "Tosa",
+			preco: 50
+		},
+		{
+			nome: "Banho",
+			preco: 50
+		},
+		{
+			nome: "Banho e Tosa",
+			preco: 80
+		}
+	];
+	const DadosServicosAgendados = [
+		{
+			servico: 1,
+			data: "2018-06-04",
+			hora: "14:30",
+			animal: 2
+		},
+		{
+			servico: 4,
+			data: "2019-01-02",
+			hora: "08:00",
+			animal: 1
 		}
 	];
 	var request = indexedDB.deleteDatabase(databaseName);
@@ -114,6 +148,22 @@
 		for (let i in DadosAnimais) {
 			let aux = animalsObjectStore.put(DadosAnimais[i]);
 		}
+
+		let servicesObjectStore = db.createObjectStore(databaseServiceTypesName,  {keyPath: 'id', autoIncrement: true });
+		servicesObjectStore.createIndex("id", "id", { unique: true });
+
+		for (let i in DadosTiposServicos) {
+			let aux = servicesObjectStore.put(DadosTiposServicos[i]);
+		}
+
+		let scheduledServicesObjectStore = db.createObjectStore(databaseScheduledServicesName,  {keyPath: 'id', autoIncrement: true });
+		scheduledServicesObjectStore.createIndex("servicoAgendado", ["servico", "data", "hora"], { unique: true });
+		scheduledServicesObjectStore.createIndex("servicoAgendadoAnimal", ["animal", "data", "hora"], { unique: true });
+		scheduledServicesObjectStore.createIndex("animal", "animal", { unique: false });
+
+		for (let i in DadosServicosAgendados) {
+			let aux = scheduledServicesObjectStore.put(DadosServicosAgendados[i]);
+		}
 	};
 
 	request.onsuccess = function(event) {
@@ -142,17 +192,22 @@
     	var passwordValue = document.getElementById("login_password").value;
     	var request = objectStore.index("usuario").get(usernameValue);
     	request.onsuccess = function(event) {
-		    if (typeof event.target.result == 'undefined') {
+    		let userInfo = event.target.result;
+		    if (typeof userInfo == 'undefined') {
 		        alert("Usuário e/ou senha inválido");
 		        return;
-		    } else if (event.target.result.senha != passwordValue) {
+		    } else if (userInfo.senha != passwordValue) {
 		    	alert("Usuário e/ou senha inválido");
 		    	return;
 		    } else {
-		    	connectedUser = event.target.result.usuario;
-				$(".horizontal_menu").html(horizontalMenu.client);
-				$(".content").html(siteContent.client.agendarHorario);
-				setWelcomeMessageName(event.target.result.nome);
+		    	connectedUser = userInfo.usuario;
+		    	if (userInfo.isAdmin) {
+					$(".horizontal_menu").html(horizontalMenu.admin);
+				} else {
+					$(".horizontal_menu").html(horizontalMenu.client);
+				}
+				setWelcomeMessageName(userInfo.nome);
+				reserveService();
 		    }
 		};
 	}
@@ -171,7 +226,7 @@
 	function menuClick(component) {
 		switch(component.attributes.tab.value) {
 			case "agendarHorario":
-				$(".content").html(siteContent.client.agendarHorario);
+				reserveService();
 				break;
 			case "comprarProduto":
 				$(".content").html(siteContent.client.comprarProduto);
@@ -183,6 +238,87 @@
 				manageAnimals();
 				break;
 		}		
+	}
+
+	function reserveService() {
+		$(".content").html(siteContent.client.agendarHorario);
+		getAllServiceTypes();
+		var tx = connection.transaction(databasePetsName, "readonly");
+		var objectStore = tx.objectStore(databasePetsName);
+		var request = objectStore.index("dono").getAll(connectedUser);
+		request.onsuccess = function(event) {
+			let animalsData = event.target.result;
+			if (typeof animalsData != 'undefined') {
+				let animalsSelect = document.getElementById("select_animal");
+				animalsData.forEach(function (animal) {
+					let option = document.createElement('option');
+					option.value = animal.id;
+					option.text = animal.nome;
+					animalsSelect.append(option);
+				});
+			}
+		}
+		$("#agendar_horario_form").on('submit', function(e) {
+			e.preventDefault();
+			let serviceId = $("#select_service").val();
+			let animalId = $("#select_animal").val();
+			let date = $("#date_input").val();
+			let time = $("#select_time").val();
+			if (serviceId == null) {
+				alert("Por favor escolha um serviço");
+			} else if (animalId == null) {
+				alert("Por favor cadastre um animal para poder agendar um serviço");
+			} else if (date == null || date.length == 0) {
+				alert("Por favor escolha uma data");
+			} else if (time == null) {
+				alert("Por favor escolha um horário");
+			} else {
+				let servicoAgendado = {
+					servico: Number(serviceId),
+					data: date,
+					hora: time,
+					animal: Number(animalId)
+				};
+				let tx = connection.transaction(databaseScheduledServicesName, "readwrite");
+				let objectStore = tx.objectStore(databaseScheduledServicesName);
+				let request = objectStore.put(servicoAgendado);
+
+				request.onsuccess = function(e) {
+					alert("Serviço agendado com sucesso");
+				};
+
+				request.onerror = function(e) {
+					alert("Já existe outro serviço agendado nesta data");
+				};
+			}
+		});
+	}
+
+	function getAllServiceTypes() {
+		let tx = connection.transaction(databaseServiceTypesName, "readonly");
+		let objectStore = tx.objectStore(databaseServiceTypesName);
+		let request = objectStore.getAll();
+
+		request.onsuccess = function(e) {
+			let serviceTypes = e.target.result;
+			if (typeof serviceTypes != 'undefined') {
+				let serviceSelect = document.getElementById("select_service");
+				while (serviceSelect.options.length) {
+			        serviceSelect.remove(0);
+			    }
+				serviceTypes.forEach(function(serviceType) {
+					let option = document.createElement('option');
+					option.text = serviceType.nome + " (R$" + serviceType.preco + ")";
+					option.value = serviceType.id;
+
+					serviceSelect.append(option);
+				});
+			}
+		}
+
+		request.onerror = function(e) {
+			console.log(e);
+		}
 	}
 
 	function setWelcomeMessageName(name) {
@@ -254,6 +390,11 @@
 	function manageAnimals() {
 		$(".content").html(siteContent.client.gerenciarAnimais);
 		getAllUserAnimals();
+		hideAnimalRegisterForm();
+		$('#register_animal_input').click(function(e){
+			e.preventDefault();
+			didTapRegisterAnimal();
+		});
 	}
 
 	function getAllUserAnimals() {
@@ -270,7 +411,6 @@
 				animalsList.id = "gerenciar_animais_list";
 				form.append(animalsList);
 				animalsData.forEach(function (animal) {
-					console.log(animal);
 					let listedAnimalContainerDiv = document.createElement('div');
 					listedAnimalContainerDiv.setAttribute('class', "listed_animal_container");
 
@@ -309,7 +449,7 @@
 	}
 
 	function animalDetailsClick(animalId) {
-		console.log(e);
+		console.log(animalId);
 	}
 
 	function deleteAnimalClick(animalName, animalId) {
@@ -324,69 +464,9 @@
 	}
 
 	function showAnimalRegisterForm() {
-		let form = document.createElement('form');
-		form.id = "animal_register_form";
-
-		let nameLabelContainerDiv = document.createElement('div');
-		nameLabelContainerDiv.setAttribute('class', "label_container");
-
-		let nameLabel = document.createElement('label');
-		nameLabel.for = "animal_name_field";
-
-		let nameSpan = document.createElement('span');
-		nameSpan.innerHTML = "Nome: ";
-
-		let nameFieldContainer = document.createElement('div');
-		nameFieldContainer.setAttribute('class', "field_container");
-
-		let nameInput = document.createElement('input');
-		nameInput.id = "animal_name_field";
-
-		let speciesLabelContainerDiv = document.createElement('div');
-		speciesLabelContainerDiv.setAttribute('class', "label_container");
-
-		let speciesLabel = document.createElement('label');
-		speciesLabel.for = "animal_race_field";
-
-		let speciesSpan = document.createElement('span');
-		speciesSpan.innerHTML = "Espécie: ";
-
-		let speciesFieldContainer = document.createElement('div');
-		speciesFieldContainer.setAttribute('class', "field_container");
-
-		let speciesInput = document.createElement('input');
-		speciesInput.id = "animal_race_field";
-
-		let submitContainerDiv = document.createElement('div');
-		submitContainerDiv.setAttribute('class', "submit_container");
-
-		let submitInput = document.createElement('input');
-		submitInput.id = "register_animal_input";
-		submitInput.type = "submit";
-		submitInput.value = "Enviar";
-
-		let animalsForm = document.getElementById("cadastrar_animal_button");
-		animalsForm.append(form);
-		
-		form.append(nameLabelContainerDiv);
-		nameLabelContainerDiv.append(nameLabel);
-		nameLabel.append(nameSpan);
-		form.append(nameFieldContainer);
-		nameFieldContainer.append(nameInput);
-
-		form.append(speciesLabelContainerDiv);
-		speciesLabelContainerDiv.append(speciesLabel);
-		speciesLabel.append(speciesSpan);
-		form.append(speciesFieldContainer);
-		speciesFieldContainer.append(speciesInput);
-
-		form.append(submitContainerDiv);
-		submitContainerDiv.append(submitInput);
-
-		$('#register_animal_input').click(function(e){
-			e.preventDefault();
-			didTapRegisterAnimal();
-		});
+		document.getElementById("animal_register_form").style.display = "initial";
+		document.getElementById("animal_name_field").value = "";
+		document.getElementById("animal_race_field").value = "";
 	}
 
 	function didTapRegisterAnimal() {
@@ -423,8 +503,7 @@
 	}
 
 	function hideAnimalRegisterForm() {
-		let form = document.getElementById("animal_register_form");
-		form.remove();
+		document.getElementById("animal_register_form").style.display = "none";
 	}
 
 	var slideIndex = 1;

@@ -71,9 +71,16 @@ let siteContent = {
 				</div>
 				<div class="field_container">
 					<select id="select_service">
-						<option>Serviço 1</option>
-						<option>Serviço 2</option>
-						<option>Serviço 3</option>		
+					</select>
+				</div>
+			</div>
+
+			<div class="form_row_container">
+				<div class="label_container">
+					<label for="select_animal"><span>Animal: </span></label>
+				</div>
+				<div class="field_container">
+					<select id="select_animal">
 					</select>
 				</div>
 			</div>
@@ -83,7 +90,7 @@ let siteContent = {
 					<label for="data"><span>Data:</span></label>
 				</div>
 				<div class="field_container">
-					<input type="date"></input>
+					<input id="date_input" type="date"></input>
 				</div>							
 			</div>
 
@@ -93,10 +100,24 @@ let siteContent = {
 				</div>
 				<div class="field_container">							
 					<select id="select_time">
-						<option value="14h30">14h30</option>
-						<option value="15h00">15h00</option>
-						<option value="15h30">15h30</option>
-						<option value="16h00">16h00</option>
+						<option value="09:00">09:00</option>
+						<option value="09:30">09:30</option>
+						<option value="10:00">10:00</option>
+						<option value="10:30">10:30</option>
+						<option value="11:00">11:00</option>
+						<option value="11:30">11:30</option>
+						<option value="12:00">12:00</option>
+						<option value="12:30">12:30</option>
+						<option value="13:00">13:00</option>
+						<option value="13:30">13:30</option>
+						<option value="14:00">14:00</option>
+						<option value="14:30">14:30</option>
+						<option value="15:00">15:00</option>
+						<option value="15:30">15:30</option>
+						<option value="16:00">16:00</option>
+						<option value="16:30">16:30</option>
+						<option value="17:00">17:00</option>
+						<option value="17:30">17:30</option>
 					</select>
 				</div>
 			</div>
@@ -242,6 +263,25 @@ let siteContent = {
 		</form>
 		<div id="cadastrar_animal_button">
 			<input type="button" value="+Cadastrar animal" onClick="showAnimalRegisterForm()"></div>
+			<form id="animal_register_form">
+	            <div class="label_container">
+	                <label for="animal_name_field"><span>Nome: </span></label>
+	            </div>                    
+	            <div class="field_container">
+	                <input type="text" id="animal_name_field"></input>
+	            </div>
+	            
+	            <div class="label_container">
+	                <label for="animal_race_field"><span>Raça: </span></label>
+	            </div>
+	            <div class="field_container">
+	                <input type="text" id="animal_race_field"></input>
+	            </div>
+
+	            <div class="submit_container">
+	                <input id="register_animal_input" type="submit" value="Enviar"></input>
+	            </div>
+	        </form>
 		</div>
 		`,
 		visualizarAnimal : 
@@ -284,7 +324,6 @@ let siteContent = {
 				</tr>							
 			</table>
 
-		`,
+		`
 	}
-
 }
