@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 
 <html>
 <head>
@@ -8,7 +9,8 @@
 	<link rel="stylesheet" type="text/css" href="animal_details.css">
 
 	<!--<link rel="stylsheet" type="text/css" href="control_panel.css">-->
-	 <meta charset="utf-8"></meta>
+	<meta charset="utf-8">
+	<title>Login</title>
 </head>
 <body>
 	<header>
@@ -39,12 +41,12 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script src="site_content.js"></script>
 
- 	<script type="text/javascript">
+ 	<script>
 
- 	const loginData = [
+ 	/* const loginData = [
 		{ usuario: "admin", nome: "Bill", senha: "password", email: "bill@company.com", telefone: "9999-9999", cidade:"são carlos", rua: "whatever", bairro: "saida da mat", isAdmin: true },
 		{ usuario: "client", nome: "Bill", senha: "1234", email: "bill@company.com", telefone: "9999-9999", cidade:"são carlos", rua: "whatever", bairro: "saida da mat", isAdmin: false }
-	];
+	]; */
 
  	var indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
  	 	console.log(indexedDB);
@@ -81,8 +83,8 @@
 
 	const dbName = "clientes";
 	const DadosClientes = [
-		{ ssn: "444-44-4444", nome: "Bill", idade: 35, email: "bill@company.com" },
-		{ ssn: "555-55-5555", nome: "Donna", idade: 32, email: "donna@home.org" }
+		{ ssn: "444-44-4444", nome: "Bill", idade: 35, email: "bill@company.com", password: "password" },
+		{ ssn: "555-55-5555", nome: "Donna", idade: 32, email: "donna@home.org", password: "123123" }
 	];
 	var request = indexedDB.deleteDatabase(dbName);
 	var request = indexedDB.open(dbName, 2);
@@ -117,15 +119,10 @@
 	    for (var i in DadosClientes) {
 	    	var aux = clientesObjectStore.add(DadosClientes[i]);
 	    }
-	   	clientesObjectStore.index("nome").get("Bill").onsuccess = function(event) {
-	   		console.log(event.target.result.idade);
-	   			//event
-	   	};
 	  }
 	};
 
 	request.onsuccess = function(event) {
-
 		console.log("Conexao obtida com sucesso");
 		connection = event.target.result;
 	};
@@ -137,10 +134,10 @@
 			if(!client) {
 				$(".horizontal_menu").html(horizontalMenu.index)
 				$(".content").html(siteContent.index);
-			$('#login_form').on('submit', function(e){
-				e.preventDefault();
-				loginClick();
-			});
+				$('#login_form').on('submit', function(e) {
+					e.preventDefault();
+					loginClick();
+				});
 			}
 		}
 	);
@@ -149,16 +146,21 @@
 		var tx = connection.transaction("clientes", "readonly");
     	var objectStore = tx.objectStore("clientes");
     	var loginValue = document.getElementById("login_username").value;
+    	var passwordValue = document.getElementById("login_password").value;
     	//alert(loginValue);
     	var request = objectStore.index("nome").get(loginValue);
     	request.onsuccess = function(event) {
 		    if (typeof event.target.result == 'undefined') {
 		        alert("Usuário e/ou senha inválido");
 		        return;
+		    } else if (event.target.result.password != passwordValue) {
+		    	alert("Usuário e/ou senha inválido");
+		    	return;
 		    } else {
 				$(".horizontal_menu").html(horizontalMenu.client);
 				$(".content").html(siteContent.client.agendarHorario);
 				$("header").append(siteContent.logoutBox);
+				$("#welcome_span").html($("#welcome_span").html().replace("user_name", event.target.result.nome));
 				$('#logout').click(function(e){
 					e.preventDefault();
 					logout();
