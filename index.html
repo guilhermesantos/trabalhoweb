@@ -130,12 +130,7 @@
 		    	connectedUser = event.target.result.usuario;
 				$(".horizontal_menu").html(horizontalMenu.client);
 				$(".content").html(siteContent.client.agendarHorario);
-				$("header").append(siteContent.logoutBox);
-				$("#welcome_span").html($("#welcome_span").html().replace("user_name", event.target.result.nome));
-				$('#logout').click(function(e){
-					e.preventDefault();
-					logout();
-				});
+				setWelcomeMessageName(event.target.result.nome);
 		    }
 		};
 	}
@@ -149,37 +144,7 @@
 				$(".content").html(siteContent.client.comprarProduto);
 				break;
 			case "editarRegistro":
-				$(".content").html(siteContent.client.editarRegistro);
-				var tx = connection.transaction("usuarios", "readonly");
-    			var objectStore = tx.objectStore("usuarios");
-				var request = objectStore.index("usuario").get(connectedUser);
-		    	request.onsuccess = function(event) {
-		    		let userInfo = event.target.result;
-				    if (typeof userInfo != 'undefined') {
-						$("#register_address_phone").val(userInfo.telefone);
-						$("#register_address_email").val(userInfo.email);
-						$("#register_address_city").val(userInfo.cidade);
-						$("#register_address_neighborhood").val(userInfo.bairro);
-						$("#register_address_street").val(userInfo.rua);
-						$("#editar_registro_form").on('submit', function(e){
-							e.preventDefault();
-							userInfo.telefone = $("#register_address_phone").val();
-							userInfo.email = $("#register_address_email").val();
-							userInfo.cidade = $("#register_address_city").val();
-							userInfo.bairro = $("#register_address_neighborhood").val();
-							userInfo.rua = $("#register_address_street").val();
-							let request = connection.transaction("usuarios", "readwrite").objectStore("usuarios").put(userInfo);
-							request.onsuccess = function(e){
-					            alert("Cadastro atualizado!");
-					        };
-					        request.onerror = function(e){
-					            alert("Erro ao atualizar cadastro, tente novamente.");
-					        };
-						});
-				    } else {
-				    	alert("Erro ao recuperar informações do usuário, por favor tente novamente.");
-				    }
-				};
+				editRegister();
 				break;
 			case "gerenciarAnimais":
 				$(".content").html(siteContent.client.gerenciarAnimais);
@@ -187,8 +152,70 @@
 		}		
 	}
 
-	function editRegister() {
+	function setWelcomeMessageName(name) {
+		$("#user_login_box").remove();
+		$("header").append(siteContent.logoutBox);
+		$("#welcome_span").html($("#welcome_span").html().replace("user_name", name));
+		$('#logout').click(function(e){
+			e.preventDefault();
+			logout();
+		});
+	}
 
+	function editRegister() {
+		$(".content").html(siteContent.client.editarRegistro);
+		var tx = connection.transaction("usuarios", "readonly");
+		var objectStore = tx.objectStore("usuarios");
+		var request = objectStore.index("usuario").get(connectedUser);
+    	request.onsuccess = function(event) {
+    		let userInfo = event.target.result;
+		    if (typeof userInfo != 'undefined') {
+		    	$("#register_name").val(userInfo.nome);
+				$("#register_address_phone").val(userInfo.telefone);
+				$("#register_address_email").val(userInfo.email);
+				$("#register_address_city").val(userInfo.cidade);
+				$("#register_address_neighborhood").val(userInfo.bairro);
+				$("#register_address_street").val(userInfo.rua);
+				$("#editar_registro_form").on('submit', function(e){
+					e.preventDefault();
+					let nome = $("#register_name").val();
+					let telefone = $("#register_address_phone").val();
+					let email = $("#register_address_email").val();
+					let cidade = $("#register_address_city").val();
+					let bairro = $("#register_address_neighborhood").val();
+					let rua = $("#register_address_street").val();
+					let senha = $("#register_password").val();
+					let repetirSenha = $("#register_repeat_password").val();
+
+					if (senha.length > 0 && senha != repetirSenha) {
+						alert("As senhas estão diferentes.");
+						return;
+					}
+
+					userInfo.nome = nome;
+					userInfo.telefone = telefone;
+					userInfo.email = email;
+					userInfo.cidade = cidade;
+					userInfo.bairro = bairro;
+					userInfo.rua = rua;
+					if (senha.length > 0) {
+						userInfo.senha = senha;
+					}
+
+					let request = connection.transaction("usuarios", "readwrite").objectStore("usuarios").put(userInfo);
+					request.onsuccess = function(e){
+			            alert("Cadastro atualizado!");
+			            setWelcomeMessageName(userInfo.nome);
+			        };
+
+			        request.onerror = function(e){
+			            alert("Erro ao atualizar cadastro, tente novamente.");
+			        };
+				});
+		    } else {
+		    	alert("Erro ao recuperar informações do usuário, por favor tente novamente.");
+		    }
+		};
 	}
 
 	function logout() {

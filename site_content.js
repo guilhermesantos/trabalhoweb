@@ -166,6 +166,14 @@ let siteContent = {
 			<h4 class="section_title">Editar registro</h4>
 			<div class="form_row_container">
 				<div class="label_container">
+					<label for="register_name"><span>Nome: </span></label>
+				</div>
+				<div class="field_container">
+					<input type="text" id="register_name" autocomplete="name"></input>
+				</div>
+			</div>
+			<div class="form_row_container">
+				<div class="label_container">
 					<label for="register_address_phone"><span>Telefone: </span></label>
 				</div>
 				<div class="field_container">
@@ -202,6 +210,22 @@ let siteContent = {
 				</div>
 				<div class="field_container">														
 					<input type="text" id="register_address_street" autocomplete="adress-line1"></input>
+				</div>
+			</div>
+			<div class="form_row_container">
+				<div class="label_container">
+					<label for="register_password"><span>Nova senha: </span></label>
+				</div>
+				<div class="field_container">														
+					<input type="password" id="register_password"></input>
+				</div>
+			</div>
+			<div class="form_row_container">
+				<div class="label_container">
+					<label for="register_repeat_password"><span>Repetir senha: </span></label>
+				</div>
+				<div class="field_container">														
+					<input type="password" id="register_repeat_password"></input>
 				</div>
 			</div>
 			<div class="submit_container">
