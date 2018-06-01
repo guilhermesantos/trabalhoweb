@@ -449,13 +449,103 @@
 	}
 
 	function animalDetailsClick(animalId) {
-		console.log(animalId);
+		let servicesPromise = new Promise(function(resolve, reject) {
+			let servicesTx = connection.transaction(databaseServiceTypesName, "readonly");
+			let servicesObjectStore = servicesTx.objectStore(databaseServiceTypesName);
+			let servicesRequest = servicesObjectStore.getAll();
+
+			servicesRequest.onsuccess = function(e) {
+				let services = e.target.result;
+				if (typeof services != 'undefined') {
+					resolve(services);
+				} else {
+					resolve([]);
+				}
+			}
+		});
+
+		servicesPromise.then(function(services) {
+			let animalTx = connection.transaction(databasePetsName, "readwrite");
+			let animalObjectStore = animalTx.objectStore(databasePetsName);
+			let animalRequest = animalObjectStore.index("id").get(animalId);
+			animalRequest.onsuccess = function(e) {
+				let animalInfo = e.target.result;
+				if (typeof animalInfo != 'undefined') {
+					$(".content").html(siteContent.client.visualizarAnimal);
+					document.getElementById("animal_name_title").innerText = animalInfo.nome;
+					document.getElementById("animal_race_title").innerText = animalInfo.especie;
+				}
+			};
+
+			let scheduledServicesTx = connection.transaction(databaseScheduledServicesName, "readwrite");
+			let scheduledServicesObjectStore = scheduledServicesTx.objectStore(databaseScheduledServicesName);
+			let scheduledServicesRequest = scheduledServicesObjectStore.index("animal").getAll(animalId);
+			scheduledServicesRequest.onsuccess = function(e) {
+				let scheduledServices = e.target.result;
+				let servicesTable = document.getElementById("service_table");
+				if (typeof scheduledServices != 'undefined' && scheduledServices.length > 0) {
+					let totalPrice = 0.0;
+					scheduledServices.forEach(function (scheduledService) {
+						let service = services.find(function(service) {
+							return service.id == scheduledService.servico;
+						});
+						if (typeof service == 'undefined') {
+							return;
+						}
+						let tableRow = document.createElement('tr');
+						tableRow.setAttribute('class', "service_table_row");
+
+						let tableDataServiceName = document.createElement('td');
+						tableDataServiceName.setAttribute('class', "service_table_data");
+						tableDataServiceName.innerHTML = service.nome;
+
+						let tableDataServiceDate = document.createElement('td');
+						tableDataServiceDate.setAttribute('class', "service_table_data");
+						tableDataServiceDate.innerHTML = scheduledService.data;
+
+						let tableDataServicePrice = document.createElement('td');
+						tableDataServicePrice.setAttribute('class', "service_table_data");
+						tableDataServicePrice.innerHTML = "R$" + service.preco;
+						totalPrice += service.preco;
+
+						servicesTable.append(tableRow);
+						servicesTable.append(tableDataServiceName);
+						servicesTable.append(tableDataServiceDate);
+						servicesTable.append(tableDataServicePrice);
+					});
+					let tableRow = document.createElement('tr');
+					tableRow.setAttribute('class', "service_table_row");
+
+					let tableDataTotal = document.createElement('td');
+					tableDataTotal.setAttribute('class', "service_table_data");
+					tableDataTotal.innerHTML = "Total";
+
+					let tableDataTotalPrice = document.createElement('td');
+					tableDataTotalPrice.setAttribute('class', "service_table_data");
+					tableDataTotalPrice.innerHTML = "R$" + totalPrice;
+
+					servicesTable.append(tableRow);
+					servicesTable.append(tableDataTotal);
+					servicesTable.append(tableDataTotalPrice);
+				} else {
+					let tableRow = document.createElement('tr');
+					tableRow.setAttribute('class', "service_table_row");
+
+					let tableDataTotal = document.createElement('td');
+					tableDataTotal.setAttribute('class', "service_table_data");
+					tableDataTotal.innerHTML = "Nenhum serviço";
+
+					servicesTable.append(tableRow);
+					servicesTable.append(tableDataTotal);
+				}
+			};
+		});
 	}
 
 	function deleteAnimalClick(animalName, animalId) {
 		if(window.confirm("Deseja remover " + animalName + "?")) {
-			var tx = connection.transaction(databasePetsName, "readwrite");
-			var objectStore = tx.objectStore(databasePetsName);
+			let tx = connection.transaction(databasePetsName, "readwrite");
+			let objectStore = tx.objectStore(databasePetsName);
 			let request = objectStore.delete(animalId);
 			request.onsuccess = function(e) {
 				getAllUserAnimals();

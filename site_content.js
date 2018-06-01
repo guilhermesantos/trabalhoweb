@@ -286,44 +286,15 @@ let siteContent = {
 		`,
 		visualizarAnimal : 
 		`
-		<div class="animal_picture_container">
-			<img class="animal_picture slides" src="raccoon.jpg" ></img>
-		</div>	
+		<h3 class="page_title">Painel de controle</h3>
 
-
-		<p id="animal_info_text_container">
-			<span>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-			</span>
-		</p>
+		<h4 id="animal_name_title"></h4>
+		<h5 id="animal_race_title"></h5>
 
 		<div class="services_container">
-			<table class="service_table">
-				<tr class="service_table_row">
-					<td class="service_table_data">Serviço 1</td>
-					<td>$50.00</td>
-				</tr>
-				<tr class="service_table_row">
-					<td class="service_table_data">Serviço 2</td>
-					<td>$50.00</td>
-				</tr>
-				<tr class="service_table_row">
-					<td class="service_table_data">Serviço 3</td>
-					<td>$50.00</td>
-				</tr>
-				<tr class="service_table_row">
-					<td class="service_table_data">Serviço 4</td>
-					<td>$50.00</td>
-				</tr>
-				<tr class="service_table_row">
-					<td class="service_table_data">Serviço 5</td>
-					<td>$50.00</td>
-				</tr>							
-				<tr class="service_table_row">
-					<td class="service_table_data">Total </td>
-					<td>$250.00</td>
-				</tr>							
+			<table id="service_table" class="service_table">
 			</table>
-
+		</div>
 		`
 	}
 }
