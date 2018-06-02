@@ -68,3 +68,7 @@
 	float: left;
 	margin-left: 20px;
 }
+
+.service_table_data {
+	padding: 0px 8px;
+}

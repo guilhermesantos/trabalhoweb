@@ -12,9 +12,9 @@ let horizontalMenu = {
 	admin:
 	`
 		<li class="horizontal_menu_item" tab="novosCadastros" onclick="adminMenuClick(this)">Cadastros</li>
-		<li class="horizontal_menu_item" tab="comprarProduto" onclick="adminMenuClick(this)">Comprar produto</li>
-		<li class="horizontal_menu_item" tab="editarRegistro" onclick="adminMenuClick(this)">Editar registro</li>
-		<li class="horizontal_menu_item" tab="gerenciarAnimais" onclick="adminMenuClick(this)">Gerenciar animais</li>
+		<li class="horizontal_menu_item" tab="servicosAgendados" onclick="adminMenuClick(this)">Serviços Agendados</li>
+		<li class="horizontal_menu_item" tab="controleDeEstoque" onclick="adminMenuClick(this)">Controle de Estoque</li>
+		<li class="horizontal_menu_item" tab="editarRegistro" onclick="menuClick(this)">Editar registro</li>
 	`
 };
 
@@ -64,7 +64,7 @@ let siteContent = {
 	`,
 
 	admin: {
-		escolherCadastro:
+		novosCadastros:
 		`
 		<h3 class="page_title">Painel de controle</h3>
 		<h4 class="section_title">Cadastros</h4>
@@ -187,7 +187,7 @@ let siteContent = {
 				<div class="label_container">
 					<label for="register_service_price"><span>Preço: </span></label>
 				</div>
-				<div class="field_container">														
+				<div class="field_container">													
 					<input type="number" id="register_service_price" min="0" step="0.01"></input>
 				</div>
 			</div>
@@ -195,6 +195,34 @@ let siteContent = {
 				<input type="submit" value="Enviar"></input>
 			</div>
 		</form>
+		`,
+		servicosAgendados:
+		`
+		<h3 class="page_title">Painel de controle</h3>
+		<h4 class="section_title">Serviços Agendados</h4>
+		<div>
+			<label for="filter_div">Filtrar por:</label>
+		</div>
+		<div id="filter_div" style="margin-bottom: 16px;">
+			<select id="service_type_select">
+				<option value="-1">Tipo de serviço</option>
+			</select>
+			<select id="animal_select">
+				<option value="-1">Animal</option>
+			</select>
+			<select id="user_select">
+				<option value="">Dono</option>
+			</select>
+		</div>
+		<div class="services_container">
+			<table id="service_table" class="service_table">
+			</table>
+		</div>
+		`,
+		controleDeEstoque:
+		`
+		<h3 class="page_title">Painel de controle</h3>
+		<h4 class="section_title">Controle de Estoque</h4>
 		`
 	},
 
