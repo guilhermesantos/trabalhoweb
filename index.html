@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 
 <html>
 <head>
@@ -8,7 +9,7 @@
 	<link rel="stylesheet" type="text/css" href="animal_details.css">
 
 	<!--<link rel="stylsheet" type="text/css" href="control_panel.css">-->
-	 <meta charset="utf-8"></meta>
+	<meta charset="utf-8"></meta>
 </head>
 <body>
 	<header>
@@ -17,21 +18,8 @@
 
 	<nav>
 		<ul class="horizontal_menu">
-
 		</ul>
 	</nav>
-<!--
-	<nav>
-		<ul class="side_menu">
-			<li class="side_menu_item">Funcionalidade 1</li>
-			<li class="side_menu_item">Funcionalidade 2</li>
-			<li class="side_menu_item">Funcionalidade 3</li>
-			<li class="side_menu_item">Funcionalidade 4</li>
-			<li class="side_menu_item">Funcionalidade 5</li>
-			<li class="side_menu_item">Funcionalidade 6</li>
-		</ul>
-	</nav>
--->
 	<main class="content">
 
 	</main>
@@ -45,9 +33,10 @@
 
 	const databaseName = "Database";
 	const databaseUsersName = "Usuarios";
-	const databasePetsName = "Animais";
+	const databaseProductsName = "Produtos";
 	const databaseServiceTypesName = "TiposServicos";
 	const databaseScheduledServicesName = "ServicosAgendados";
+	const databasePetsName = "Animais";
 	const DadosUsuarios = [
 		{
 			usuario: "admin",
@@ -72,21 +61,24 @@
 			isAdmin: false
 		}
 	];
-	const DadosAnimais = [
+	const DadosProdutos = [
 		{
-			nome: "Billy",
-			especie: "Cachorro",
-			dono: "client"
+			nome: "Bolinha",
+			descrição: "Ideal para seu cachorro!",
+			preco: 10.00,
+			quantidade: 50
 		},
 		{
-			nome: "Lua",
-			especie: "Gato",
-			dono: "client"
+			nome: "Osso",
+			descrição: "Cachorros gostam muito",
+			preco: 5.00,
+			quantidade: 20
 		},
 		{
-			nome: "Per",
-			especie: "Gato",
-			dono: "client"
+			nome: "Areia",
+			descrição: "Para a higiene de seu gato",
+			preco: 20.00,
+			quantidade: 15
 		}
 	];
 	const DadosTiposServicos = [
@@ -121,6 +113,23 @@
 			animal: 1
 		}
 	];
+	const DadosAnimais = [
+		{
+			nome: "Billy",
+			especie: "Cachorro",
+			dono: "client"
+		},
+		{
+			nome: "Lua",
+			especie: "Gato",
+			dono: "client"
+		},
+		{
+			nome: "Per",
+			especie: "Gato",
+			dono: "client"
+		}
+	];
 	var request = indexedDB.deleteDatabase(databaseName);
 	var request = indexedDB.open(databaseName, 2);
 	var connection;
@@ -133,6 +142,7 @@
 	request.onupgradeneeded = function(event) {
 		let db = event.target.result;
 
+		// Usuarios cadastrados
 		let usuariosObjectStore = db.createObjectStore(databaseUsersName, { keyPath: 'usuario' });
 		usuariosObjectStore.createIndex("usuario", "usuario", { unique: true });
 
@@ -140,15 +150,14 @@
 			let aux = usuariosObjectStore.put(DadosUsuarios[i]);
 		}
 
-		let animalsObjectStore = db.createObjectStore(databasePetsName,  {keyPath: 'id', autoIncrement: true });
-		animalsObjectStore.createIndex("id", "id", { unique: true });
-		animalsObjectStore.createIndex("nome", "nome", { unique: false });
-		animalsObjectStore.createIndex("dono", "dono", { unique: false });
+		let productsObjectStore = db.createObjectStore(databaseProductsName, { keyPath: 'id', autoIncrement: true });
+		productsObjectStore.createIndex("id", "id", { unique: true });
 
-		for (let i in DadosAnimais) {
-			let aux = animalsObjectStore.put(DadosAnimais[i]);
+		for (let i in DadosProdutos) {
+			let aux = productsObjectStore.put(DadosProdutos[i]);
 		}
 
+		// Tipos de Serviços disponiveis
 		let servicesObjectStore = db.createObjectStore(databaseServiceTypesName,  {keyPath: 'id', autoIncrement: true });
 		servicesObjectStore.createIndex("id", "id", { unique: true });
 
@@ -156,6 +165,7 @@
 			let aux = servicesObjectStore.put(DadosTiposServicos[i]);
 		}
 
+		// Serviços agendados
 		let scheduledServicesObjectStore = db.createObjectStore(databaseScheduledServicesName,  {keyPath: 'id', autoIncrement: true });
 		scheduledServicesObjectStore.createIndex("servicoAgendado", ["servico", "data", "hora"], { unique: true });
 		scheduledServicesObjectStore.createIndex("servicoAgendadoAnimal", ["animal", "data", "hora"], { unique: true });
@@ -163,6 +173,16 @@
 
 		for (let i in DadosServicosAgendados) {
 			let aux = scheduledServicesObjectStore.put(DadosServicosAgendados[i]);
+		}
+
+		// Animais cadastrados
+		let animalsObjectStore = db.createObjectStore(databasePetsName,  {keyPath: 'id', autoIncrement: true });
+		animalsObjectStore.createIndex("id", "id", { unique: true });
+		animalsObjectStore.createIndex("nome", "nome", { unique: false });
+		animalsObjectStore.createIndex("dono", "dono", { unique: false });
+
+		for (let i in DadosAnimais) {
+			let aux = animalsObjectStore.put(DadosAnimais[i]);
 		}
 	};
 
@@ -206,7 +226,7 @@
 					adminShowRegisterArea();
 				} else {
 					$(".horizontal_menu").html(horizontalMenu.client);
-					reserveService();
+					showScheduleService();
 				}
 				setWelcomeMessageName(userInfo.nome);
 		    }
@@ -221,6 +241,16 @@
 		$('#login_form').on('submit', function(e){
 			e.preventDefault();
 			loginClick();
+		});
+	}
+
+	function setWelcomeMessageName(name) {
+		$("#user_login_box").remove();
+		$("header").append(siteContent.logoutBox);
+		$("#welcome_span").html($("#welcome_span").html().replace("user_name", name));
+		$('#logout').click(function(e){
+			e.preventDefault();
+			logout();
 		});
 	}
 
@@ -392,21 +422,21 @@
 	function menuClick(component) {
 		switch(component.attributes.tab.value) {
 			case "agendarHorario":
-				reserveService();
+				showScheduleService();
 				break;
 			case "comprarProduto":
 				$(".content").html(siteContent.client.comprarProduto);
 				break;
 			case "editarRegistro":
-				editRegister();
+				showEditUser();
 				break;
 			case "gerenciarAnimais":
-				manageAnimals();
+				showAnimalManager();
 				break;
 		}		
 	}
 
-	function reserveService() {
+	function showScheduleService() {
 		$(".content").html(siteContent.client.agendarHorario);
 		getAllServiceTypes();
 		var tx = connection.transaction(databasePetsName, "readonly");
@@ -487,17 +517,7 @@
 		}
 	}
 
-	function setWelcomeMessageName(name) {
-		$("#user_login_box").remove();
-		$("header").append(siteContent.logoutBox);
-		$("#welcome_span").html($("#welcome_span").html().replace("user_name", name));
-		$('#logout').click(function(e){
-			e.preventDefault();
-			logout();
-		});
-	}
-
-	function editRegister() {
+	function showEditUser() {
 		$(".content").html(siteContent.client.editarRegistro);
 		var tx = connection.transaction(databaseUsersName, "readonly");
 		var objectStore = tx.objectStore(databaseUsersName);
@@ -554,7 +574,7 @@
 		};
 	}
 
-	function manageAnimals() {
+	function showAnimalManager() {
 		$(".content").html(siteContent.client.gerenciarAnimais);
 		getAllUserAnimals();
 		hideAnimalRegisterForm();
@@ -780,14 +800,11 @@
 	    }
 	    x[slideIndex-1].style.display = "block";
 	}
-
-
  	</script>
 	
 	<footer>
 		Copyright
 		Icons by Freepik of flaticon.com and Alfredo Hernandez of alfredocreates.com
 	</footer>
-
 </body>
 </html>
