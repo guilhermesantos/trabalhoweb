@@ -15,7 +15,7 @@
 </head>
 <body>
 	<header>
-		<h1 class="site_title">%Pet Shop Name%</h1>
+		<h1 class="site_title">Pet Shop</h1>
 	</header>
 
 	<nav>
@@ -137,6 +137,13 @@
 	var connection;
 	var connectedUser;
 
+	// Admin Variables
+	let adminScheduledServices = [];
+	let adminUsers = [];
+	let adminServiceTypes = [];
+	let adminAnimals = [];
+	let adminProducts = [];
+
 	request.onerror = function(event) {
 		alert("Falha na conexão com o servidor");
 	};
@@ -193,17 +200,14 @@
 		connection = event.target.result;
 	};
 
- 	let client = false;
 	$(document).ready(
 		function() {
-			if(!client) {
-				$(".horizontal_menu").html(horizontalMenu.index)
-				$(".content").html(siteContent.index);
-				$('#login_form').on('submit', function(e){
-					e.preventDefault();
-					loginClick();
-				});
-			}
+			$(".horizontal_menu").html(horizontalMenu.index)
+			$(".content").html(siteContent.index);
+			$('#login_form').on('submit', function(e){
+				e.preventDefault();
+				loginClick();
+			});
 		}
 	);
 
@@ -406,11 +410,6 @@
 			}
 		});
 	}
-
-	let adminScheduledServices = [];
-	let adminUsers = [];
-	let adminServiceTypes = [];
-	let adminAnimals = [];
 
 	function adminShowScheduledServices() {
 		$(".content").html(siteContent.admin.servicosAgendados);
@@ -623,14 +622,14 @@
 				tableDataServiceTime.setAttribute('class', "service_table_data");
 				tableDataServiceTime.innerHTML = scheduledService.hora;
 
-				let animalDeleteA = document.createElement('a');
-				animalDeleteA.setAttribute('onclick','adminDeleteScheduledService(' + scheduledService.id + ')');
+				let serviceA = document.createElement('a');
+				serviceA.setAttribute('onclick','adminDeleteScheduledService(' + scheduledService.id + ')');
 
-				let animalDeleteImage = document.createElement('img');
-				animalDeleteImage.src = "icons/delete.png";
-				animalDeleteImage.width = 18;
-				animalDeleteImage.height = 18;
-				animalDeleteImage.style.paddingTop = "4px";
+				let serviceDeleteImage = document.createElement('img');
+				serviceDeleteImage.src = "icons/delete.png";
+				serviceDeleteImage.width = 18;
+				serviceDeleteImage.height = 18;
+				serviceDeleteImage.style.paddingTop = "4px";
 
 				servicesTable.append(tableRow);
 				tableRow.append(tableDataAnimalName);
@@ -638,8 +637,8 @@
 				tableRow.append(tableDataServiceName);
 				tableRow.append(tableDataServiceDate);
 				tableRow.append(tableDataServiceTime);
-				tableRow.append(animalDeleteA);
-				animalDeleteA.append(animalDeleteImage);
+				tableRow.append(serviceA);
+				serviceA.append(serviceDeleteImage);
 			});
 		} else {
 			let tableRow = document.createElement('tr');
@@ -677,6 +676,107 @@
 
 	function adminShowProducts() {
 		$(".content").html(siteContent.admin.controleDeEstoque);
+		let tx = connection.transaction(databaseProductsName, "readonly");
+		let objectStore = tx.objectStore(databaseProductsName);
+		let request = objectStore.getAll();
+
+		request.onsuccess = function(e) {
+			let products = e.target.result;
+			if (typeof products == 'undefined') {
+				adminProducts = [];
+				return;
+			}
+			adminProducts = products;
+			adminBuildProductsTable();
+		}
+	}
+
+	function adminBuildProductsTable() {
+		let productsTable = document.getElementById("product_table");
+		productsTable.innerHTML = "";
+		if (adminProducts.length > 0) {
+			let tableHeaderRow = document.createElement('tr');
+			tableHeaderRow.setAttribute('class', "service_table_row");
+
+			let tableHeaderProductName = document.createElement('th');
+			tableHeaderProductName.innerHTML = "Animal";
+
+			let tableHeaderProductPrice = document.createElement('th');
+			tableHeaderProductPrice.innerHTML = "Preço";
+
+			let tableHeaderProductQuantity = document.createElement('th');
+			tableHeaderProductQuantity.innerHTML = "Quantidade";
+
+			productsTable.append(tableHeaderRow);
+			tableHeaderRow.append(tableHeaderProductName);
+			tableHeaderRow.append(tableHeaderProductPrice);
+			tableHeaderRow.append(tableHeaderProductQuantity);
+
+			adminProducts.forEach(function(product) {
+				let tableRow = document.createElement('tr');
+				tableRow.setAttribute('class', "service_table_row");
+
+				let tableDataProductName = document.createElement('td');
+				tableDataProductName.setAttribute('class', "service_table_data");
+				tableDataProductName.innerHTML = product.nome;
+
+				let tableDataProductPrice = document.createElement('td');
+				tableDataProductPrice.setAttribute('class', "service_table_data");
+				tableDataProductPrice.innerHTML = "R$ " + Number(product.preco).toFixed(2);
+
+				let tableDataProductQuantity = document.createElement('td');
+				tableDataProductQuantity.setAttribute('class', "service_table_data");
+				tableDataProductQuantity.innerHTML = product.quantidade;
+
+				let productDeleteA = document.createElement('a');
+				productDeleteA.setAttribute('onclick','adminDeleteProduct(' + product.id + ')');
+
+				let productDeleteImage = document.createElement('img');
+				productDeleteImage.src = "icons/delete.png";
+				productDeleteImage.width = 18;
+				productDeleteImage.height = 18;
+				productDeleteImage.style.paddingTop = "4px";
+
+				productsTable.append(tableRow);
+				tableRow.append(tableDataProductName);
+				tableRow.append(tableDataProductPrice);
+				tableRow.append(tableDataProductQuantity);
+				tableRow.append(productDeleteA);
+				productDeleteA.append(productDeleteImage);
+			});
+		} else {
+			let tableRow = document.createElement('tr');
+			tableRow.setAttribute('class', "service_table_row");
+
+			let tableDataNoProducts = document.createElement('td');
+			tableDataNoProducts.setAttribute('class', "service_table_data");
+			tableDataNoProducts.innerHTML = "Nenhum produto encontrado";
+
+			productsTable.append(tableRow);
+			tableRow.append(tableDataNoProducts);
+		}
+	}
+
+	function adminDeleteProduct(productId) {
+		if (typeof productId == 'undefined' || productId == null) {
+			return;
+		}
+
+		if (window.confirm("Deseja deletar esse produto?")) {
+			let tx = connection.transaction(databaseProductsName, "readwrite");
+			let objectStore = tx.objectStore(databaseProductsName);
+			let request = objectStore.delete(productId);
+			request.onsuccess = function(e) {
+				adminProducts = adminProducts.filter(function(product) {
+					return product.id != productId;
+				});
+				adminBuildProductsTable();
+			};
+
+			request.onerror = function(e) {
+				alert("Falha ao deletar produto")
+			}
+		}
 	}
 
 	// Client Functions
