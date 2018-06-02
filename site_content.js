@@ -69,8 +69,7 @@ let siteContent = {
 		<h3 class="page_title">Painel de controle</h3>
 		<h4 class="section_title">Cadastros</h4>
 
-		<button id="new_admin_button" type="button" style="width: 18%;">Cadastrar Administrador</button>
-		<button id="new_client_button" type="button" style="width: 18%;">Cadastrar Cliente</button>
+		<button id="new_user_button" type="button" style="width: 18%;">Cadastrar Usuário</button>
 		<button id="new_product_button" type="button" style="width: 18%;">Cadastrar Produto</button>
 		<button id="new_service_button" type="button" style="width: 18%;">Cadastrar Serviço</button>
 
@@ -145,6 +144,14 @@ let siteContent = {
 				</div>
 				<div class="field_container">														
 					<input type="password" id="register_repeat_password"></input>
+				</div>
+			</div>
+			<div class="form_row_container">
+				<div class="label_container">
+					<label for="register_is_admin"><span>Administrador: </span></label>
+				</div>
+				<div class="field_container">														
+					<input type="checkbox" id="register_is_admin"></input>
 				</div>
 			</div>
 			<div class="submit_container">

@@ -277,9 +277,7 @@
 		document.getElementById("new_product_form").style.display = "none";
 		document.getElementById("new_service_form").style.display = "none";
 
-		let isNewUserAdmin = false;
-
-		$("#new_admin_button").click(function(e) {
+		$("#new_user_button").click(function(e) {
 			e.preventDefault();
 			document.getElementById("new_user_form").style.display = "initial";
 			document.getElementById("new_product_form").style.display = "none";
@@ -294,24 +292,6 @@
 			document.getElementById("register_address_street").value = "";
 			document.getElementById("register_password").value = "";
 			document.getElementById("register_repeat_password").value = "";
-			isNewUserAdmin = true;
-		});
-		$("#new_client_button").click(function(e) {
-			e.preventDefault();
-			document.getElementById("new_user_form").style.display = "initial";
-			document.getElementById("new_product_form").style.display = "none";
-			document.getElementById("new_service_form").style.display = "none";
-
-			document.getElementById("register_username").value = "";
-			document.getElementById("register_name").value = "";
-			document.getElementById("register_address_phone").value = "";
-			document.getElementById("register_address_email").value = "";
-			document.getElementById("register_address_city").value = "";
-			document.getElementById("register_address_neighborhood").value = "";
-			document.getElementById("register_address_street").value = "";
-			document.getElementById("register_password").value = "";
-			document.getElementById("register_repeat_password").value = "";
-			isNewUserAdmin = false;
 		});
 		$("#new_product_button").click(function(e) {
 			e.preventDefault();
@@ -343,6 +323,7 @@
 			let street = document.getElementById("register_address_street").value;
 			let password = document.getElementById("register_password").value;
 			let repeatPassword = document.getElementById("register_repeat_password").value;
+			let isAdmin = document.getElementById("register_is_admin").checked;
 
 			if (username.length == 0) {
 				alert("Por favor insira um nome de usuário");
@@ -372,14 +353,14 @@
 					cidade: city,
 					rua: street,
 					bairro: neighborhood,
-					isAdmin: isNewUserAdmin
+					isAdmin: isAdmin
 				};
 				let tx = connection.transaction(databaseUsersName, "readwrite");
 				let objectStore = tx.objectStore(databaseUsersName);
 				let request = objectStore.add(userInfo);
 
 				request.onsuccess = function(e) {
-					if (isNewUserAdmin) {
+					if (isAdmin) {
 						alert("Administrador cadastrado com sucesso");
 					} else {
 						alert("Cliente cadastrado com sucesso");
