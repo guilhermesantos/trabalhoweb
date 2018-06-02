@@ -426,6 +426,11 @@
 		});
 	}
 
+	let adminScheduledServices = [];
+	let adminUsers = [];
+	let adminServiceTypes = [];
+	let adminAnimals = [];
+
 	function adminShowScheduledServices() {
 		$(".content").html(siteContent.admin.servicosAgendados);
 		let usersPromise = new Promise(function(resolve, reject) {
@@ -508,58 +513,55 @@
 		});
 
 		Promise.all([usersPromise, serviceTypesPromise, animalsPromise]).then(function(values) {
-			let users = values[0];
-			let serviceTypes = values[1];
-			let animals = values[2];
+			adminUsers = values[0];
+			adminServiceTypes = values[1];
+			adminAnimals = values[2];
 			let tx = connection.transaction(databaseScheduledServicesName, "readwrite");
 			let objectStore = tx.objectStore(databaseScheduledServicesName);
 			let request = objectStore.getAll();
 			request.onsuccess = function(e) {
-				let scheduledServices = e.target.result;
-				if (typeof scheduledServices == 'undefined') {
+				let scheduledServicesAux = e.target.result;
+				if (typeof scheduledServicesAux == 'undefined') {
+					adminScheduledServices = [];
 					return;
 				}
+				adminScheduledServices = scheduledServicesAux;
 
-				adminGetScheduledServices(users, scheduledServices, serviceTypes, animals, null, null, null);
+				adminBuildScheduledServiceTable();
 
 				$("#user_select").change(function() {
-					let usuario = $("#user_select").val();
-					let serviceTypeId = Number($("#service_type_select").val());
-					let animalId = Number($("#animal_select").val());
-					adminGetScheduledServices(users, scheduledServices, serviceTypes, animals, usuario, serviceTypeId, animalId);
+					adminBuildScheduledServiceTable();
 				})
 
 				$("#service_type_select").change(function() {
-					let usuario = $("#user_select").val();
-					let serviceTypeId = Number($("#service_type_select").val());
-					let animalId = Number($("#animal_select").val());
-					adminGetScheduledServices(users, scheduledServices, serviceTypes, animals, usuario, serviceTypeId, animalId);
+					adminBuildScheduledServiceTable();
 				});
 
 				$("#animal_select").change(function() {
-					let usuario = $("#user_select").val();
-					let serviceTypeId = Number($("#service_type_select").val());
-					let animalId = Number($("#animal_select").val());
-					adminGetScheduledServices(users, scheduledServices, serviceTypes, animals, usuario, serviceTypeId, animalId);
+					adminBuildScheduledServiceTable();
 				});
 			};
 		});
 	}
 
-	function adminGetScheduledServices(users, scheduledServices, serviceTypes, animals, usuario, serviceTypeId, animalId) {
+	function adminBuildScheduledServiceTable() {
+		let usuario = $("#user_select").val();
+		let serviceTypeId = Number($("#service_type_select").val());
+		let animalId = Number($("#animal_select").val());
+		let scheduledServicesAux = adminScheduledServices;
 		if (serviceTypeId != null && serviceTypeId >= 0) {
-			scheduledServices = scheduledServices.filter(function(scheduledService) {
+			scheduledServicesAux = scheduledServicesAux.filter(function(scheduledService) {
 				return scheduledService.servico == serviceTypeId;
 			});
 		}
 		if (animalId != null && animalId >= 0) {
-			scheduledServices = scheduledServices.filter(function(scheduledService) {
+			scheduledServicesAux = scheduledServicesAux.filter(function(scheduledService) {
 				return scheduledService.animal == animalId;
 			});
 		}
 		if (usuario != null && usuario.length > 0) {
-			scheduledServices = scheduledServices.filter(function(scheduledService) {
-				let animal = animals.find(function(animal) {
+			scheduledServicesAux = scheduledServicesAux.filter(function(scheduledService) {
+				let animal = adminAnimals.find(function(animal) {
 					return animal.id == scheduledService.animal;
 				});
 				if (typeof animal == 'undefined') {
@@ -571,7 +573,7 @@
 
 		let servicesTable = document.getElementById("service_table");
 		servicesTable.innerHTML = "";
-		if (scheduledServices.length > 0) {
+		if (scheduledServicesAux.length > 0) {
 			let tableHeaderRow = document.createElement('tr');
 			tableHeaderRow.setAttribute('class', "service_table_row");
 
@@ -597,11 +599,11 @@
 			tableHeaderRow.append(tableHeaderServiceDate);
 			tableHeaderRow.append(tableHeaderServiceTime);
 
-			scheduledServices.forEach(function (scheduledService) {
-				let serviceType = serviceTypes.find(function(service) {
+			scheduledServicesAux.forEach(function (scheduledService) {
+				let serviceType = adminServiceTypes.find(function(service) {
 					return scheduledService.servico == service.id;
 				});
-				let animal = animals.find(function(animal) {
+				let animal = adminAnimals.find(function(animal) {
 					return scheduledService.animal == animal.id;
 				});
 
@@ -609,7 +611,7 @@
 					return;
 				}
 
-				let dono = users.find(function(user) {
+				let dono = adminUsers.find(function(user) {
 					return user.usuario == animal.dono;
 				});
 
@@ -640,12 +642,23 @@
 				tableDataServiceTime.setAttribute('class', "service_table_data");
 				tableDataServiceTime.innerHTML = scheduledService.hora;
 
+				let animalDeleteA = document.createElement('a');
+				animalDeleteA.setAttribute('onclick','adminDeleteScheduledService(' + scheduledService.id + ')');
+
+				let animalDeleteImage = document.createElement('img');
+				animalDeleteImage.src = "icons/delete.png";
+				animalDeleteImage.width = 18;
+				animalDeleteImage.height = 18;
+				animalDeleteImage.style.paddingTop = "4px";
+
 				servicesTable.append(tableRow);
-				servicesTable.append(tableDataAnimalName);
-				servicesTable.append(tableDataAnimalDono);
-				servicesTable.append(tableDataServiceName);
-				servicesTable.append(tableDataServiceDate);
-				servicesTable.append(tableDataServiceTime);
+				tableRow.append(tableDataAnimalName);
+				tableRow.append(tableDataAnimalDono);
+				tableRow.append(tableDataServiceName);
+				tableRow.append(tableDataServiceDate);
+				tableRow.append(tableDataServiceTime);
+				tableRow.append(animalDeleteA);
+				animalDeleteA.append(animalDeleteImage);
 			});
 		} else {
 			let tableRow = document.createElement('tr');
@@ -656,6 +669,28 @@
 
 			servicesTable.append(tableRow);
 			servicesTable.append(tableDataNoService);
+		}
+	}
+
+	function adminDeleteScheduledService(scheduledServiceId) {
+		if (typeof scheduledServiceId == 'undefined' || scheduledServiceId == null) {
+			return;
+		}
+
+		if (window.confirm("Deseja deletar esse agendamento?")) {
+			let tx = connection.transaction(databaseScheduledServicesName, "readwrite");
+			let objectStore = tx.objectStore(databaseScheduledServicesName);
+			let request = objectStore.delete(scheduledServiceId);
+			request.onsuccess = function(e) {
+				adminScheduledServices = adminScheduledServices.filter(function(scheduledService) {
+					return scheduledService.id != scheduledServiceId;
+				});
+				adminBuildScheduledServiceTable();
+			};
+
+			request.onerror = function(e) {
+				alert("Falha ao deletar agendamento")
+			}
 		}
 	}
 
