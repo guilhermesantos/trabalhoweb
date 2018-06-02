@@ -986,6 +986,20 @@
 			let request = objectStore.delete(animalId);
 			request.onsuccess = function(e) {
 				getAllUserAnimals();
+				let scheduledServicesTx = connection.transaction(databaseScheduledServicesName, "readwrite");
+				let scheduledServicesObjectStore = scheduledServicesTx.objectStore(databaseScheduledServicesName);
+				let request = scheduledServicesObjectStore.index("animal").openCursor();
+
+				request.onsuccess = function(e) {
+					let cursor = e.target.result;
+					if (cursor) {
+						let scheduledService = cursor.value;
+						if (typeof scheduledService != 'undefined' && scheduledService.animal == animalId) {
+							scheduledServicesObjectStore.delete(scheduledService.id);
+						}
+						cursor.continue();
+					}
+				}
 			};
 		}
 	}
