@@ -158,7 +158,7 @@ let siteContent = {
 					<label for="register_product_name"><span>Nome: </span></label>
 				</div>
 				<div class="field_container">														
-					<input type="password" id="register_product_name"></input>
+					<input type="text" id="register_product_name"></input>
 				</div>
 			</div>
 			<div class="form_row_container">
@@ -166,7 +166,7 @@ let siteContent = {
 					<label for="register_product_description"><span>Descrição: </span></label>
 				</div>
 				<div class="field_container">														
-					<input type="password" id="register_product_description"></input>
+					<input type="text" id="register_product_description"></input>
 				</div>
 			</div>
 			<div class="submit_container">
@@ -180,7 +180,7 @@ let siteContent = {
 					<label for="register_service_name"><span>Nome: </span></label>
 				</div>
 				<div class="field_container">														
-					<input type="password" id="register_service_name"></input>
+					<input type="text" id="register_service_name"></input>
 				</div>
 			</div>
 			<div class="form_row_container">
@@ -188,7 +188,7 @@ let siteContent = {
 					<label for="register_service_price"><span>Preço: </span></label>
 				</div>
 				<div class="field_container">														
-					<input type="password" id="register_service_price"></input>
+					<input type="number" id="register_service_price" min="0" step="0.01"></input>
 				</div>
 			</div>
 			<div class="submit_container">

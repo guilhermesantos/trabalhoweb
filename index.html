@@ -245,6 +245,7 @@
 			document.getElementById("new_user_form").style.display = "initial";
 			document.getElementById("new_product_form").style.display = "none";
 			document.getElementById("new_service_form").style.display = "none";
+
 			document.getElementById("register_username").value = "";
 			document.getElementById("register_name").value = "";
 			document.getElementById("register_address_phone").value = "";
@@ -261,6 +262,7 @@
 			document.getElementById("new_user_form").style.display = "initial";
 			document.getElementById("new_product_form").style.display = "none";
 			document.getElementById("new_service_form").style.display = "none";
+
 			document.getElementById("register_username").value = "";
 			document.getElementById("register_name").value = "";
 			document.getElementById("register_address_phone").value = "";
@@ -277,12 +279,18 @@
 			document.getElementById("new_user_form").style.display = "none";
 			document.getElementById("new_product_form").style.display = "initial";
 			document.getElementById("new_service_form").style.display = "none";
+
+			document.getElementById("register_product_name").value = "";
+			document.getElementById("register_product_description").value = "";
 		});
 		$("#new_service_button").click(function(e) {
 			e.preventDefault();
 			document.getElementById("new_user_form").style.display = "none";
 			document.getElementById("new_product_form").style.display = "none";
 			document.getElementById("new_service_form").style.display = "initial";
+
+			document.getElementById("register_service_name").value = "";
+			document.getElementById("register_service_price").value = "";
 		});
 
 		$("#new_user_form").on('submit', function(e) {
@@ -341,6 +349,39 @@
 
 				request.onerror = function(e) {
 					alert("Usuário já está em uso");
+				}
+			}
+		});
+
+		$("#new_product_form").on('submit', function(e) {
+			e.preventDefault();
+		});
+
+		$("#new_service_form").on('submit', function(e) {
+			e.preventDefault();
+			let name = document.getElementById("register_service_name").value;
+			let price = document.getElementById("register_service_price").value;
+
+			if (name.length == 0) {
+				alert("Por favor insira um nome")
+			} else if (price.length == 0) {
+				alert("Por favor insira um preço")
+			} else {
+				let serviceTypeInfo = {
+					nome: name,
+					preco: Number(price)
+				};
+
+				let tx = connection.transaction(databaseServiceTypesName, "readwrite");
+				let objectStore = tx.objectStore(databaseServiceTypesName);
+				let request = objectStore.put(serviceTypeInfo);
+
+				request.onsuccess = function(e) {
+					alert("Tipo de serviço criado com sucesso");
+				};
+
+				request.onerror = function(e) {
+					alert("Um erro ocorreu, tente novamente");
 				}
 			}
 		});
