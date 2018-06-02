@@ -11,6 +11,10 @@ let horizontalMenu = {
 	`,
 	admin:
 	`
+		<li class="horizontal_menu_item" tab="novosCadastros" onclick="adminMenuClick(this)">Cadastros</li>
+		<li class="horizontal_menu_item" tab="comprarProduto" onclick="adminMenuClick(this)">Comprar produto</li>
+		<li class="horizontal_menu_item" tab="editarRegistro" onclick="adminMenuClick(this)">Editar registro</li>
+		<li class="horizontal_menu_item" tab="gerenciarAnimais" onclick="adminMenuClick(this)">Gerenciar animais</li>
 	`
 };
 
@@ -26,38 +30,173 @@ let siteContent = {
 
 	index: 
 	`
-		<h3 class="page_title">Página principal</h3>
-		<p id="introductory_text">
-			<span>Seja bem vindo. Para utilizar as funcionalidades e ter acesso ao dados do seu pet, entre abaixo no sistema.<br/>
-			Se ainda não tiver um cadastro, clique <em>	aqui</em>
-			</span>
-		</p>
-		
-		<form id="login_form">
-			<fieldset>
-				<legend>Autenticação</legend>						
-				<div class="form_row_container">
-					<div class="label_container">
-						<label for="login"><span>Login: </span></label>
-					</div>
-					<div class="field_container">
-						<input id="login_username" type="text"></input>
-					</div>
+	<h3 class="page_title">Página principal</h3>
+	<p id="introductory_text">
+		<span>Seja bem vindo. Para utilizar as funcionalidades e ter acesso ao dados do seu pet, entre abaixo no sistema.<br/>
+		Se ainda não tiver um cadastro, clique <em>	aqui</em>
+		</span>
+	</p>
+	
+	<form id="login_form">
+		<fieldset>
+			<legend>Autenticação</legend>						
+			<div class="form_row_container">
+				<div class="label_container">
+					<label for="login"><span>Login: </span></label>
 				</div>
-				<div class="form_row_container">
-					<div class="label_container">
-						<label for="password"><span>Senha: </span></label>
-					</div>
-					<div class="field_container">
-						<input id="login_password" type="password"></input>
-					</div>							
+				<div class="field_container">
+					<input id="login_username" type="text"></input>
 				</div>
-				<div class="form_row_container">
-					<input type="submit" value="Enviar""></input>
+			</div>
+			<div class="form_row_container">
+				<div class="label_container">
+					<label for="password"><span>Senha: </span></label>
 				</div>
-			</fieldset>
-		</form>	
-		`,
+				<div class="field_container">
+					<input id="login_password" type="password"></input>
+				</div>							
+			</div>
+			<div class="form_row_container">
+				<input type="submit" value="Enviar""></input>
+			</div>
+		</fieldset>
+	</form>	
+	`,
+
+	admin: {
+		escolherCadastro:
+		`
+		<h3 class="page_title">Painel de controle</h3>
+		<h4 class="section_title">Cadastros</h4>
+
+		<button id="new_admin_button" type="button" style="width: 18%;">Cadastrar Administrador</button>
+		<button id="new_client_button" type="button" style="width: 18%;">Cadastrar Cliente</button>
+		<button id="new_product_button" type="button" style="width: 18%;">Cadastrar Produto</button>
+		<button id="new_service_button" type="button" style="width: 18%;">Cadastrar Serviço</button>
+
+		<form id="new_user_form">
+			<div class="form_row_container">
+				<div class="label_container">
+					<label for="register_username"><span>Usuário: </span></label>
+				</div>
+				<div class="field_container">
+					<input type="text" id="register_username"></input>
+				</div>
+			</div>
+			<div class="form_row_container">
+				<div class="label_container">
+					<label for="register_name"><span>Nome: </span></label>
+				</div>
+				<div class="field_container">
+					<input type="text" id="register_name" autocomplete="name"></input>
+				</div>
+			</div>
+			<div class="form_row_container">
+				<div class="label_container">
+					<label for="register_address_phone"><span>Telefone: </span></label>
+				</div>
+				<div class="field_container">
+					<input type="text" id="register_address_phone" autocomplete="tel"></input>
+				</div>
+			</div>
+			<div class="form_row_container">
+				<div class="label_container">
+					<label for="register_address_email"><span>Email: </span></label>
+				</div>
+				<div class="field_container">
+					<input type="email" id="register_address_email" autocomplete="email"></input>
+				</div>							
+			</div>
+			<div class="form_row_container">
+				<div class="label_container">
+					<label for="register_address_city"><span>Cidade: </span></label>
+				</div>
+				<div class="field_container">
+					<input type="text" id="register_address_city" autocomplete="address-level2"></input>
+				</div>
+			</div>
+			<div class="form_row_container">
+				<div class="label_container">
+					<label for="register_address_neighborhood"><span>Bairro: </span></label>
+				</div>
+				<div class="field_container">
+					<input type="text" id="register_address_neighborhood"></input>
+				</div>							
+			</div>
+			<div class="form_row_container">
+				<div class="label_container">
+					<label for="register_address_street"><span>Rua: </span></label>
+				</div>
+				<div class="field_container">														
+					<input type="text" id="register_address_street" autocomplete="adress-line1"></input>
+				</div>
+			</div>
+			<div class="form_row_container">
+				<div class="label_container">
+					<label for="register_password"><span>Senha: </span></label>
+				</div>
+				<div class="field_container">														
+					<input type="password" id="register_password"></input>
+				</div>
+			</div>
+			<div class="form_row_container">
+				<div class="label_container">
+					<label for="register_repeat_password"><span>Repetir senha: </span></label>
+				</div>
+				<div class="field_container">														
+					<input type="password" id="register_repeat_password"></input>
+				</div>
+			</div>
+			<div class="submit_container">
+				<input type="submit" value="Enviar"></input>
+			</div>
+		</form>
+
+		<form id="new_product_form">
+			<div class="form_row_container">
+				<div class="label_container">
+					<label for="register_product_name"><span>Nome: </span></label>
+				</div>
+				<div class="field_container">														
+					<input type="password" id="register_product_name"></input>
+				</div>
+			</div>
+			<div class="form_row_container">
+				<div class="label_container">
+					<label for="register_product_description"><span>Descrição: </span></label>
+				</div>
+				<div class="field_container">														
+					<input type="password" id="register_product_description"></input>
+				</div>
+			</div>
+			<div class="submit_container">
+				<input type="submit" value="Enviar"></input>
+			</div>
+		</form>
+
+		<form id="new_service_form">
+			<div class="form_row_container">
+				<div class="label_container">
+					<label for="register_service_name"><span>Nome: </span></label>
+				</div>
+				<div class="field_container">														
+					<input type="password" id="register_service_name"></input>
+				</div>
+			</div>
+			<div class="form_row_container">
+				<div class="label_container">
+					<label for="register_service_price"><span>Preço: </span></label>
+				</div>
+				<div class="field_container">														
+					<input type="password" id="register_service_price"></input>
+				</div>
+			</div>
+			<div class="submit_container">
+				<input type="submit" value="Enviar"></input>
+			</div>
+		</form>
+		`
+	},
 
 	client: {
 		agendarHorario: 

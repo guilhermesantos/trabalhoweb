@@ -124,7 +124,7 @@
 	var request = indexedDB.deleteDatabase(databaseName);
 	var request = indexedDB.open(databaseName, 2);
 	var connection;
-	var connectedUser = "";
+	var connectedUser;
 
 	request.onerror = function(event) {
 		alert("Falha na conexão com o servidor");
@@ -200,20 +200,21 @@
 		    	alert("Usuário e/ou senha inválido");
 		    	return;
 		    } else {
-		    	connectedUser = userInfo.usuario;
+		    	connectedUser = userInfo;
 		    	if (userInfo.isAdmin) {
 					$(".horizontal_menu").html(horizontalMenu.admin);
+					adminShowRegisterArea();
 				} else {
 					$(".horizontal_menu").html(horizontalMenu.client);
+					reserveService();
 				}
 				setWelcomeMessageName(userInfo.nome);
-				reserveService();
 		    }
 		};
 	}
 
 	function logout() {
-		connectedUser = "";
+		connectedUser = null;
 		$("#user_login_box").remove();
 		$(".content").html(siteContent.index);
 		$(".horizontal_menu").html(horizontalMenu.index);
@@ -223,6 +224,130 @@
 		});
 	}
 
+	// Admin Functions
+	function adminMenuClick(component) {
+		switch(component.attributes.tab.value) {
+			case "novosCadastros":
+				break;
+		}
+	}
+
+	function adminShowRegisterArea() {
+		$(".content").html(siteContent.admin.escolherCadastro);
+		document.getElementById("new_user_form").style.display = "none";
+		document.getElementById("new_product_form").style.display = "none";
+		document.getElementById("new_service_form").style.display = "none";
+
+		let isNewUserAdmin = false;
+
+		$("#new_admin_button").click(function(e) {
+			e.preventDefault();
+			document.getElementById("new_user_form").style.display = "initial";
+			document.getElementById("new_product_form").style.display = "none";
+			document.getElementById("new_service_form").style.display = "none";
+			document.getElementById("register_username").value = "";
+			document.getElementById("register_name").value = "";
+			document.getElementById("register_address_phone").value = "";
+			document.getElementById("register_address_email").value = "";
+			document.getElementById("register_address_city").value = "";
+			document.getElementById("register_address_neighborhood").value = "";
+			document.getElementById("register_address_street").value = "";
+			document.getElementById("register_password").value = "";
+			document.getElementById("register_repeat_password").value = "";
+			isNewUserAdmin = true;
+		});
+		$("#new_client_button").click(function(e) {
+			e.preventDefault();
+			document.getElementById("new_user_form").style.display = "initial";
+			document.getElementById("new_product_form").style.display = "none";
+			document.getElementById("new_service_form").style.display = "none";
+			document.getElementById("register_username").value = "";
+			document.getElementById("register_name").value = "";
+			document.getElementById("register_address_phone").value = "";
+			document.getElementById("register_address_email").value = "";
+			document.getElementById("register_address_city").value = "";
+			document.getElementById("register_address_neighborhood").value = "";
+			document.getElementById("register_address_street").value = "";
+			document.getElementById("register_password").value = "";
+			document.getElementById("register_repeat_password").value = "";
+			isNewUserAdmin = false;
+		});
+		$("#new_product_button").click(function(e) {
+			e.preventDefault();
+			document.getElementById("new_user_form").style.display = "none";
+			document.getElementById("new_product_form").style.display = "initial";
+			document.getElementById("new_service_form").style.display = "none";
+		});
+		$("#new_service_button").click(function(e) {
+			e.preventDefault();
+			document.getElementById("new_user_form").style.display = "none";
+			document.getElementById("new_product_form").style.display = "none";
+			document.getElementById("new_service_form").style.display = "initial";
+		});
+
+		$("#new_user_form").on('submit', function(e) {
+			e.preventDefault();
+			let username = document.getElementById("register_username").value;
+			let name = document.getElementById("register_name").value;
+			let phone = document.getElementById("register_address_phone").value;
+			let email = document.getElementById("register_address_email").value;
+			let city = document.getElementById("register_address_city").value;
+			let neighborhood = document.getElementById("register_address_neighborhood").value;
+			let street = document.getElementById("register_address_street").value;
+			let password = document.getElementById("register_password").value;
+			let repeatPassword = document.getElementById("register_repeat_password").value;
+
+			if (username.length == 0) {
+				alert("Por favor insira um nome de usuário");
+			} else if (name.length == 0) {
+				alert("Por favor insira um nome");
+			} else if (phone.length == 0) {
+				alert("Por favor insira um telefone");
+			} else if (email.length == 0) {
+				alert("Por favor insira um email");
+			} else if (city.length == 0) {
+				alert("Por favor insira uma cidade");
+			} else if (neighborhood.length == 0) {
+				alert("Por favor insira um bairro");
+			} else if (street.length == 0) {
+				alert("Por favor insira uma rua");
+			} else if (password.length == 0) {
+				alert("Por favor insira uma senha");
+			} else if (password != repeatPassword) {
+				alert("As senhas inseridas são diferentes");
+			} else {
+				let userInfo = {
+					usuario: username.toLowerCase(),
+					nome: name,
+					senha: password,
+					email: email,
+					telefone: phone,
+					cidade: city,
+					rua: street,
+					bairro: neighborhood,
+					isAdmin: isNewUserAdmin
+				};
+				let tx = connection.transaction(databaseUsersName, "readwrite");
+				let objectStore = tx.objectStore(databaseUsersName);
+				let request = objectStore.put(userInfo);
+
+				request.onsuccess = function(e) {
+					if (isNewUserAdmin) {
+						alert("Administrador cadastrado com sucesso");
+					} else {
+						alert("Cliente cadastrado com sucesso");
+					}
+				};
+
+				request.onerror = function(e) {
+					alert("Usuário já está em uso");
+				}
+			}
+		});
+	}
+
+
+	// Client Functions
 	function menuClick(component) {
 		switch(component.attributes.tab.value) {
 			case "agendarHorario":
@@ -245,7 +370,7 @@
 		getAllServiceTypes();
 		var tx = connection.transaction(databasePetsName, "readonly");
 		var objectStore = tx.objectStore(databasePetsName);
-		var request = objectStore.index("dono").getAll(connectedUser);
+		var request = objectStore.index("dono").getAll(connectedUser.usuario);
 		request.onsuccess = function(event) {
 			let animalsData = event.target.result;
 			if (typeof animalsData != 'undefined') {
@@ -335,7 +460,7 @@
 		$(".content").html(siteContent.client.editarRegistro);
 		var tx = connection.transaction(databaseUsersName, "readonly");
 		var objectStore = tx.objectStore(databaseUsersName);
-		var request = objectStore.index("usuario").get(connectedUser);
+		var request = objectStore.index("usuario").get(connectedUser.usuario);
     	request.onsuccess = function(event) {
     		let userInfo = event.target.result;
 		    if (typeof userInfo != 'undefined') {
@@ -375,6 +500,7 @@
 					request.onsuccess = function(e){
 			            alert("Cadastro atualizado!");
 			            setWelcomeMessageName(userInfo.nome);
+			            connectedUser = userInfo;
 			        };
 
 			        request.onerror = function(e){
@@ -400,7 +526,7 @@
 	function getAllUserAnimals() {
 		var tx = connection.transaction(databasePetsName, "readonly");
 		var objectStore = tx.objectStore(databasePetsName);
-		var request = objectStore.index("dono").getAll(connectedUser);
+		var request = objectStore.index("dono").getAll(connectedUser.usuario);
 		request.onsuccess = function(event) {
 			let animalsData = event.target.result;
 			if (typeof animalsData != 'undefined') {
@@ -567,7 +693,7 @@
 			animal = {
 				nome: name,
 				especie: race,
-				dono: connectedUser
+				dono: connectedUser.usuario
 			};
 			let tx = connection.transaction(databasePetsName, "readwrite");
 			let objectStore = tx.objectStore(databasePetsName);
