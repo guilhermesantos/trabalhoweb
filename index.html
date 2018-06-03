@@ -144,6 +144,10 @@
 	let adminAnimals = [];
 	let adminProducts = [];
 
+	// User Variables
+	let userCart = {};
+	let userProducts =[];
+
 	request.onerror = function(event) {
 		alert("Falha na conexão com o servidor");
 	};
@@ -925,7 +929,7 @@
 				showScheduleService();
 				break;
 			case "comprarProduto":
-				$(".content").html(siteContent.client.comprarProduto);
+				showBuyProduct();
 				break;
 			case "editarRegistro":
 				showEditUser();
@@ -1015,6 +1019,180 @@
 		request.onerror = function(e) {
 			console.log(e);
 		}
+	}
+
+	function showBuyProduct() {
+		$(".content").html(siteContent.client.comprarProduto);
+
+		let tx = connection.transaction(databaseProductsName, "readonly");
+		let objectStore = tx.objectStore(databaseProductsName);
+		let request = objectStore.getAll();
+
+		request.onsuccess = function(e) {
+			let products = e.target.result;
+			if (typeof products == 'undefined') {
+				userProducts = [];
+				return;
+			}
+			userProducts = products;
+			buildBuyProductTable();
+
+			$("#sort_by_select").change(function() {
+				buildBuyProductTable();
+			});
+
+			$("#sort_order_select").change(function() {
+				buildBuyProductTable();
+			});
+		}
+	}
+
+	function buildBuyProductTable() {
+		let productsTable = document.getElementById("product_table");
+		let sortBy = $("#sort_by_select").val();
+		let sortPriority = $("#sort_order_select").val();
+
+		let products = userProducts.sort(function(product1, product2) {
+			switch (sortBy) {
+				case "nome":
+					return (sortPriority == "crescente") ? product1.nome > product2.nome : product1.nome < product2.nome;
+					break;
+
+				case "preco":
+					return (sortPriority == "crescente") ? product1.preco > product2.preco : product1.preco < product2.preco;
+					break;
+			}
+		});
+
+		productsTable.innerHTML = "";
+		if (products.length > 0) {
+			let tableHeaderRow = document.createElement('tr');
+			tableHeaderRow.setAttribute('class', "service_table_row");
+
+			let tableHeaderProductName = document.createElement('th');
+			tableHeaderProductName.innerHTML = "Produto";
+
+			let tableHeaderProductDescription = document.createElement('th');
+			tableHeaderProductDescription.innerHTML = "Descrição";
+
+			let tableHeaderProductPrice = document.createElement('th');
+			tableHeaderProductPrice.innerHTML = "Preço";
+
+			productsTable.append(tableHeaderRow);
+			tableHeaderRow.append(tableHeaderProductName);
+			tableHeaderRow.append(tableHeaderProductDescription);
+			tableHeaderRow.append(tableHeaderProductPrice);
+
+			products.forEach(function(product) {
+				let tableRow = document.createElement('tr');
+				tableRow.setAttribute('class', "service_table_row");
+
+				let tableDataProductName = document.createElement('td');
+				tableDataProductName.setAttribute('class', "service_table_data");
+				tableDataProductName.innerHTML = product.nome;
+
+				let tableDataProductDescription = document.createElement('td');
+				tableDataProductDescription.setAttribute('class', "service_table_data");
+				tableDataProductDescription.innerHTML = product.descricao;
+
+				let tableDataProductPrice = document.createElement('td');
+				tableDataProductPrice.setAttribute('class', "service_table_data");
+				tableDataProductPrice.innerHTML = "R$ " + Number(product.preco).toFixed(2);
+
+				let productDetailtA = document.createElement('a');
+				productDetailtA.setAttribute('onclick','showProductInfo(' + product.id + ')');
+
+				let productDetailImage = document.createElement('img');
+				productDetailImage.src = "icons/clipboard.png";
+				productDetailImage.width = 18;
+				productDetailImage.height = 18;
+				productDetailImage.style.paddingTop = "4px";
+				productDetailImage.style.paddingRight = "4px";
+
+				productsTable.append(tableRow);
+				tableRow.append(tableDataProductName);
+				tableRow.append(tableDataProductDescription);
+				tableRow.append(tableDataProductPrice);
+				tableRow.append(productDetailtA);
+				productDetailtA.append(productDetailImage);
+			});
+		} else {
+			let tableRow = document.createElement('tr');
+			tableRow.setAttribute('class', "service_table_row");
+
+			let tableDataNoProducts = document.createElement('td');
+			tableDataNoProducts.setAttribute('class', "service_table_data");
+			tableDataNoProducts.innerHTML = "Nenhum produto encontrado";
+
+			productsTable.append(tableRow);
+			tableRow.append(tableDataNoProducts);
+		}
+	}
+
+	function showProductInfo(productId) {
+		/*if (typeof productId == 'undefined' || productId == null) {
+			return;
+		}
+
+		$(".content").html(siteContent.admin.editarProduto);
+		let tx = connection.transaction(databaseProductsName, "readwrite");
+		let objectStore = tx.objectStore(databaseProductsName);
+		let request = objectStore.index("id").get(productId);
+
+		request.onsuccess = function(e) {
+			let productInfo = e.target.result;
+			if (typeof productInfo == 'undefined') {
+				return;
+			}
+
+			$("#edit_product_name").val(productInfo.nome);
+			$("#edit_product_description").val(productInfo.descricao);
+			$("#edit_product_price").val(productInfo.preco);
+			$("#edit_product_quantity").val(productInfo.quantidade);
+
+			$("#edit_product_form").on('submit', function(e) {
+				e.preventDefault();
+
+				let name = $("#edit_product_name").val();
+				let description = $("#edit_product_description").val();
+				let price = $("#edit_product_price").val();
+				let quantity = $("#edit_product_quantity").val();
+
+				if (name.length == 0) {
+					alert("Insira um nome para o produto");
+					return;
+				} else if (typeof price == 'undefined' || price == null || price.length == 0) {
+					alert("Insira um preço");
+					return;
+				} else if (typeof quantity == 'undefined' || quantity == null || quantity.length == 0) {
+					alert("Insira uma quantidade");
+					return;
+				}
+
+				productInfo.nome = name;
+				productInfo.descricao = description;
+				productInfo.preco = price;
+				productInfo.quantidade = quantity;
+
+				let tx = connection.transaction(databaseProductsName, "readwrite");
+				let objectStore = tx.objectStore(databaseProductsName);
+				let request = objectStore.put(productInfo);
+
+				request.onsuccess = function(e) {
+					alert("Produto atualizado");
+					adminShowProducts();
+				};
+
+				request.onerror = function(e) {
+					alert("Erro ao editar produto, tente novamente")
+				};
+			});
+		};
+
+		request.onerror = function(e) {
+			alert("Erro ao buscar produto");
+			adminShowProducts();
+		};*/
 	}
 
 	function showEditUser() {

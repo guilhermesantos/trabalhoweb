@@ -379,52 +379,24 @@ let siteContent = {
 		comprarProduto:
 		`
 		<h3 class="page_title">Painel de controle</h3>
-
-		<form id="comprar_produto_form">
-			<h4 class="section_title">Comprar produto</h4>
-			<div class="product_grid">
-				<div class="product">
-					<img src="casa_cachorro.jpeg" class="product_img"></img>
-					<input type="button" value="Adicionar ao carrinho"></input>
-				</div>
-				<div class="product">
-					<img src="caixa_transportadora.jpg" class="product_img"></img>
-					<input type="button" value="Adicionar ao carrinho"></input>
-				</div>
-				<div class="product">
-					<img src="pote_racao.jpg" class="product_img"></img>
-					<input type="button" value="Adicionar ao carrinho"></input>
-				</div>
-				<div class="product">
-					<img src="casa_cachorro.jpeg" class="product_img"></img>
-					<input type="button" value="Adicionar ao carrinho"></input>
-				</div>
-				<div class="product">
-					<img src="caixa_transportadora.jpg" class="product_img"></img>
-					<input type="button" value="Adicionar ao carrinho"></input>
-				</div>
-				<div class="product">
-					<img src="pote_racao.jpg" class="product_img"></img>
-					<input type="button" value="Adicionar ao carrinho"></input>
-				</div>
-				<div class="product">
-					<img src="casa_cachorro.jpeg" class="product_img"></img>
-					<input type="button" value="Adicionar ao carrinho"></input>
-				</div>
-				<div class="product">
-					<img src="caixa_transportadora.jpg" class="product_img"></img>
-					<input type="button" value="Adicionar ao carrinho"></input>
-				</div>
-				<div class="product">
-					<img src="pote_racao.jpg" class="product_img"></img>
-					<input type="button" value="Adicionar ao carrinho"></input>
-				</div>
-				<div class="product">
-					<img src="casa_cachorro.jpeg" class="product_img"></img>
-					<input type="button" value="Adicionar ao carrinho"></input>
-				</div>							
-			</div>
-		</form>		
+		<h4 class="section_title">Comprar Produto</h4>
+		<div>
+			<label for="sort_div">Ordenar por:</label>
+		</div>
+		<div id="sort_div" style="margin-bottom: 16px;">
+			<select id="sort_by_select">
+				<option value="nome">Nome</option>
+				<option value="preco">Preço</option>
+			</select>
+			<select id="sort_order_select">
+				<option value="crescente">Crescente</option>
+				<option value="decrescente">Decrescente</option>
+			</select>
+		</div>
+		<div class="services_container">
+			<table id="product_table" class="service_table">
+			</table>
+		</div>
 		`,
 		editarRegistro:
 		`
