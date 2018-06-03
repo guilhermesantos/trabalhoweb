@@ -4,10 +4,11 @@ let horizontalMenu = {
 	`,
 	client:
 	`
+		<li class="horizontal_menu_item" tab="gerenciarAnimais" onclick="menuClick(this)">Gerenciar animais</li>
 		<li class="horizontal_menu_item" tab="agendarHorario" onclick="menuClick(this)">Agendar horário</li>
 		<li class="horizontal_menu_item" tab="comprarProduto" onclick="menuClick(this)">Comprar produto</li>
-		<li class="horizontal_menu_item" tab="editarRegistro" onclick="menuClick(this)">Editar registro</li>
-		<li class="horizontal_menu_item" tab="gerenciarAnimais" onclick="menuClick(this)">Gerenciar animais</li>	
+		<li class="horizontal_menu_item" tab="carrinho" onclick="menuClick(this)">Carrinho</li>
+		<li class="horizontal_menu_item" tab="editarRegistro" onclick="menuClick(this)">Editar registro</li>	
 	`,
 	admin:
 	`
@@ -398,6 +399,33 @@ let siteContent = {
 			</table>
 		</div>
 		`,
+		carrinho:
+		`
+		<h3 class="page_title">Loja</h3>
+		<h4 class="section_title">Carrinho</h4>
+		<div>
+			<label for="sort_div">Ordenar por:</label>
+		</div>
+		<div id="sort_div" style="margin-bottom: 16px;">
+			<select id="sort_by_select">
+				<option value="nome">Nome</option>
+				<option value="quantidade">Quantidade</option>
+				<option value="preco">Preço</option>
+				<option value="precoTotal">Preço Total</option>
+			</select>
+			<select id="sort_order_select">
+				<option value="crescente">Crescente</option>
+				<option value="decrescente">Decrescente</option>
+			</select>
+		</div>
+		<div class="services_container">
+			<table id="cart_table" class="service_table">
+			</table>
+		</div>
+		<form id="complete_buy" style="display: none;">
+			<input type="submit" class="buy_button" value="Finalizar Compra"></button>
+		</form>
+		`,
 		detalhesProduto:
 		`
 		<h3 class="page_title">Loja</h3>
@@ -423,7 +451,7 @@ let siteContent = {
 				</div>
 			</div>
 			<div class="submit_container">
-				<input type="submit" class="buy_button" value="Comprar"></input>
+				<input type="submit" class="buy_button" value="Adicionar ao Carrinho"></input>
 			</div>
 		</form>
 		`,

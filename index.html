@@ -236,7 +236,7 @@
 					adminShowRegisterArea();
 				} else {
 					$(".horizontal_menu").html(horizontalMenu.client);
-					showScheduleService();
+					showAnimalManager();
 				}
 				setWelcomeMessageName(userInfo.nome);
 		    }
@@ -245,6 +245,14 @@
 
 	function logout() {
 		connectedUser = null;
+		adminScheduledServices = [];
+		adminUsers = [];
+		adminServiceTypes = [];
+		adminAnimals = [];
+		adminProducts = [];
+
+		userCart = {};
+		userProducts =[];
 		$("#user_login_box").remove();
 		$(".content").html(siteContent.index);
 		$(".horizontal_menu").html(horizontalMenu.index);
@@ -925,17 +933,20 @@
 	// Client Functions
 	function menuClick(component) {
 		switch(component.attributes.tab.value) {
+			case "gerenciarAnimais":
+				showAnimalManager();
+				break;
 			case "agendarHorario":
 				showScheduleService();
 				break;
 			case "comprarProduto":
 				showBuyProduct();
 				break;
+			case "carrinho":
+				showCart();
+				break;
 			case "editarRegistro":
 				showEditUser();
-				break;
-			case "gerenciarAnimais":
-				showAnimalManager();
 				break;
 		}		
 	}
@@ -1147,19 +1158,26 @@
 
 			$("#product_name_header").html(productInfo.nome);
 			$("#description_div").html(productInfo.descricao);
-			$("#product_quantity").attr({"min" : 0, "max" : productInfo.quantidade});
+			let max = productInfo.quantidade;
+			if (userCart[productInfo.id] != null) {
+				max -= userCart[productInfo.id];
+			}
+			$("#product_quantity").attr({"min" : 0, "max" : max});
 			$("#price_div").html("R$ " + productInfo.preco);
 			$("#buy_button").html(productInfo.quantidade > 0 ? "Comprar" : "Indisponível");
 			$("#buy_button").css("background-color", (productInfo.quantidade > 0) ? "#00b214" : "af0000");
 
 			$("#buy_form").on('submit', function(e) {
 				e.preventDefault();
+				let quantity = Number($("#product_quantity").val());
 
-				if (userCart[productId] == null) {
-					userCart[productId] = Number($("#product_quantity").val());
-				} else {
-					userCart[productId] += Number($("#product_quantity").val());
-				}
+				if (quantity > 0) {
+					if (userCart[productId] == null) {
+						userCart[productId] = quantity;
+					} else {
+						userCart[productId] += quantity;
+					}
+				}	
 
 				showBuyProduct();
 			});
@@ -1169,6 +1187,217 @@
 			alert("Erro ao buscar produto");
 			showBuyProduct();
 		};
+	}
+
+	function showCart() {
+		$(".content").html(siteContent.client.carrinho);
+
+		let tx = connection.transaction(databaseProductsName, "readonly");
+		let objectStore = tx.objectStore(databaseProductsName);
+		let request = objectStore.getAll();
+
+		request.onsuccess = function(e) {
+			let products = e.target.result;
+			if (typeof products == 'undefined') {
+				alert("Falha ao recuperar o carrinho, por favor tente novamente");
+				return;
+			}
+
+			userProducts = products;
+			buildCartTable();
+
+			$("#sort_by_select").change(function() {
+				buildCartTable();
+			});
+
+			$("#sort_order_select").change(function() {
+				buildCartTable();
+			});
+
+			$("#complete_buy").on('submit', function(e) {
+				e.preventDefault();
+
+				let buyPromises = [];
+				for (let productId in userCart) {
+					let quantity = userCart[productId];
+
+					let promise = new Promise(function(resolve, reject) {
+						let tx = connection.transaction(databaseProductsName, "readonly");
+						let objectStore = tx.objectStore(databaseProductsName);
+						let request = objectStore.index("id").get(Number(productId));
+
+						request.onsuccess = function(e) {
+							let productInfo = e.target.result;
+							if (typeof productInfo != 'undefined') {
+								productInfo.quantidade -= quantity;
+
+								let tx = connection.transaction(databaseProductsName, "readwrite");
+								let objectStore = tx.objectStore(databaseProductsName);
+								let putRequest = objectStore.put(productInfo);
+
+								putRequest.onsuccess = function(e) {
+									resolve();
+								};
+
+								putRequest.onerror = function(e) {
+									resolve();
+								}
+							} else {
+								resolve();
+							}
+						};
+
+						request.onerror = function(e) {
+							resolve();
+						};
+					});
+					buyPromises.push(promise);
+				}
+				Promise.all(buyPromises).then(function() {
+					alert("Obrigado por finalizar a compra!");
+					userCart = {};
+					showCart();
+				});
+			});
+		};
+
+		request.onerror = function(e) {
+			alert("Falha ao recuperar o carrinho, por favor tente novamente");
+		};
+	}
+
+	function buildCartTable() {
+		let productsTable = document.getElementById("cart_table");
+		let sortBy = $("#sort_by_select").val();
+		let sortPriority = $("#sort_order_select").val();
+
+		let products = [];
+
+		for (let productId in userCart) {
+			let quantity = userCart[productId];
+			let product = userProducts.find(function(product) {
+				return product.id == productId;
+			});
+			if (typeof product == 'undefined') {
+				return;
+			}
+			product.quantidade = quantity;
+			products.push(product);
+		}
+
+		products = products.sort(function(product1, product2) {
+			switch (sortBy) {
+				case "nome":
+					return (sortPriority == "crescente") ? product1.nome > product2.nome : product1.nome < product2.nome;
+					break;
+
+				case "quantidade":
+					return (sortPriority == "crescente") ? product1.quantidade > product2.quantidade : product1.quantidade < product2.quantidade;
+					break;
+
+				case "preco":
+					return (sortPriority == "crescente") ? product1.preco > product2.preco : product1.preco < product2.preco;
+					break;
+
+				case "precoTotal":
+					let total1 = product1.preco * product1.quantidade;
+					let total2 = product2.preco * product2.quantidade;
+					return (sortPriority == "crescente") ? total1 > total2 : total1 < total2;
+					break;
+			}
+		});
+
+		productsTable.innerHTML = "";
+		if (products.length > 0) {
+			let totalPrice = 0.0;
+
+			$("#complete_buy").css('display', 'initial');
+
+			let tableHeaderRow = document.createElement('tr');
+			tableHeaderRow.setAttribute('class', "service_table_row");
+
+			let tableHeaderProductName = document.createElement('th');
+			tableHeaderProductName.innerHTML = "Produto";
+
+			let tableHeaderProductQuantity = document.createElement('th');
+			tableHeaderProductQuantity.innerHTML = "Quantidade";
+
+			let tableHeaderProductPrice = document.createElement('th');
+			tableHeaderProductPrice.innerHTML = "Preço";
+
+			let tableHeaderProductTotalPrice = document.createElement('th');
+			tableHeaderProductTotalPrice.innerHTML = "Total";
+
+			productsTable.append(tableHeaderRow);
+			tableHeaderRow.append(tableHeaderProductName);
+			tableHeaderRow.append(tableHeaderProductQuantity);
+			tableHeaderRow.append(tableHeaderProductPrice);
+			tableHeaderRow.append(tableHeaderProductTotalPrice);
+
+			products.forEach(function(product) {
+				let tableRow = document.createElement('tr');
+				tableRow.setAttribute('class', "service_table_row");
+
+				let tableDataProductName = document.createElement('td');
+				tableDataProductName.setAttribute('class', "service_table_data");
+				tableDataProductName.innerHTML = product.nome;
+
+				let tableDataProductQuantity = document.createElement('td');
+				tableDataProductQuantity.setAttribute('class', "service_table_data");
+				tableDataProductQuantity.innerHTML = product.quantidade;
+
+				let tableDataProductPrice = document.createElement('td');
+				tableDataProductPrice.setAttribute('class', "service_table_data");
+				tableDataProductPrice.innerHTML = "R$ " + Number(product.preco).toFixed(2);
+
+				let tableDataProductTotalPrice = document.createElement('td');
+				tableDataProductTotalPrice.setAttribute('class', "service_table_data");
+				tableDataProductTotalPrice.innerHTML = "R$ " + Number(product.preco * Number(product.quantidade)).toFixed(2);
+				totalPrice += product.preco * Number(product.quantidade);
+
+				let productDetailtA = document.createElement('a');
+				productDetailtA.setAttribute('onclick','showProductInfo(' + product.id + ')');
+
+				let productDetailImage = document.createElement('img');
+				productDetailImage.src = "icons/clipboard.png";
+				productDetailImage.width = 18;
+				productDetailImage.height = 18;
+				productDetailImage.style.paddingTop = "4px";
+				productDetailImage.style.paddingRight = "4px";
+
+				productsTable.append(tableRow);
+				tableRow.append(tableDataProductName);
+				tableRow.append(tableDataProductQuantity);
+				tableRow.append(tableDataProductPrice);
+				tableRow.append(tableDataProductTotalPrice);
+				tableRow.append(productDetailtA);
+				productDetailtA.append(productDetailImage);
+			});
+			let tableRow = document.createElement('tr');
+			tableRow.setAttribute('class', "service_table_row");
+
+			let tableDataTotal = document.createElement('td');
+			tableDataTotal.setAttribute('class', "service_table_data");
+			tableDataTotal.innerHTML = "Total";
+
+			let tableDataTotalPrice = document.createElement('td');
+			tableDataTotalPrice.setAttribute('class', "service_table_data");
+			tableDataTotalPrice.innerHTML = "R$" + totalPrice;
+
+			productsTable.append(tableRow);
+			productsTable.append(tableDataTotal);
+			productsTable.append(tableDataTotalPrice);
+		} else {
+			let tableRow = document.createElement('tr');
+			tableRow.setAttribute('class', "service_table_row");
+
+			let tableDataNoProducts = document.createElement('td');
+			tableDataNoProducts.setAttribute('class', "service_table_data");
+			tableDataNoProducts.innerHTML = "Carrinho vazio";
+
+			productsTable.append(tableRow);
+			tableRow.append(tableDataNoProducts);
+		}
 	}
 
 	function showEditUser() {
