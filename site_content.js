@@ -176,8 +176,24 @@ let siteContent = {
 					<input type="text" id="register_product_description"></input>
 				</div>
 			</div>
+			<div class="form_row_container">
+				<div class="label_container">
+					<label for="register_product_price"><span>Preço: </span></label>
+				</div>
+				<div class="field_container">														
+					<input type="number" id="register_product_price" min="0" step="0.01"></input>
+				</div>
+			</div>
+			<div class="form_row_container">
+				<div class="label_container">
+					<label for="register_product_quantity"><span>Quantidade: </span></label>
+				</div>
+				<div class="field_container">														
+					<input type="number" id="register_product_quantity" min="0" step="1"></input>
+				</div>
+			</div>
 			<div class="submit_container">
-				<input type="submit" value="Enviar"></input>
+				<input type="submit" value="Salvar"></input>
 			</div>
 		</form>
 
@@ -234,6 +250,47 @@ let siteContent = {
 			<table id="product_table" class="service_table">
 			</table>
 		</div>
+		`,
+		editarProduto:
+		`
+		<h3 class="page_title">Painel de controle</h3>
+		<h4 class="section_title">Editar Produto</h4>
+		<form id="edit_product_form">
+			<div class="form_row_container">
+				<div class="label_container">
+					<label for="edit_product_name"><span>Nome: </span></label>
+				</div>
+				<div class="field_container">														
+					<input type="text" id="edit_product_name"></input>
+				</div>
+			</div>
+			<div class="form_row_container">
+				<div class="label_container">
+					<label for="edit_product_description"><span>Descrição: </span></label>
+				</div>
+				<div class="field_container">														
+					<input type="text" id="edit_product_description"></input>
+				</div>
+			</div>
+			<div class="form_row_container">
+				<div class="label_container">Preço: </span></label>
+				</div>
+				<div class="field_container">														
+					<input id="edit_product_price" type="number" min="0" step="0.01"></input>
+				</div>
+			</div>
+			<div class="form_row_container">
+				<div class="label_container">
+					<label for="edit_product_quantity"><span>Quantidade: </span></label>
+				</div>
+				<div class="field_container">														
+					<input id="edit_product_quantity" type="number" min="0" step="1"></input>
+				</div>
+			</div>
+			<div class="submit_container">
+				<input type="submit" value="Salvar"></input>
+			</div>
+		</form>
 		`
 	},
 

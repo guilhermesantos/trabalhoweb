@@ -66,19 +66,19 @@
 	const DadosProdutos = [
 		{
 			nome: "Bolinha",
-			descrição: "Ideal para seu cachorro!",
+			descricao: "Ideal para seu cachorro!",
 			preco: 10.00,
 			quantidade: 50
 		},
 		{
 			nome: "Osso",
-			descrição: "Cachorros gostam muito",
+			descricao: "Cachorros gostam muito",
 			preco: 5.00,
 			quantidade: 20
 		},
 		{
 			nome: "Areia",
-			descrição: "Para a higiene de seu gato",
+			descricao: "Para a higiene de seu gato",
 			preco: 20.00,
 			quantidade: 15
 		}
@@ -379,6 +379,46 @@
 
 		$("#new_product_form").on('submit', function(e) {
 			e.preventDefault();
+
+			let name = $("#register_product_name").val();
+			let description = $("#register_product_description").val();
+			let price = $("#register_product_price").val();
+			let quantity = $("#register_product_quantity").val();
+
+			if (name.length == 0) {
+				alert("Insira um nome para o produto");
+				return;
+			} else if (typeof price == 'undefined' || price == null || price.length == 0) {
+				alert("Insira um preço");
+				return;
+			} else if (typeof quantity == 'undefined' || quantity == null || quantity.length == 0) {
+				alert("Insira uma quantidade");
+				return;
+			}
+
+			let productInfo = {
+				nome: name,
+				descricao: description,
+				preco: price,
+				quantidade: quantity
+			};
+
+			let tx = connection.transaction(databaseProductsName, "readwrite");
+			let objectStore = tx.objectStore(databaseProductsName);
+			let request = objectStore.add(productInfo);
+
+			request.onsuccess = function(e) {
+				alert("Produto cadastrado com sucesso");
+
+				$("#new_product_name").val("");
+				$("#new_product_description").val("");
+				$("#new_product_price").val("");
+				$("#new_product_quantity").val("");
+			};
+
+			request.onerror = function(e) {
+				alert("Erro ao cadastrar produto, tente novamente")
+			};
 		});
 
 		$("#new_service_form").on('submit', function(e) {
@@ -699,7 +739,7 @@
 			tableHeaderRow.setAttribute('class', "service_table_row");
 
 			let tableHeaderProductName = document.createElement('th');
-			tableHeaderProductName.innerHTML = "Animal";
+			tableHeaderProductName.innerHTML = "Produto";
 
 			let tableHeaderProductPrice = document.createElement('th');
 			tableHeaderProductPrice.innerHTML = "Preço";
@@ -728,6 +768,16 @@
 				tableDataProductQuantity.setAttribute('class', "service_table_data");
 				tableDataProductQuantity.innerHTML = product.quantidade;
 
+				let productEditA = document.createElement('a');
+				productEditA.setAttribute('onclick','adminEditProduct(' + product.id + ')');
+
+				let productEditImage = document.createElement('img');
+				productEditImage.src = "icons/edit.png";
+				productEditImage.width = 18;
+				productEditImage.height = 18;
+				productEditImage.style.paddingTop = "4px";
+				productEditImage.style.paddingRight = "4px";
+
 				let productDeleteA = document.createElement('a');
 				productDeleteA.setAttribute('onclick','adminDeleteProduct(' + product.id + ')');
 
@@ -741,6 +791,8 @@
 				tableRow.append(tableDataProductName);
 				tableRow.append(tableDataProductPrice);
 				tableRow.append(tableDataProductQuantity);
+				tableRow.append(productEditA);
+				productEditA.append(productEditImage);
 				tableRow.append(productDeleteA);
 				productDeleteA.append(productDeleteImage);
 			});
@@ -755,6 +807,72 @@
 			productsTable.append(tableRow);
 			tableRow.append(tableDataNoProducts);
 		}
+	}
+
+	function adminEditProduct(productId) {
+		if (typeof productId == 'undefined' || productId == null) {
+			return;
+		}
+
+		$(".content").html(siteContent.admin.editarProduto);
+		let tx = connection.transaction(databaseProductsName, "readwrite");
+		let objectStore = tx.objectStore(databaseProductsName);
+		let request = objectStore.index("id").get(productId);
+
+		request.onsuccess = function(e) {
+			let productInfo = e.target.result;
+			if (typeof productInfo == 'undefined') {
+				return;
+			}
+
+			$("#edit_product_name").val(productInfo.nome);
+			$("#edit_product_description").val(productInfo.descricao);
+			$("#edit_product_price").val(productInfo.preco);
+			$("#edit_product_quantity").val(productInfo.quantidade);
+
+			$("#edit_product_form").on('submit', function(e) {
+				e.preventDefault();
+
+				let name = $("#edit_product_name").val();
+				let description = $("#edit_product_description").val();
+				let price = $("#edit_product_price").val();
+				let quantity = $("#edit_product_quantity").val();
+
+				if (name.length == 0) {
+					alert("Insira um nome para o produto");
+					return;
+				} else if (typeof price == 'undefined' || price == null || price.length == 0) {
+					alert("Insira um preço");
+					return;
+				} else if (typeof quantity == 'undefined' || quantity == null || quantity.length == 0) {
+					alert("Insira uma quantidade");
+					return;
+				}
+
+				productInfo.nome = name;
+				productInfo.descricao = description;
+				productInfo.preco = price;
+				productInfo.quantidade = quantity;
+
+				let tx = connection.transaction(databaseProductsName, "readwrite");
+				let objectStore = tx.objectStore(databaseProductsName);
+				let request = objectStore.put(productInfo);
+
+				request.onsuccess = function(e) {
+					alert("Produto atualizado");
+					adminShowProducts();
+				};
+
+				request.onerror = function(e) {
+					alert("Erro ao editar produto, tente novamente")
+				};
+			});
+		};
+
+		request.onerror = function(e) {
+			alert("Erro ao buscar produto");
+			adminShowProducts();
+		};
 	}
 
 	function adminDeleteProduct(productId) {
