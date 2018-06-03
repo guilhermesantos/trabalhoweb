@@ -246,6 +246,20 @@ let siteContent = {
 		`
 		<h3 class="page_title">Painel de controle</h3>
 		<h4 class="section_title">Controle de Estoque</h4>
+		<div>
+			<label for="sort_div">Ordenar por:</label>
+		</div>
+		<div id="sort_div" style="margin-bottom: 16px;">
+			<select id="sort_by_select">
+				<option value="nome">Nome</option>
+				<option value="preco">Preço</option>
+				<option value="quantidade">Quantidade</option>
+			</select>
+			<select id="sort_order_select">
+				<option value="crescente">Crescente</option>
+				<option value="decrescente">Decrescente</option>
+			</select>
+		</div>
 		<div class="services_container">
 			<table id="product_table" class="service_table">
 			</table>

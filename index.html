@@ -42,24 +42,24 @@
 	const DadosUsuarios = [
 		{
 			usuario: "admin",
-			nome: "Bill",
-			senha: "password",
-			email: "bill@company.com",
-			telefone: "9999-9999",
-			cidade:"são carlos",
-			rua: "whatever",
-			bairro: "saida da mat",
+			nome: "Administrador",
+			senha: "admin",
+			email: "admin@admin.com",
+			telefone: "(16) 9999-9999",
+			cidade:"São Carlos",
+			rua: "Av. São Carlos",
+			bairro: "",
 			isAdmin: true
 		},
 		{
 			usuario: "client",
 			nome: "John",
-			senha: "1234",
-			email: "john@company.com",
-			telefone: "9999-9999",
-			cidade:"são carlos",
-			rua: "whatever",
-			bairro: "saida da mat",
+			senha: "client",
+			email: "john@client.com",
+			telefone: "(16) 1111-1111",
+			cidade:"São Carlos",
+			rua: "Av. Francisco Pereira Lopes",
+			bairro: "Arnold Schimidt",
 			isAdmin: false
 		}
 	];
@@ -337,12 +337,6 @@
 				alert("Por favor insira um telefone");
 			} else if (email.length == 0) {
 				alert("Por favor insira um email");
-			} else if (city.length == 0) {
-				alert("Por favor insira uma cidade");
-			} else if (neighborhood.length == 0) {
-				alert("Por favor insira um bairro");
-			} else if (street.length == 0) {
-				alert("Por favor insira uma rua");
 			} else if (password.length == 0) {
 				alert("Por favor insira uma senha");
 			} else if (password != repeatPassword) {
@@ -551,7 +545,7 @@
 
 				$("#user_select").change(function() {
 					adminBuildScheduledServiceTable();
-				})
+				});
 
 				$("#service_type_select").change(function() {
 					adminBuildScheduledServiceTable();
@@ -728,13 +722,40 @@
 			}
 			adminProducts = products;
 			adminBuildProductsTable();
+
+			$("#sort_by_select").change(function() {
+				adminBuildProductsTable();
+			});
+
+			$("#sort_order_select").change(function() {
+				adminBuildProductsTable();
+			});
 		}
 	}
 
 	function adminBuildProductsTable() {
 		let productsTable = document.getElementById("product_table");
+		let sortBy = $("#sort_by_select").val();
+		let sortPriority = $("#sort_order_select").val();
+
+		let products = adminProducts.sort(function(product1, product2) {
+			switch (sortBy) {
+				case "nome":
+					return (sortPriority == "crescente") ? product1.nome > product2.nome : product1.nome < product2.nome;
+					break;
+
+				case "preco":
+					return (sortPriority == "crescente") ? product1.preco > product2.preco : product1.preco < product2.preco;
+					break;
+
+				case "quantidade":
+					return (sortPriority == "crescente") ? product1.quantidade > product2.quantidade : product1.quantidade < product2.quantidade;
+					break;
+			}
+		});
+
 		productsTable.innerHTML = "";
-		if (adminProducts.length > 0) {
+		if (products.length > 0) {
 			let tableHeaderRow = document.createElement('tr');
 			tableHeaderRow.setAttribute('class', "service_table_row");
 
@@ -752,7 +773,7 @@
 			tableHeaderRow.append(tableHeaderProductPrice);
 			tableHeaderRow.append(tableHeaderProductQuantity);
 
-			adminProducts.forEach(function(product) {
+			products.forEach(function(product) {
 				let tableRow = document.createElement('tr');
 				tableRow.setAttribute('class', "service_table_row");
 
@@ -1020,6 +1041,17 @@
 					let rua = $("#register_address_street").val();
 					let senha = $("#register_password").val();
 					let repetirSenha = $("#register_repeat_password").val();
+
+					if (nome.length == 0) {
+						alert("Por favor insira um nome");
+						return;
+					} else if (telefone.length == 0) {
+						alert("Por favor insira um telefone");
+						return;
+					} else if (email.length == 0) {
+						alert("Por favor insira um email");
+						return;
+					}
 
 					if (senha.length > 0 && senha != repetirSenha) {
 						alert("As senhas estão diferentes.");
