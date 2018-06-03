@@ -378,7 +378,7 @@ let siteContent = {
 		`,
 		comprarProduto:
 		`
-		<h3 class="page_title">Painel de controle</h3>
+		<h3 class="page_title">Loja</h3>
 		<h4 class="section_title">Comprar Produto</h4>
 		<div>
 			<label for="sort_div">Ordenar por:</label>
@@ -397,6 +397,35 @@ let siteContent = {
 			<table id="product_table" class="service_table">
 			</table>
 		</div>
+		`,
+		detalhesProduto:
+		`
+		<h3 class="page_title">Loja</h3>
+		<h4 id="product_name_header" class="section_title"></h4>
+		<div id="description_div"></div>
+		<div>
+			<div class="form_row_container">
+				<div class="label_container">
+					<label for="price_div">Preço: </label>
+				</div>
+				<div class="field_container">
+					<div id="price_div"></div>
+				</div>
+			</div>
+		</div>
+		<form id="buy_form">
+			<div class="form_row_container">
+				<div class="label_container">
+					<label for="product_quantity"><span>Quantidade: </span></label>
+				</div>
+				<div class="field_container">
+					<input type="number" id="product_quantity" min="0" step="1" value="0"></input>
+				</div>
+			</div>
+			<div class="submit_container">
+				<input type="submit" class="buy_button" value="Comprar"></input>
+			</div>
+		</form>
 		`,
 		editarRegistro:
 		`

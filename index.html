@@ -1130,11 +1130,11 @@
 	}
 
 	function showProductInfo(productId) {
-		/*if (typeof productId == 'undefined' || productId == null) {
+		if (typeof productId == 'undefined' || productId == null) {
 			return;
 		}
 
-		$(".content").html(siteContent.admin.editarProduto);
+		$(".content").html(siteContent.client.detalhesProduto);
 		let tx = connection.transaction(databaseProductsName, "readwrite");
 		let objectStore = tx.objectStore(databaseProductsName);
 		let request = objectStore.index("id").get(productId);
@@ -1145,54 +1145,30 @@
 				return;
 			}
 
-			$("#edit_product_name").val(productInfo.nome);
-			$("#edit_product_description").val(productInfo.descricao);
-			$("#edit_product_price").val(productInfo.preco);
-			$("#edit_product_quantity").val(productInfo.quantidade);
+			$("#product_name_header").html(productInfo.nome);
+			$("#description_div").html(productInfo.descricao);
+			$("#product_quantity").attr({"min" : 0, "max" : productInfo.quantidade});
+			$("#price_div").html("R$ " + productInfo.preco);
+			$("#buy_button").html(productInfo.quantidade > 0 ? "Comprar" : "Indisponível");
+			$("#buy_button").css("background-color", (productInfo.quantidade > 0) ? "#00b214" : "af0000");
 
-			$("#edit_product_form").on('submit', function(e) {
+			$("#buy_form").on('submit', function(e) {
 				e.preventDefault();
 
-				let name = $("#edit_product_name").val();
-				let description = $("#edit_product_description").val();
-				let price = $("#edit_product_price").val();
-				let quantity = $("#edit_product_quantity").val();
-
-				if (name.length == 0) {
-					alert("Insira um nome para o produto");
-					return;
-				} else if (typeof price == 'undefined' || price == null || price.length == 0) {
-					alert("Insira um preço");
-					return;
-				} else if (typeof quantity == 'undefined' || quantity == null || quantity.length == 0) {
-					alert("Insira uma quantidade");
-					return;
+				if (userCart[productId] == null) {
+					userCart[productId] = Number($("#product_quantity").val());
+				} else {
+					userCart[productId] += Number($("#product_quantity").val());
 				}
 
-				productInfo.nome = name;
-				productInfo.descricao = description;
-				productInfo.preco = price;
-				productInfo.quantidade = quantity;
-
-				let tx = connection.transaction(databaseProductsName, "readwrite");
-				let objectStore = tx.objectStore(databaseProductsName);
-				let request = objectStore.put(productInfo);
-
-				request.onsuccess = function(e) {
-					alert("Produto atualizado");
-					adminShowProducts();
-				};
-
-				request.onerror = function(e) {
-					alert("Erro ao editar produto, tente novamente")
-				};
+				showBuyProduct();
 			});
 		};
 
 		request.onerror = function(e) {
 			alert("Erro ao buscar produto");
-			adminShowProducts();
-		};*/
+			showBuyProduct();
+		};
 	}
 
 	function showEditUser() {
