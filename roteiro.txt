@@ -1,0 +1,114 @@
+1. Login:
+i)
+Conta: admin
+Senha: admin
+Resultado: sucesso
+
+ii)
+Conta: admin
+Senha: 123
+Resultado: falha
+
+iii)
+Conta: 123
+Senha: admin
+Resultado: falha
+
+/* Funções do Administrador */
+2. Cadastrar Usuário:
+i)
+Cadastro de cliente: sucesso
+
+ii)
+Cadastro de administrador: sucesso
+
+3. Cadastrar Produto:
+Cadastrar novo produto: sucesso
+Novo produto aparece em Controle de Estoque: sucesso
+
+4. Cadastrar Serviço:
+Cadastrar novo serviço: sucesso
+Como cliente, serviço criado deve aparecer em Agendar Horário: sucesso
+
+5. Serviços Agendados:
+i)
+Serviços agendados aparecem na lista: sucesso
+Filtros funcionam corretamente: sucesso
+
+ii)
+Como cliente, agende um novo serviço: sucesso
+Como administrador, verifique se o novo serviço agendado aparece na lista: sucesso
+
+6. Controle de Estoque:
+i)
+Produtos cadastrados aparecem na lista: sucesso
+Ordenação funciona corretamente: sucesso
+
+ii)
+Cadastre novo produto e verifique se o mesmo aparece no controle de estoque: sucesso
+
+iii)
+Edição do produto funciona: sucesso
+
+iiii)
+Deletar o produto funciona: sucesso
+
+7. Editar Registro:
+i)
+Edição funciona corretamente: sucesso
+
+/* Funções do Cliente */
+8. Gerenciar Animais:
+i)
+Animais cadastrados aparecem na lista: sucesso
+
+ii)
+Cadastre novo animal: sucesso
+O novo animal aparece na lista: sucesso
+
+iii)
+Clique em detalhes do animal, os detalhes aparecem corretamente: sucesso
+
+iiii)
+Deletar um animal funciona corretamente: sucesso
+
+9. Agendar Horário:
+i)
+Agende um serviço: sucesso
+Verifique se o serviço agendado aparece nos detalhes do animal correspondente: sucesso
+
+ii)
+Não deve ser possível agendar o mesmo serviço no mesmo horário do serviço agendado anteriormente: sucesso
+
+iii)
+Não deve ser possível agendar um serviço em um horário que o animal já tem um serviço agendado: sucesso
+
+iiii)
+Delete um animal que tem serviços agendados e, como um Administrador, verifique se os serviços agendados para aquele animal foram excluidos: sucesso
+
+10. Comprar Produto:
+i)
+Os produtos aparecem na lista e a ordenação funciona corretamente: sucesso
+
+ii)
+Ao clicar em detalhes do produto, os mesmos aparecem corretamente: sucesso
+
+iii)
+Nos detalhes do produto, é possível adicionar itens no carrinho: sucesso
+
+11. Carrinho:
+i)
+Se nenhum produto foi adicionado ao carrinho, o botão "Finalizar Compra" deve estar escondido: sucesso
+
+ii)
+Adicione um produto no carrinho: sucesso
+Remove este produto do carrinho: sucesso
+
+iii)
+Adicione um produto no carrinho: sucesso
+Finalize a compra: sucesso
+Como Administrador, verifique se a quantidade de produtos em estoque está correta: sucesso
+
+12. Editar Registro:
+i)
+Edição funciona corretamente: sucesso

@@ -1352,23 +1352,23 @@
 				tableDataProductTotalPrice.innerHTML = "R$ " + Number(product.preco * Number(product.quantidade)).toFixed(2);
 				totalPrice += product.preco * Number(product.quantidade);
 
-				let productDetailtA = document.createElement('a');
-				productDetailtA.setAttribute('onclick','showProductInfo(' + product.id + ')');
+				let productRemoveA = document.createElement('a');
+				productRemoveA.setAttribute('onclick','removeProductFromCart(' + product.id + ')');
 
-				let productDetailImage = document.createElement('img');
-				productDetailImage.src = "icons/clipboard.png";
-				productDetailImage.width = 18;
-				productDetailImage.height = 18;
-				productDetailImage.style.paddingTop = "4px";
-				productDetailImage.style.paddingRight = "4px";
+				let productRemoveImage = document.createElement('img');
+				productRemoveImage.src = "icons/delete.png";
+				productRemoveImage.width = 18;
+				productRemoveImage.height = 18;
+				productRemoveImage.style.paddingTop = "4px";
+				productRemoveImage.style.paddingRight = "4px";
 
 				productsTable.append(tableRow);
 				tableRow.append(tableDataProductName);
 				tableRow.append(tableDataProductQuantity);
 				tableRow.append(tableDataProductPrice);
 				tableRow.append(tableDataProductTotalPrice);
-				tableRow.append(productDetailtA);
-				productDetailtA.append(productDetailImage);
+				tableRow.append(productRemoveA);
+				productRemoveA.append(productRemoveImage);
 			});
 			let tableRow = document.createElement('tr');
 			tableRow.setAttribute('class', "service_table_row");
@@ -1396,6 +1396,13 @@
 
 			productsTable.append(tableRow);
 			tableRow.append(tableDataNoProducts);
+		}
+	}
+
+	function removeProductFromCart(productId) {
+		if (window.confirm("Deseja remover o produto do carrinho?")) {
+			delete userCart[productId];
+			buildCartTable();
 		}
 	}
 
