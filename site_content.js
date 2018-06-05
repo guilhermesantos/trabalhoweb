@@ -42,22 +42,22 @@ let siteContent = {
 			<legend>Autenticação</legend>						
 			<div class="form_row_container">
 				<div class="label_container">
-					<label for="login"><span>Login: </span></label>
+					<label for="login_username"><span>Login: </span></label>
 				</div>
 				<div class="field_container">
-					<input id="login_username" type="text"></input>
+					<input id="login_username" type="text">
 				</div>
 			</div>
 			<div class="form_row_container">
 				<div class="label_container">
-					<label for="password"><span>Senha: </span></label>
+					<label for="login_password"><span>Senha: </span></label>
 				</div>
 				<div class="field_container">
-					<input id="login_password" type="password"></input>
+					<input id="login_password" type="password">
 				</div>							
 			</div>
 			<div class="form_row_container">
-				<input type="submit" value="Enviar""></input>
+				<input type="submit" value="Enviar">
 			</div>
 		</fieldset>
 	</form>	
@@ -79,7 +79,7 @@ let siteContent = {
 					<label for="register_username"><span>Usuário: </span></label>
 				</div>
 				<div class="field_container">
-					<input type="text" id="register_username"></input>
+					<input type="text" id="register_username">
 				</div>
 			</div>
 			<div class="form_row_container">
@@ -87,7 +87,7 @@ let siteContent = {
 					<label for="register_name"><span>Nome: </span></label>
 				</div>
 				<div class="field_container">
-					<input type="text" id="register_name" autocomplete="name"></input>
+					<input type="text" id="register_name" autocomplete="name">
 				</div>
 			</div>
 			<div class="form_row_container">
@@ -95,7 +95,7 @@ let siteContent = {
 					<label for="register_address_phone"><span>Telefone: </span></label>
 				</div>
 				<div class="field_container">
-					<input type="text" id="register_address_phone" autocomplete="tel"></input>
+					<input type="text" id="register_address_phone" autocomplete="tel">
 				</div>
 			</div>
 			<div class="form_row_container">
@@ -103,7 +103,7 @@ let siteContent = {
 					<label for="register_address_email"><span>Email: </span></label>
 				</div>
 				<div class="field_container">
-					<input type="email" id="register_address_email" autocomplete="email"></input>
+					<input type="email" id="register_address_email" autocomplete="email">
 				</div>							
 			</div>
 			<div class="form_row_container">
@@ -111,7 +111,7 @@ let siteContent = {
 					<label for="register_address_city"><span>Cidade: </span></label>
 				</div>
 				<div class="field_container">
-					<input type="text" id="register_address_city" autocomplete="address-level2"></input>
+					<input type="text" id="register_address_city" autocomplete="address-level2">
 				</div>
 			</div>
 			<div class="form_row_container">
@@ -119,7 +119,7 @@ let siteContent = {
 					<label for="register_address_neighborhood"><span>Bairro: </span></label>
 				</div>
 				<div class="field_container">
-					<input type="text" id="register_address_neighborhood"></input>
+					<input type="text" id="register_address_neighborhood">
 				</div>							
 			</div>
 			<div class="form_row_container">
@@ -127,7 +127,7 @@ let siteContent = {
 					<label for="register_address_street"><span>Rua: </span></label>
 				</div>
 				<div class="field_container">														
-					<input type="text" id="register_address_street" autocomplete="adress-line1"></input>
+					<input type="text" id="register_address_street" autocomplete="address-line1">
 				</div>
 			</div>
 			<div class="form_row_container">
@@ -135,7 +135,7 @@ let siteContent = {
 					<label for="register_password"><span>Senha: </span></label>
 				</div>
 				<div class="field_container">														
-					<input type="password" id="register_password"></input>
+					<input type="password" id="register_password">
 				</div>
 			</div>
 			<div class="form_row_container">
@@ -143,7 +143,7 @@ let siteContent = {
 					<label for="register_repeat_password"><span>Repetir senha: </span></label>
 				</div>
 				<div class="field_container">														
-					<input type="password" id="register_repeat_password"></input>
+					<input type="password" id="register_repeat_password">
 				</div>
 			</div>
 			<div class="form_row_container">
@@ -151,11 +151,11 @@ let siteContent = {
 					<label for="register_is_admin"><span>Administrador: </span></label>
 				</div>
 				<div class="field_container">														
-					<input type="checkbox" id="register_is_admin"></input>
+					<input type="checkbox" id="register_is_admin">
 				</div>
 			</div>
 			<div class="submit_container">
-				<input type="submit" value="Enviar"></input>
+				<input type="submit" value="Enviar">
 			</div>
 		</form>
 
@@ -165,7 +165,7 @@ let siteContent = {
 					<label for="register_product_name"><span>Nome: </span></label>
 				</div>
 				<div class="field_container">														
-					<input type="text" id="register_product_name"></input>
+					<input type="text" id="register_product_name">
 				</div>
 			</div>
 			<div class="form_row_container">
@@ -173,7 +173,7 @@ let siteContent = {
 					<label for="register_product_description"><span>Descrição: </span></label>
 				</div>
 				<div class="field_container">														
-					<input type="text" id="register_product_description"></input>
+					<input type="text" id="register_product_description">
 				</div>
 			</div>
 			<div class="form_row_container">
@@ -181,7 +181,7 @@ let siteContent = {
 					<label for="register_product_price"><span>Preço: </span></label>
 				</div>
 				<div class="field_container">														
-					<input type="number" id="register_product_price" min="0" step="0.01"></input>
+					<input type="number" id="register_product_price" min="0" step="0.01">
 				</div>
 			</div>
 			<div class="form_row_container">
@@ -189,11 +189,11 @@ let siteContent = {
 					<label for="register_product_quantity"><span>Quantidade: </span></label>
 				</div>
 				<div class="field_container">														
-					<input type="number" id="register_product_quantity" min="0" step="1"></input>
+					<input type="number" id="register_product_quantity" min="0" step="1">
 				</div>
 			</div>
 			<div class="submit_container">
-				<input type="submit" value="Salvar"></input>
+				<input type="submit" value="Salvar">
 			</div>
 		</form>
 
@@ -203,7 +203,7 @@ let siteContent = {
 					<label for="register_service_name"><span>Nome: </span></label>
 				</div>
 				<div class="field_container">														
-					<input type="text" id="register_service_name"></input>
+					<input type="text" id="register_service_name">
 				</div>
 			</div>
 			<div class="form_row_container">
@@ -211,11 +211,11 @@ let siteContent = {
 					<label for="register_service_price"><span>Preço: </span></label>
 				</div>
 				<div class="field_container">													
-					<input type="number" id="register_service_price" min="0" step="0.01"></input>
+					<input type="number" id="register_service_price" min="0" step="0.01">
 				</div>
 			</div>
 			<div class="submit_container">
-				<input type="submit" value="Enviar"></input>
+				<input type="submit" value="Enviar">
 			</div>
 		</form>
 		`,
@@ -224,7 +224,7 @@ let siteContent = {
 		<h3 class="page_title">Painel de controle</h3>
 		<h4 class="section_title">Serviços Agendados</h4>
 		<div>
-			<label for="filter_div">Filtrar por:</label>
+			<label>Filtrar por:</label>
 		</div>
 		<div id="filter_div" style="margin-bottom: 16px;">
 			<select id="service_type_select">
@@ -247,7 +247,7 @@ let siteContent = {
 		<h3 class="page_title">Painel de controle</h3>
 		<h4 class="section_title">Controle de Estoque</h4>
 		<div>
-			<label for="sort_div">Ordenar por:</label>
+			<label>Ordenar por:</label>
 		</div>
 		<div id="sort_div" style="margin-bottom: 16px;">
 			<select id="sort_by_select">
@@ -275,7 +275,7 @@ let siteContent = {
 					<label for="edit_product_name"><span>Nome: </span></label>
 				</div>
 				<div class="field_container">														
-					<input type="text" id="edit_product_name"></input>
+					<input type="text" id="edit_product_name">
 				</div>
 			</div>
 			<div class="form_row_container">
@@ -283,14 +283,15 @@ let siteContent = {
 					<label for="edit_product_description"><span>Descrição: </span></label>
 				</div>
 				<div class="field_container">														
-					<input type="text" id="edit_product_description"></input>
+					<input type="text" id="edit_product_description">
 				</div>
 			</div>
 			<div class="form_row_container">
-				<div class="label_container">Preço: </span></label>
+				<div class="label_container">
+					<label><span>Preço: </span></label>
 				</div>
 				<div class="field_container">														
-					<input id="edit_product_price" type="number" min="0" step="0.01"></input>
+					<input id="edit_product_price" type="number" min="0" step="0.01">
 				</div>
 			</div>
 			<div class="form_row_container">
@@ -298,11 +299,11 @@ let siteContent = {
 					<label for="edit_product_quantity"><span>Quantidade: </span></label>
 				</div>
 				<div class="field_container">														
-					<input id="edit_product_quantity" type="number" min="0" step="1"></input>
+					<input id="edit_product_quantity" type="number" min="0" step="1">
 				</div>
 			</div>
 			<div class="submit_container">
-				<input type="submit" value="Salvar"></input>
+				<input type="submit" value="Salvar">
 			</div>
 		</form>
 		`
@@ -336,16 +337,16 @@ let siteContent = {
 
 			<div class="form_row_container">
 				<div class="label_container">
-					<label for="data"><span>Data:</span></label>
+					<label for="date_input"><span>Data:</span></label>
 				</div>
 				<div class="field_container">
-					<input id="date_input" type="date"></input>
+					<input id="date_input" type="date">
 				</div>							
 			</div>
 
 			<div class="form_row_container">
 				<div class="label_container">
-					<label for><span>Horário:</span></label>
+					<label for="select_time"><span>Horário:</span></label>
 				</div>
 				<div class="field_container">							
 					<select id="select_time">
@@ -374,14 +375,13 @@ let siteContent = {
 				<button type="submit">Enviar</button>
 			</div>
 		</form>
-
 		`,
 		comprarProduto:
 		`
 		<h3 class="page_title">Loja</h3>
 		<h4 class="section_title">Comprar Produto</h4>
 		<div>
-			<label for="sort_div">Ordenar por:</label>
+			<label>Ordenar por:</label>
 		</div>
 		<div id="sort_div" style="margin-bottom: 16px;">
 			<select id="sort_by_select">
@@ -403,7 +403,7 @@ let siteContent = {
 		<h3 class="page_title">Loja</h3>
 		<h4 class="section_title">Carrinho</h4>
 		<div>
-			<label for="sort_div">Ordenar por:</label>
+			<label>Ordenar por:</label>
 		</div>
 		<div id="sort_div" style="margin-bottom: 16px;">
 			<select id="sort_by_select">
@@ -422,7 +422,7 @@ let siteContent = {
 			</table>
 		</div>
 		<form id="complete_buy" style="display: none;">
-			<input type="submit" class="buy_button" value="Finalizar Compra"></button>
+			<input type="submit" class="buy_button" value="Finalizar Compra">
 		</form>
 		`,
 		detalhesProduto:
@@ -433,7 +433,7 @@ let siteContent = {
 		<div>
 			<div class="form_row_container">
 				<div class="label_container">
-					<label for="price_div">Preço: </label>
+					<label>Preço: </label>
 				</div>
 				<div class="field_container">
 					<div id="price_div"></div>
@@ -446,11 +446,11 @@ let siteContent = {
 					<label for="product_quantity"><span>Quantidade: </span></label>
 				</div>
 				<div class="field_container">
-					<input type="number" id="product_quantity" min="0" step="1" value="0"></input>
+					<input type="number" id="product_quantity" min="0" step="1" value="0">
 				</div>
 			</div>
 			<div class="submit_container">
-				<input type="submit" class="buy_button" value="Adicionar ao Carrinho"></input>
+				<input type="submit" class="buy_button" value="Adicionar ao Carrinho">
 			</div>
 		</form>
 		`,
@@ -465,7 +465,7 @@ let siteContent = {
 					<label for="register_name"><span>Nome: </span></label>
 				</div>
 				<div class="field_container">
-					<input type="text" id="register_name" autocomplete="name"></input>
+					<input type="text" id="register_name" autocomplete="name">
 				</div>
 			</div>
 			<div class="form_row_container">
@@ -473,7 +473,7 @@ let siteContent = {
 					<label for="register_address_phone"><span>Telefone: </span></label>
 				</div>
 				<div class="field_container">
-					<input type="text" id="register_address_phone" autocomplete="tel"></input>
+					<input type="text" id="register_address_phone" autocomplete="tel">
 				</div>
 			</div>
 			<div class="form_row_container">
@@ -481,7 +481,7 @@ let siteContent = {
 					<label for="register_address_email"><span>Email: </span></label>
 				</div>
 				<div class="field_container">
-					<input type="email" id="register_address_email" autocomplete="email"></input>
+					<input type="email" id="register_address_email" autocomplete="email">
 				</div>							
 			</div>
 			<div class="form_row_container">
@@ -489,7 +489,7 @@ let siteContent = {
 					<label for="register_address_city"><span>Cidade: </span></label>
 				</div>
 				<div class="field_container">
-					<input type="text" id="register_address_city" autocomplete="address-level2"></input>
+					<input type="text" id="register_address_city" autocomplete="address-level2">
 				</div>
 			</div>
 			<div class="form_row_container">
@@ -497,7 +497,7 @@ let siteContent = {
 					<label for="register_address_neighborhood"><span>Bairro: </span></label>
 				</div>
 				<div class="field_container">
-					<input type="text" id="register_address_neighborhood"></input>
+					<input type="text" id="register_address_neighborhood">
 				</div>							
 			</div>
 			<div class="form_row_container">
@@ -505,7 +505,7 @@ let siteContent = {
 					<label for="register_address_street"><span>Rua: </span></label>
 				</div>
 				<div class="field_container">														
-					<input type="text" id="register_address_street" autocomplete="adress-line1"></input>
+					<input type="text" id="register_address_street" autocomplete="address-line1">
 				</div>
 			</div>
 			<div class="form_row_container">
@@ -513,7 +513,7 @@ let siteContent = {
 					<label for="register_password"><span>Nova senha: </span></label>
 				</div>
 				<div class="field_container">														
-					<input type="password" id="register_password"></input>
+					<input type="password" id="register_password">
 				</div>
 			</div>
 			<div class="form_row_container">
@@ -521,11 +521,11 @@ let siteContent = {
 					<label for="register_repeat_password"><span>Repetir senha: </span></label>
 				</div>
 				<div class="field_container">														
-					<input type="password" id="register_repeat_password"></input>
+					<input type="password" id="register_repeat_password">
 				</div>
 			</div>
 			<div class="submit_container">
-				<input type="submit" value="Enviar"></input>
+				<input type="submit" value="Enviar">
 			</div>
 		</form>
 		`,
@@ -535,31 +535,30 @@ let siteContent = {
 
 		<form id="gerenciar_animais_form">
 			<h4 class="section_title">Gerenciar animais</h4>
-			<div id="gerenciar_animais_list">
-			</div>
+			<div id="gerenciar_animais_list"></div>
 		</form>
 		<div id="cadastrar_animal_button">
-			<input type="button" value="+Cadastrar animal" onClick="showAnimalRegisterForm()"></div>
-			<form id="animal_register_form">
-	            <div class="label_container">
-	                <label for="animal_name_field"><span>Nome: </span></label>
-	            </div>                    
-	            <div class="field_container">
-	                <input type="text" id="animal_name_field"></input>
-	            </div>
-	            
-	            <div class="label_container">
-	                <label for="animal_race_field"><span>Raça: </span></label>
-	            </div>
-	            <div class="field_container">
-	                <input type="text" id="animal_race_field"></input>
-	            </div>
-
-	            <div class="submit_container">
-	                <input id="register_animal_input" type="submit" value="Enviar"></input>
-	            </div>
-	        </form>
+			<input type="button" value="+Cadastrar animal" onClick="showAnimalRegisterForm()">
 		</div>
+		<form id="animal_register_form">
+            <div class="label_container">
+                <label for="animal_name_field"><span>Nome: </span></label>
+            </div>                    
+            <div class="field_container">
+                <input type="text" id="animal_name_field">
+            </div>
+            
+            <div class="label_container">
+                <label for="animal_race_field"><span>Raça: </span></label>
+            </div>
+            <div class="field_container">
+                <input type="text" id="animal_race_field">
+            </div>
+
+            <div class="submit_container">
+                <input id="register_animal_input" type="submit" value="Enviar">
+            </div>
+        </form>
 		`,
 		visualizarAnimal : 
 		`
