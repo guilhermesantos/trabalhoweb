@@ -1310,8 +1310,6 @@
 		if (products.length > 0) {
 			let totalPrice = 0.0;
 
-			$("#complete_buy").css('display', 'initial');
-
 			let tableHeaderRow = document.createElement('tr');
 			tableHeaderRow.setAttribute('class', "service_table_row");
 
@@ -1387,6 +1385,8 @@
 			productsTable.append(tableDataTotal);
 			productsTable.append(tableDataTotalPrice);
 		} else {
+			$("#complete_buy").css('display', 'none');
+
 			let tableRow = document.createElement('tr');
 			tableRow.setAttribute('class', "service_table_row");
 

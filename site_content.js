@@ -421,7 +421,7 @@ let siteContent = {
 			<table id="cart_table" class="service_table">
 			</table>
 		</div>
-		<form id="complete_buy" style="display: none;">
+		<form id="complete_buy" style="clear: both;">
 			<input type="submit" class="buy_button" value="Finalizar Compra">
 		</form>
 		`,
