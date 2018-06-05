@@ -8,7 +8,6 @@
 	<link rel="stylesheet" type="text/css" href="forms.css"> 
 	<link rel="stylesheet" type="text/css" href="animal_details.css">
 
-	<!--<link rel="stylsheet" type="text/css" href="control_panel.css">-->
 	<meta charset="utf-8">
 
 	<title>Pet Shop</title>
@@ -132,7 +131,7 @@
 			dono: "client"
 		}
 	];
-	var request = indexedDB.deleteDatabase(databaseName);
+	//var request = indexedDB.deleteDatabase(databaseName);
 	var request = indexedDB.open(databaseName, 2);
 	var connection;
 	var connectedUser;

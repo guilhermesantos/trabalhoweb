@@ -34,7 +34,6 @@ let siteContent = {
 	<h3 class="page_title">Página principal</h3>
 	<p id="introductory_text">
 		<span>Seja bem vindo. Para utilizar as funcionalidades e ter acesso ao dados do seu pet, entre abaixo no sistema.<br/>
-		Se ainda não tiver um cadastro, clique <em>	aqui</em>
 		</span>
 	</p>
 	
