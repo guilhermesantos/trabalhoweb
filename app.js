@@ -76,7 +76,7 @@ MongoClient.connect(url, function(err, db) {
 
 //Server startup
 function startServer() {
-	server = app.listen(3000, 'localhost', () => {
+	server = app.listen(80, 'localhost', () => {
 		let host = server.address().address;
 		let port = server.address().port;
 		console.log("Server listening at http://%s:%s", host, port);
