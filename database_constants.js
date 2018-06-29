@@ -6,95 +6,95 @@ const databaseScheduledServicesName = "scheduled_services";
 const databasePetsName = "animals";
 const DadosUsuarios = [
 	{
-		usuario: "admin",
-		nome: "Administrador",
-		senha: "admin",
+		user: "admin",
+		name: "Administrador",
+		password: "admin",
 		email: "admin@admin.com",
-		telefone: "(16) 9999-9999",
-		cidade:"São Carlos",
-		rua: "Av. São Carlos",
-		bairro: "",
+		phone: "(16) 9999-9999",
+		city:"São Carlos",
+		street: "Av. São Carlos",
+		neighborhood: "",
 		isAdmin: true
 	},
 	{
-		usuario: "client",
-		nome: "John",
-		senha: "client",
+		user: "client",
+		name: "John",
+		password: "client",
 		email: "john@client.com",
-		telefone: "(16) 1111-1111",
-		cidade:"São Carlos",
-		rua: "Av. Francisco Pereira Lopes",
-		bairro: "Arnold Schimidt",
+		phone: "(16) 1111-1111",
+		city:"São Carlos",
+		street: "Av. Francisco Pereira Lopes",
+		neighborhood: "Arnold Schimidt",
 		isAdmin: false
 	}
 ];
 const DadosProdutos = [
 	{
-		nome: "Bolinha",
-		descricao: "Ideal para seu cachorro!",
-		preco: 10.00,
-		quantidade: 50
+		name: "Bolinha",
+		description: "Ideal para seu cachorro!",
+		price: 10.00,
+		quantity: 50
 	},
 	{
-		nome: "Osso",
-		descricao: "Cachorros gostam muito",
-		preco: 5.00,
-		quantidade: 20
+		name: "Osso",
+		description: "Cachorros gostam muito",
+		price: 5.00,
+		quantity: 20
 	},
 	{
-		nome: "Areia",
-		descricao: "Para a higiene de seu gato",
-		preco: 20.00,
-		quantidade: 15
+		name: "Areia",
+		description: "Para a higiene de seu gato",
+		price: 20.00,
+		quantity: 15
 	}
 ];
 const DadosTiposServicos = [
 	{
-		nome: "Consulta",
-		preco: 150
+		name: "Consulta",
+		price: 150
 	},
 	{
-		nome: "Tosa",
-		preco: 50
+		name: "Tosa",
+		price: 50
 	},
 	{
-		nome: "Banho",
-		preco: 50
+		name: "Banho",
+		price: 50
 	},
 	{
-		nome: "Banho e Tosa",
-		preco: 80
+		name: "Banho e Tosa",
+		price: 80
 	}
 ];
 const DadosServicosAgendados = [
 	{
 		servico: 1,
-		data: "2018-06-04",
-		hora: "14:30",
+		date: "2018-06-04",
+		time: "14:30",
 		animal: 2
 	},
 	{
 		servico: 4,
-		data: "2019-01-02",
-		hora: "08:00",
+		date: "2019-01-02",
+		time: "08:00",
 		animal: 1
 	}
 ];
 const DadosAnimais = [
 	{
-		nome: "Billy",
-		especie: "Cachorro",
-		dono: "client"
+		name: "Billy",
+		species: "Cachorro",
+		owner: "client"
 	},
 	{
-		nome: "Lua",
-		especie: "Gato",
-		dono: "client"
+		name: "Lua",
+		species: "Gato",
+		owner: "client"
 	},
 	{
-		nome: "Per",
-		especie: "Gato",
-		dono: "client"
+		name: "Per",
+		species: "Gato",
+		owner: "client"
 	}
 ];
 
