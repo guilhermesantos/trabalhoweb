@@ -231,38 +231,35 @@
 
 			if (name.length == 0) {
 				alert("Insira um nome para o produto");
-				return;
 			} else if (typeof price == 'undefined' || price == null || price.length == 0) {
 				alert("Insira um preço");
-				return;
 			} else if (typeof quantity == 'undefined' || quantity == null || quantity.length == 0) {
 				alert("Insira uma quantidade");
-				return;
+			} else {
+				let productInfo = {
+					name: name,
+					description: description,
+					price: Number(price),
+					quantity: Number(quantity)
+				};
+				const data = JSON.stringify(productInfo);
+				$.ajax({
+			        type: 'post',
+			        contentType: 'application/json',
+			        url: 'new_product',
+			        data: data,
+			        success: function(response) {
+						alert(response.message);
+						$("#new_product_name").val("");
+						$("#new_product_description").val("");
+						$("#new_product_price").val("");
+						$("#new_product_quantity").val("");
+			        },
+			        error: function(response) {
+			        	alert(response.responseJSON.message);
+			        }
+		        });
 			}
-
-			let productInfo = {
-				name: name,
-				description: description,
-				price: Number(price),
-				quantity: Number(quantity)
-			};
-			const data = JSON.stringify(productInfo);
-			$.ajax({
-		        type: 'post',
-		        contentType: 'application/json',
-		        url: 'new_product',
-		        data: data,
-		        success: function(response) {
-					alert(response.message);
-					$("#new_product_name").val("");
-					$("#new_product_description").val("");
-					$("#new_product_price").val("");
-					$("#new_product_quantity").val("");
-		        },
-		        error: function(response) {
-		        	alert(response.responseJSON.message);
-		        }
-	        });
 		});
 
 		$("#new_service_form").on('submit', function(e) {
@@ -276,21 +273,22 @@
 				alert("Por favor insira um preço")
 			} else {
 				let serviceTypeInfo = {
-					nome: name,
-					preco: Number(price)
+					name: name,
+					price: Number(price)
 				};
-
-				let tx = connection.transaction(databaseServiceTypesName, "readwrite");
-				let objectStore = tx.objectStore(databaseServiceTypesName);
-				let request = objectStore.put(serviceTypeInfo);
-
-				request.onsuccess = function(e) {
-					alert("Tipo de serviço criado com sucesso");
-				};
-
-				request.onerror = function(e) {
-					alert("Um erro ocorreu, tente novamente");
-				}
+				const data = JSON.stringify(serviceTypeInfo);
+				$.ajax({
+			        type: 'post',
+			        contentType: 'application/json',
+			        url: 'new_service_type',
+			        data: data,
+			        success: function(response) {
+						alert(response.message);
+			        },
+			        error: function(response) {
+			        	alert(response.responseJSON.message);
+			        }
+		        });
 			}
 		});
 	}

@@ -249,3 +249,37 @@ app.post('/new_product', function(req, res) {
 		});
 	}
 });
+
+//New Service Type
+app.post('/new_service_type', function(req, res) {
+	console.log("POST /new_service_type");
+
+	if (!validBody(['name', {'price' : 'number'}], req.body)) {
+		res.status(400).json(buildJsonPayload("Missing information", null));
+		return;
+	}
+
+	const name = req.body.name;
+	const price = Number(req.body.price);
+
+	if (name.length == 0) {
+		res.status(400).json(buildJsonPayload("Nome do produto não informado", null));
+	} else {
+		const serviceTypeObject = {
+			name: name,
+			price: price
+		}
+		dbps.collection(databaseConstants.databaseServiceTypesName).insertOne(serviceTypeObject, function(err, response) {
+			if (err) {
+				console.log(err);
+				if (err.code == 11000) {
+					res.status(400).json(buildJsonPayload("Este tipo de serviço já existe", null));
+				} else {
+					res.status(400).json(buildJsonPayload("Algo inesperado aconteceu", null));
+				}
+			} else {
+				res.status(200).json(buildJsonPayload("Tipo de serviço criado com sucesso", null));
+			}
+		});
+	}
+});
