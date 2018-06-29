@@ -283,3 +283,20 @@ app.post('/new_service_type', function(req, res) {
 		});
 	}
 });
+
+//All Products
+app.get('/products', function(req, res) {
+	console.log("GET /products");
+
+	let products = [];
+	const cursor = dbps.collection(databaseConstants.databaseProductsName).find();
+	cursor.each(function(err, product) {
+		if (product != null) {
+			product.id = product._id;
+			product._id = undefined;
+			products.push(product);
+		} else {
+			res.status(200).json(buildJsonPayload(null, products));
+		}
+	});
+});

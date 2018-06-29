@@ -558,27 +558,31 @@
 
 	function adminShowProducts() {
 		$(".content").html(siteContent.admin.controleDeEstoque);
-		let tx = connection.transaction(databaseProductsName, "readonly");
-		let objectStore = tx.objectStore(databaseProductsName);
-		let request = objectStore.getAll();
-
-		request.onsuccess = function(e) {
-			let products = e.target.result;
-			if (typeof products == 'undefined') {
-				adminProducts = [];
-				return;
-			}
-			adminProducts = products;
-			adminBuildProductsTable();
-
-			$("#sort_by_select").change(function() {
+		$.ajax({
+	        type: 'get',
+	        contentType: 'application/json',
+	        url: 'products',
+	        success: function(response) {
+	        	let products = response.data;
+				if (typeof products == 'undefined') {
+					adminProducts = [];
+					return;
+				}
+				adminProducts = products;
 				adminBuildProductsTable();
-			});
 
-			$("#sort_order_select").change(function() {
-				adminBuildProductsTable();
-			});
-		}
+				$("#sort_by_select").change(function() {
+					adminBuildProductsTable();
+				});
+
+				$("#sort_order_select").change(function() {
+					adminBuildProductsTable();
+				});
+	        },
+	        error: function(response) {
+	        	alert(response.responseJSON.message);
+	        }
+        });
 	}
 
 	function adminBuildProductsTable() {
@@ -589,15 +593,15 @@
 		let products = adminProducts.sort(function(product1, product2) {
 			switch (sortBy) {
 				case "nome":
-					return (sortPriority == "crescente") ? product1.nome > product2.nome : product1.nome < product2.nome;
+					return (sortPriority == "crescente") ? product1.name > product2.name : product1.name < product2.name;
 					break;
 
 				case "preco":
-					return (sortPriority == "crescente") ? product1.preco > product2.preco : product1.preco < product2.preco;
+					return (sortPriority == "crescente") ? product1.price > product2.price : product1.price < product2.price;
 					break;
 
 				case "quantidade":
-					return (sortPriority == "crescente") ? product1.quantidade > product2.quantidade : product1.quantidade < product2.quantidade;
+					return (sortPriority == "crescente") ? product1.quantity > product2.quantity : product1.quantity < product2.quantity;
 					break;
 			}
 		});
@@ -627,15 +631,15 @@
 
 				let tableDataProductName = document.createElement('td');
 				tableDataProductName.setAttribute('class', "service_table_data");
-				tableDataProductName.innerHTML = product.nome;
+				tableDataProductName.innerHTML = product.name;
 
 				let tableDataProductPrice = document.createElement('td');
 				tableDataProductPrice.setAttribute('class', "service_table_data");
-				tableDataProductPrice.innerHTML = "R$ " + Number(product.preco).toFixed(2);
+				tableDataProductPrice.innerHTML = "R$ " + Number(product.price).toFixed(2);
 
 				let tableDataProductQuantity = document.createElement('td');
 				tableDataProductQuantity.setAttribute('class', "service_table_data");
-				tableDataProductQuantity.innerHTML = product.quantidade;
+				tableDataProductQuantity.innerHTML = product.quantity;
 
 				let productEditA = document.createElement('a');
 				productEditA.setAttribute('onclick','adminEditProduct(' + product.id + ')');
