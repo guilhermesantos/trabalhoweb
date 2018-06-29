@@ -215,7 +215,6 @@
 						alert(response.message);
 			        },
 			        error: function(response) {
-			        	console.log(response);
 			        	alert(response.responseJSON.message);
 			        }
 		        });
@@ -242,28 +241,28 @@
 			}
 
 			let productInfo = {
-				nome: name,
-				descricao: description,
-				preco: price,
-				quantidade: quantity
+				name: name,
+				description: description,
+				price: Number(price),
+				quantity: Number(quantity)
 			};
-
-			let tx = connection.transaction(databaseProductsName, "readwrite");
-			let objectStore = tx.objectStore(databaseProductsName);
-			let request = objectStore.add(productInfo);
-
-			request.onsuccess = function(e) {
-				alert("Produto cadastrado com sucesso");
-
-				$("#new_product_name").val("");
-				$("#new_product_description").val("");
-				$("#new_product_price").val("");
-				$("#new_product_quantity").val("");
-			};
-
-			request.onerror = function(e) {
-				alert("Erro ao cadastrar produto, tente novamente")
-			};
+			const data = JSON.stringify(productInfo);
+			$.ajax({
+		        type: 'post',
+		        contentType: 'application/json',
+		        url: 'new_product',
+		        data: data,
+		        success: function(response) {
+					alert(response.message);
+					$("#new_product_name").val("");
+					$("#new_product_description").val("");
+					$("#new_product_price").val("");
+					$("#new_product_quantity").val("");
+		        },
+		        error: function(response) {
+		        	alert(response.responseJSON.message);
+		        }
+	        });
 		});
 
 		$("#new_service_form").on('submit', function(e) {

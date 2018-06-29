@@ -83,34 +83,6 @@ function startServer() {
 		let port = server.address().port;
 		console.log("Server listening at http://%s:%s", host, port);
 	});
-
-	//Repeated keys (user) test
-	/*
-	const admin = {
-		user: "admin",
-		name: "Administrador 2",
-		password: "admin2",
-		email: "admin@admin.com2",
-		phone: "(16) 9999-99992",
-		city:"São Carlos2",
-		street: "Av. São Carlos2",
-		neighborhood: "2",
-		isAdmin: true
-	};
-	dbps.collection(databaseConstants.databaseUsersName).insertOne(admin, function(err, res) {
-		if (err) {
-			console.log(err);
-		}
-		const cursor = dbps.collection(databaseConstants.databaseUsersName).find();
-		cursor.each(function(err, item) {
-			if (item == null) {
-				return;
-			} else {
-				console.log(item);
-			}
-		});
-	});
-	*/
 }
 
 //Utils
@@ -129,17 +101,43 @@ function purifyUser(user) {
 			isAdmin: user.isAdmin};
 }
 
-//Express
+function validBody(params, body) {
+	for (let i = 0; i < params.length; i++) {
+		const param = params[i];
+		if (typeof param == 'string') {
+			if (body[param] == null) {
+				return false;
+			}
+		} else if (typeof params[i] == 'object') {
+			const keys = Object.keys(param);
+			if (keys.length == 0) {
+				return false;
+			} else {
+				const paramName = keys[0];
+				const paramType = param[paramName];
+				const bodyParam = body[paramName];
+				if (bodyParam == null || typeof bodyParam != paramType) {
+					return false;
+				}
+			}
+		}
+	}
+
+	return true;
+}
+
+// Express
+//Login
 app.post('/login', function(req, res) {
 	console.log("POST /login");
 
-	const user = req.body.user.toLowerCase();
-	const password = req.body.password;
-
-	if (typeof user == 'undefined' || typeof password == 'undefined') {
+	if (!validBody(['user', 'password'], req.body)) {
 		res.status(400).json(buildJsonPayload("Missing credentials", null));
 		return;
 	}
+
+	const user = req.body.user.toLowerCase();
+	const password = req.body.password;
 
 	const query = {user: user, password: password};
 	dbps.collection(databaseConstants.databaseUsersName).find(query).toArray(function(err, result) {
@@ -154,8 +152,14 @@ app.post('/login', function(req, res) {
 	});
 });
 
+//New User
 app.post('/new_user', function(req, res) {
 	console.log("POST /new_user");
+
+	if (!validBody(['user', 'name', 'phone', 'email', 'city', 'neighborhood', 'street', 'password', 'repeatPassword', {'isAdmin' : 'boolean'}], req.body)) {
+		res.status(400).json(buildJsonPayload("Missing information", null));
+		return;
+	}
 
 	const user = req.body.user.toLowerCase();
 	const name = req.body.name;
@@ -203,6 +207,44 @@ app.post('/new_user', function(req, res) {
 			} else {
 				const message = isAdmin ? "Administrador cadastrado com sucesso" : "Cliente cadastrado com sucesso";
 				res.status(200).json(buildJsonPayload(message, null));
+			}
+		});
+	}
+});
+
+//New Product
+app.post('/new_product', function(req, res) {
+	console.log("POST /new_product");
+
+	if (!validBody(['name', 'description', {'price' : 'number'}, {'quantity' : 'number'}], req.body)) {
+		res.status(400).json(buildJsonPayload("Missing information", null));
+		return;
+	}
+
+	const name = req.body.name;
+	const description = req.body.description;
+	const price = Number(req.body.price);
+	const quantity = Number(req.body.quantity);
+
+	if (name.length == 0) {
+		res.status(400).json(buildJsonPayload("Nome do produto não informado", null));
+	} else {
+		const productObject = {
+			name: name,
+			description: description,
+			price: price,
+			quantity: quantity
+		}
+		dbps.collection(databaseConstants.databaseProductsName).insertOne(productObject, function(err, response) {
+			if (err) {
+				console.log(err);
+				if (err.code == 11000) {
+					res.status(400).json(buildJsonPayload("Este produto já existe", null));
+				} else {
+					res.status(400).json(buildJsonPayload("Algo inesperado aconteceu", null));
+				}
+			} else {
+				res.status(200).json(buildJsonPayload("Produto criado com sucesso", null));
 			}
 		});
 	}
