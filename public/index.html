@@ -29,110 +29,6 @@
 	<script src="site_content.js"></script>
 
  	<script>
-
- 	var indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
-
-	const databaseName = "Database";
-	const databaseUsersName = "Usuarios";
-	const databaseProductsName = "Produtos";
-	const databaseServiceTypesName = "TiposServicos";
-	const databaseScheduledServicesName = "ServicosAgendados";
-	const databasePetsName = "Animais";
-	const DadosUsuarios = [
-		{
-			usuario: "admin",
-			nome: "Administrador",
-			senha: "admin",
-			email: "admin@admin.com",
-			telefone: "(16) 9999-9999",
-			cidade:"São Carlos",
-			rua: "Av. São Carlos",
-			bairro: "",
-			isAdmin: true
-		},
-		{
-			usuario: "client",
-			nome: "John",
-			senha: "client",
-			email: "john@client.com",
-			telefone: "(16) 1111-1111",
-			cidade:"São Carlos",
-			rua: "Av. Francisco Pereira Lopes",
-			bairro: "Arnold Schimidt",
-			isAdmin: false
-		}
-	];
-	const DadosProdutos = [
-		{
-			nome: "Bolinha",
-			descricao: "Ideal para seu cachorro!",
-			preco: 10.00,
-			quantidade: 50
-		},
-		{
-			nome: "Osso",
-			descricao: "Cachorros gostam muito",
-			preco: 5.00,
-			quantidade: 20
-		},
-		{
-			nome: "Areia",
-			descricao: "Para a higiene de seu gato",
-			preco: 20.00,
-			quantidade: 15
-		}
-	];
-	const DadosTiposServicos = [
-		{
-			nome: "Consulta",
-			preco: 150
-		},
-		{
-			nome: "Tosa",
-			preco: 50
-		},
-		{
-			nome: "Banho",
-			preco: 50
-		},
-		{
-			nome: "Banho e Tosa",
-			preco: 80
-		}
-	];
-	const DadosServicosAgendados = [
-		{
-			servico: 1,
-			data: "2018-06-04",
-			hora: "14:30",
-			animal: 2
-		},
-		{
-			servico: 4,
-			data: "2019-01-02",
-			hora: "08:00",
-			animal: 1
-		}
-	];
-	const DadosAnimais = [
-		{
-			nome: "Billy",
-			especie: "Cachorro",
-			dono: "client"
-		},
-		{
-			nome: "Lua",
-			especie: "Gato",
-			dono: "client"
-		},
-		{
-			nome: "Per",
-			especie: "Gato",
-			dono: "client"
-		}
-	];
-	//var request = indexedDB.deleteDatabase(databaseName);
-	var request = indexedDB.open(databaseName, 2);
 	var connection;
 	var connectedUser;
 
@@ -147,100 +43,16 @@
 	let userCart = {};
 	let userProducts =[];
 
-	request.onerror = function(event) {
-		alert("Falha na conexão com o servidor");
-	};
-
-	request.onupgradeneeded = function(event) {
-		let db = event.target.result;
-
-		// Usuarios cadastrados
-		let usuariosObjectStore = db.createObjectStore(databaseUsersName, { keyPath: 'usuario' });
-		usuariosObjectStore.createIndex("usuario", "usuario", { unique: true });
-
-		for (let i in DadosUsuarios) {
-			let aux = usuariosObjectStore.put(DadosUsuarios[i]);
-		}
-
-		// Produtos em estoque
-		let productsObjectStore = db.createObjectStore(databaseProductsName, { keyPath: 'id', autoIncrement: true });
-		productsObjectStore.createIndex("id", "id", { unique: true });
-
-		for (let i in DadosProdutos) {
-			let aux = productsObjectStore.put(DadosProdutos[i]);
-		}
-
-		// Tipos de Serviços disponiveis
-		let servicesObjectStore = db.createObjectStore(databaseServiceTypesName,  {keyPath: 'id', autoIncrement: true });
-		servicesObjectStore.createIndex("id", "id", { unique: true });
-
-		for (let i in DadosTiposServicos) {
-			let aux = servicesObjectStore.put(DadosTiposServicos[i]);
-		}
-
-		// Serviços agendados
-		let scheduledServicesObjectStore = db.createObjectStore(databaseScheduledServicesName,  {keyPath: 'id', autoIncrement: true });
-		scheduledServicesObjectStore.createIndex("servicoAgendado", ["servico", "data", "hora"], { unique: true });
-		scheduledServicesObjectStore.createIndex("servicoAgendadoAnimal", ["animal", "data", "hora"], { unique: true });
-		scheduledServicesObjectStore.createIndex("animal", "animal", { unique: false });
-
-		for (let i in DadosServicosAgendados) {
-			let aux = scheduledServicesObjectStore.put(DadosServicosAgendados[i]);
-		}
-
-		// Animais cadastrados
-		let animalsObjectStore = db.createObjectStore(databasePetsName,  {keyPath: 'id', autoIncrement: true });
-		animalsObjectStore.createIndex("id", "id", { unique: true });
-		animalsObjectStore.createIndex("nome", "nome", { unique: false });
-		animalsObjectStore.createIndex("dono", "dono", { unique: false });
-
-		for (let i in DadosAnimais) {
-			let aux = animalsObjectStore.put(DadosAnimais[i]);
-		}
-	};
-
-	request.onsuccess = function(event) {
-		connection = event.target.result;
-	};
-
 	$(document).ready(
 		function() {
 			$(".horizontal_menu").html(horizontalMenu.index)
 			$(".content").html(siteContent.index);
-			$('#login_form').on('submit', function(e){
+			$('#login_form').submit(function(e) {
 				e.preventDefault();
 				loginClick();
 			});
 		}
 	);
-
-	function loginClick() {
-		var tx = connection.transaction(databaseUsersName, "readonly");
-    	var objectStore = tx.objectStore(databaseUsersName);
-    	var usernameValue = document.getElementById("login_username").value;
-    	var passwordValue = document.getElementById("login_password").value;
-    	var request = objectStore.index("usuario").get(usernameValue);
-    	request.onsuccess = function(event) {
-    		let userInfo = event.target.result;
-		    if (typeof userInfo == 'undefined') {
-		        alert("Usuário e/ou senha inválido");
-		        return;
-		    } else if (userInfo.senha != passwordValue) {
-		    	alert("Usuário e/ou senha inválido");
-		    	return;
-		    } else {
-		    	connectedUser = userInfo;
-		    	if (userInfo.isAdmin) {
-					$(".horizontal_menu").html(horizontalMenu.admin);
-					adminShowRegisterArea();
-				} else {
-					$(".horizontal_menu").html(horizontalMenu.client);
-					showAnimalManager();
-				}
-				setWelcomeMessageName(userInfo.nome);
-		    }
-		};
-	}
 
 	function logout() {
 		connectedUser = null;
@@ -259,6 +71,33 @@
 			e.preventDefault();
 			loginClick();
 		});
+	}
+
+	function loginClick() {
+		var usernameValue = document.getElementById("login_username").value;
+		var passwordValue = document.getElementById("login_password").value;
+		const data = JSON.stringify({user: usernameValue, password: passwordValue});
+		$.ajax({
+	        type: 'post',
+	        contentType: 'application/json',
+	        url: 'login',
+	        data: data,
+	        success: function(response) {
+	       		console.log(response);
+	       		connectedUser = response.data;
+	       		if (connectedUser.isAdmin) {
+					$(".horizontal_menu").html(horizontalMenu.admin);
+					adminShowRegisterArea();
+				} else {
+					$(".horizontal_menu").html(horizontalMenu.client);
+					showAnimalManager();
+				}
+				setWelcomeMessageName(connectedUser.nome);
+	        },
+	        error: function(response) {
+	        	alert(response.responseJSON.message);
+	        }
+        });
 	}
 
 	function setWelcomeMessageName(name) {
