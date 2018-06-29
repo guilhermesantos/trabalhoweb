@@ -54,28 +54,9 @@
 		}
 	);
 
-	function logout() {
-		connectedUser = null;
-		adminScheduledServices = [];
-		adminUsers = [];
-		adminServiceTypes = [];
-		adminAnimals = [];
-		adminProducts = [];
-
-		userCart = {};
-		userProducts =[];
-		$("#user_login_box").remove();
-		$(".content").html(siteContent.index);
-		$(".horizontal_menu").html(horizontalMenu.index);
-		$('#login_form').on('submit', function(e){
-			e.preventDefault();
-			loginClick();
-		});
-	}
-
 	function loginClick() {
-		var usernameValue = document.getElementById("login_username").value;
-		var passwordValue = document.getElementById("login_password").value;
+		const usernameValue = document.getElementById("login_username").value;
+		const passwordValue = document.getElementById("login_password").value;
 		const data = JSON.stringify({user: usernameValue, password: passwordValue});
 		$.ajax({
 	        type: 'post',
@@ -100,13 +81,32 @@
         });
 	}
 
+	function logoutClick() {
+		connectedUser = null;
+		adminScheduledServices = [];
+		adminUsers = [];
+		adminServiceTypes = [];
+		adminAnimals = [];
+		adminProducts = [];
+
+		userCart = {};
+		userProducts =[];
+		$("#user_login_box").remove();
+		$(".content").html(siteContent.index);
+		$(".horizontal_menu").html(horizontalMenu.index);
+		$('#login_form').on('submit', function(e){
+			e.preventDefault();
+			loginClick();
+		});
+	}
+
 	function setWelcomeMessageName(name) {
 		$("#user_login_box").remove();
 		$("header").append(siteContent.logoutBox);
 		$("#welcome_span").html($("#welcome_span").html().replace("user_name", name));
 		$('#logout').click(function(e){
 			e.preventDefault();
-			logout();
+			logoutClick();
 		});
 	}
 
@@ -168,6 +168,7 @@
 
 		$("#new_user_form").on('submit', function(e) {
 			e.preventDefault();
+
 			let username = document.getElementById("register_username").value;
 			let name = document.getElementById("register_name").value;
 			let phone = document.getElementById("register_address_phone").value;
@@ -192,32 +193,32 @@
 			} else if (password != repeatPassword) {
 				alert("As senhas inseridas são diferentes");
 			} else {
-				let userInfo = {
-					usuario: username.toLowerCase(),
-					nome: name,
-					senha: password,
+				let user = {
+					user: username.toLowerCase(),
+					name: name,
+					password: password,
+					repeatPassword: repeatPassword,
 					email: email,
-					telefone: phone,
-					cidade: city,
-					rua: street,
-					bairro: neighborhood,
+					phone: phone,
+					city: city,
+					street: street,
+					neighborhood: neighborhood,
 					isAdmin: isAdmin
 				};
-				let tx = connection.transaction(databaseUsersName, "readwrite");
-				let objectStore = tx.objectStore(databaseUsersName);
-				let request = objectStore.add(userInfo);
-
-				request.onsuccess = function(e) {
-					if (isAdmin) {
-						alert("Administrador cadastrado com sucesso");
-					} else {
-						alert("Cliente cadastrado com sucesso");
-					}
-				};
-
-				request.onerror = function(e) {
-					alert("Usuário já está em uso");
-				}
+				const data = JSON.stringify(user);
+				$.ajax({
+			        type: 'post',
+			        contentType: 'application/json',
+			        url: 'new_user',
+			        data: data,
+			        success: function(response) {
+						alert(response.message);
+			        },
+			        error: function(response) {
+			        	console.log(response);
+			        	alert(response.responseJSON.message);
+			        }
+		        });
 			}
 		});
 

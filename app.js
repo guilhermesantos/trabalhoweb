@@ -133,7 +133,7 @@ function purifyUser(user) {
 app.post('/login', function(req, res) {
 	console.log("POST /login");
 
-	const user = req.body.user;
+	const user = req.body.user.toLowerCase();
 	const password = req.body.password;
 
 	if (typeof user == 'undefined' || typeof password == 'undefined') {
@@ -152,4 +152,58 @@ app.post('/login', function(req, res) {
 			res.status(200).json(buildJsonPayload(null, purifyUser(user)));
 		}
 	});
+});
+
+app.post('/new_user', function(req, res) {
+	console.log("POST /new_user");
+
+	const user = req.body.user.toLowerCase();
+	const name = req.body.name;
+	const phone = req.body.phone;
+	const email = req.body.email;
+	const city = req.body.city;
+	const neighborhood = req.body.neighborhood;
+	const street = req.body.street;
+	const password = req.body.password;
+	const repeatPassword = req.body.repeatPassword;
+	const isAdmin = req.body.isAdmin;
+
+	if (user.length == 0) {
+		res.status(400).json(buildJsonPayload("Nome de usuário não informado", null));
+	} else if (name.length == 0) {
+		res.status(400).json(buildJsonPayload("Nome não informado", null));
+	} else if (phone.length == 0) {
+		res.status(400).json(buildJsonPayload("Telefone não informado", null));
+	} else if (email.length == 0) {
+		res.status(400).json(buildJsonPayload("Email não informado", null));
+	} else if (password.length == 0) {
+		res.status(400).json(buildJsonPayload("Senha não informada", null));
+	} else if (password != repeatPassword) {
+		res.status(400).json(buildJsonPayload("As senhas são diferentes", null));
+	} else {
+		const userObject = {
+			user: user,
+			name: name,
+			password: password,
+			email: email,
+			phone: phone,
+			city: city,
+			street: street,
+			neighborhood: neighborhood,
+			isAdmin: isAdmin
+		}
+		dbps.collection(databaseConstants.databaseUsersName).insertOne(userObject, function(err, response) {
+			if (err) {
+				console.log(err);
+				if (err.code == 11000) {
+					res.status(400).json(buildJsonPayload("Este usuário já existe", null));
+				} else {
+					res.status(400).json(buildJsonPayload("Algo inesperado aconteceu", null));
+				}
+			} else {
+				const message = isAdmin ? "Administrador cadastrado com sucesso" : "Cliente cadastrado com sucesso";
+				res.status(200).json(buildJsonPayload(message, null));
+			}
+		});
+	}
 });
