@@ -1278,12 +1278,12 @@
 	}
 
 	function getAllUserAnimals() {
-		var tx = connection.transaction(databasePetsName, "readonly");
-		var objectStore = tx.objectStore(databasePetsName);
-		var request = objectStore.index("dono").getAll(connectedUser.usuario);
-		request.onsuccess = function(event) {
-			let animalsData = event.target.result;
-			if (typeof animalsData != 'undefined') {
+		$.ajax({
+	        type: 'get',
+	        contentType: 'application/json',
+	        url: "users/" + connectedUser.user + "/animals",
+	        success: function(response) {
+				let animalsData = response.data;
 				let form = document.getElementById("gerenciar_animais_form");
 				let oldAnimalsList = document.getElementById("gerenciar_animais_list");
 				oldAnimalsList.remove();
@@ -1298,19 +1298,19 @@
 					animalInfoContainerDiv.setAttribute('class', "animal_info_container");
 
 					let animalNameSpan = document.createElement('span');
-					animalNameSpan.innerHTML = animal.nome;
+					animalNameSpan.innerHTML = animal.name;
 
 					let iconsContainerDiv = document.createElement('div');
 					iconsContainerDiv.setAttribute('class', "icons_container");
 
 					let animalDetailsA = document.createElement('a');
-					animalDetailsA.setAttribute('onclick','animalDetailsClick(' + animal.id + ');');
+					animalDetailsA.setAttribute('onclick','animalDetailsClick("' + animal.id + '");');
 
 					let animalDetailImage = document.createElement('img');
 					animalDetailImage.src = "icons/clipboard.png";
 
 					let animalDeleteA = document.createElement('a');
-					animalDeleteA.setAttribute('onclick','deleteAnimalClick("' + animal.nome + '", ' + animal.id + ');');
+					animalDeleteA.setAttribute('onclick','deleteAnimalClick("' + animal.name + '", "' + animal.id + '");');
 
 					let animalDeleteImage = document.createElement('img');
 					animalDeleteImage.src = "icons/delete.png";
@@ -1324,73 +1324,48 @@
 					iconsContainerDiv.append(animalDeleteA);
 					animalDeleteA.append(animalDeleteImage);
 				});
-			}
-		};
+	        },
+	        error: function(response) {
+	        	alert(response.responseJSON.message);
+	        }
+        });
 	}
 
 	function animalDetailsClick(animalId) {
-		let servicesPromise = new Promise(function(resolve, reject) {
-			let servicesTx = connection.transaction(databaseServiceTypesName, "readonly");
-			let servicesObjectStore = servicesTx.objectStore(databaseServiceTypesName);
-			let servicesRequest = servicesObjectStore.getAll();
+		$.ajax({
+	        type: 'get',
+	        contentType: 'application/json',
+	        url: "animals/" + animalId,
+	        success: function(response) {
+				let animal = response.data;
 
-			servicesRequest.onsuccess = function(e) {
-				let services = e.target.result;
-				if (typeof services != 'undefined') {
-					resolve(services);
-				} else {
-					resolve([]);
-				}
-			}
-		});
+				$(".content").html(siteContent.client.visualizarAnimal);
+				document.getElementById("animal_name_title").innerText = animal.name;
+				document.getElementById("animal_race_title").innerText = animal.species;
 
-		servicesPromise.then(function(services) {
-			let animalTx = connection.transaction(databasePetsName, "readwrite");
-			let animalObjectStore = animalTx.objectStore(databasePetsName);
-			let animalRequest = animalObjectStore.index("id").get(animalId);
-			animalRequest.onsuccess = function(e) {
-				let animalInfo = e.target.result;
-				if (typeof animalInfo != 'undefined') {
-					$(".content").html(siteContent.client.visualizarAnimal);
-					document.getElementById("animal_name_title").innerText = animalInfo.nome;
-					document.getElementById("animal_race_title").innerText = animalInfo.especie;
-				}
-			};
-
-			let scheduledServicesTx = connection.transaction(databaseScheduledServicesName, "readwrite");
-			let scheduledServicesObjectStore = scheduledServicesTx.objectStore(databaseScheduledServicesName);
-			let scheduledServicesRequest = scheduledServicesObjectStore.index("animal").getAll(animalId);
-			scheduledServicesRequest.onsuccess = function(e) {
-				let scheduledServices = e.target.result;
 				let servicesTable = document.getElementById("service_table");
-				if (typeof scheduledServices != 'undefined' && scheduledServices.length > 0) {
+				if (animal.services.length > 0) {
 					let totalPrice = 0.0;
-					scheduledServices.forEach(function (scheduledService) {
-						let service = services.find(function(service) {
-							return service.id == scheduledService.servico;
-						});
-						if (typeof service == 'undefined') {
-							return;
-						}
+					animal.services.forEach(function (service) {
 						let tableRow = document.createElement('tr');
 						tableRow.setAttribute('class', "service_table_row");
 
 						let tableDataServiceName = document.createElement('td');
 						tableDataServiceName.setAttribute('class', "service_table_data");
-						tableDataServiceName.innerHTML = service.nome;
+						tableDataServiceName.innerHTML = service.name;
 
 						let tableDataServiceDate = document.createElement('td');
 						tableDataServiceDate.setAttribute('class', "service_table_data");
-						tableDataServiceDate.innerHTML = scheduledService.data;
+						tableDataServiceDate.innerHTML = service.date;
 
 						let tableDataServiceTime = document.createElement('td');
 						tableDataServiceTime.setAttribute('class', "service_table_data");
-						tableDataServiceTime.innerHTML = scheduledService.hora;
+						tableDataServiceTime.innerHTML = service.time;
 
 						let tableDataServicePrice = document.createElement('td');
 						tableDataServicePrice.setAttribute('class', "service_table_data");
-						tableDataServicePrice.innerHTML = "R$" + service.preco;
-						totalPrice += service.preco;
+						tableDataServicePrice.innerHTML = "R$" + service.price;
+						totalPrice += service.price;
 
 						servicesTable.append(tableRow);
 						servicesTable.append(tableDataServiceName);
@@ -1423,32 +1398,26 @@
 					servicesTable.append(tableRow);
 					servicesTable.append(tableDataTotal);
 				}
-			};
-		});
+	        },
+	        error: function(response) {
+	        	alert(response.responseJSON.message);
+	        }
+        });
 	}
 
 	function deleteAnimalClick(animalName, animalId) {
 		if(window.confirm("Deseja remover " + animalName + "?")) {
-			let tx = connection.transaction(databasePetsName, "readwrite");
-			let objectStore = tx.objectStore(databasePetsName);
-			let request = objectStore.delete(animalId);
-			request.onsuccess = function(e) {
-				getAllUserAnimals();
-				let scheduledServicesTx = connection.transaction(databaseScheduledServicesName, "readwrite");
-				let scheduledServicesObjectStore = scheduledServicesTx.objectStore(databaseScheduledServicesName);
-				let request = scheduledServicesObjectStore.index("animal").openCursor();
-
-				request.onsuccess = function(e) {
-					let cursor = e.target.result;
-					if (cursor) {
-						let scheduledService = cursor.value;
-						if (typeof scheduledService != 'undefined' && scheduledService.animal == animalId) {
-							scheduledServicesObjectStore.delete(scheduledService.id);
-						}
-						cursor.continue();
-					}
-				}
-			};
+			$.ajax({
+		        type: 'delete',
+		        contentType: 'application/json',
+		        url: "animals/" + animalId,
+		        success: function(response) {
+					getAllUserAnimals();
+		        },
+		        error: function(response) {
+		        	alert(response.responseJSON.message);
+		        }
+	        });
 		}
 	}
 

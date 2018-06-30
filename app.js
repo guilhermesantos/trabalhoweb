@@ -112,42 +112,67 @@ function buildJsonPayload(message, data) {
 }
 
 function purifyUser(user) {
+	if (typeof user == 'undefined' || user == null) {
+		return;
+	}
 	delete user._id;
 	delete user.password;
 }
 
 function purifyProduct(product) {
+	if (typeof product == 'undefined' || product == null) {
+		return;
+	}
+
 	product.id = product._id;
 	delete product._id;
 }
 
 function purifyServiceType(serviceType) {
+	if (typeof serviceType == 'undefined' || serviceType == null) {
+		return;
+	}
+
 	serviceType.id = serviceType._id;
 	delete serviceType._id;
 }
 
 function purifyAnimal(animal) {
+	if (typeof animal == 'undefined' || animal == null) {
+		return;
+	}
+
 	animal.id = animal._id;
 	delete animal._id;
 }
 
 function purifyScheduledService(scheduledService) {
+	if (typeof scheduledService == 'undefined' || scheduledService == null) {
+		return;
+	}
+
 	scheduledService.id = scheduledService._id;
 	delete scheduledService._id;
 	delete scheduledService.serviceTypeId;
 	delete scheduledService.animalId;
 
-	let serviceType = scheduledService.serviceType[0];
-	purifyServiceType(serviceType);
-	scheduledService.serviceType = serviceType;
+	if (typeof scheduledService.serviceType != 'undefined' && scheduledService.serviceType.length > 0) {
+		let serviceType = scheduledService.serviceType[0];
+		purifyServiceType(serviceType);
+		scheduledService.serviceType = serviceType;
+	}
 
-	let animal = scheduledService.animal[0];
-	purifyAnimal(animal);
-	scheduledService.animal = animal;
+	if (typeof scheduledService.animal != 'undefined' && scheduledService.animal.length > 0) {
+		let animal = scheduledService.animal[0];
+		purifyAnimal(animal);
+		scheduledService.animal = animal;
+	}
 
-	let animalOwner = scheduledService.animalOwner[0];
-	purifyUser(animalOwner);
-	scheduledService.animalOwner = animalOwner;
+	if (typeof scheduledService.animalOwner != 'undefined' && scheduledService.animalOwner.length > 0) {
+		let animalOwner = scheduledService.animalOwner[0];
+		purifyUser(animalOwner);
+		scheduledService.animalOwner = animalOwner;
+	}
 }
 
 //Returns wheter or not the body has all the requested parameters
@@ -534,4 +559,111 @@ app.delete('/scheduled_services/:scheduledServiceId', function(req, res) {
 	} else {
 		res.status(400).json(buildJsonPayload("Erro ao deletar serviço agendado", null));
 	}
+});
+
+//Animal
+//Get animal
+app.get('/animals/:animalId', function(req, res) {
+	console.log("GET /animals/" + req.params.animalId);
+
+	if (ObjectId.isValid(req.params.animalId)) {
+		const animalId = ObjectId(req.params.animalId);
+
+		const animalQuery = {_id : animalId};
+		const animalPromise = new Promise(function(resolve, reject) {
+			dbps.collection(databaseConstants.databasePetsName).findOne(animalQuery, function(err, animal) {
+				if (err) {
+					reject();
+				} else {
+					purifyAnimal(animal);
+					resolve(animal);
+				}
+			});
+		});
+
+		const scheduledServicesQuery = {animalId : animalId};
+		const cursor = dbps.collection(databaseConstants.databaseScheduledServicesName).aggregate([
+																							   {$match : scheduledServicesQuery},
+																							   {$lookup: {from: databaseConstants.databaseServiceTypesName,
+																								localField: "serviceTypeId",
+																								foreignField: "_id",
+																								as: "serviceType" }}]);
+		let scheduledServicesPromise = new Promise(function(resolve, reject) {
+			cursor.toArray(function(err, scheduledServices) {
+				if (err) {
+					reject();
+				} else {
+					scheduledServices.forEach(function(scheduledService) {
+						purifyScheduledService(scheduledService);
+					});
+					resolve(scheduledServices);
+				}
+			});
+		});
+
+		Promise.all([animalPromise, scheduledServicesPromise]).then(function(values) {
+			let animal = values[0];
+			let scheduledServices = values[1].map(function(scheduledService) {
+				return {name: scheduledService.serviceType.name,
+						price: scheduledService.serviceType.price,
+						date: scheduledService.date, 
+						time: scheduledService.time};
+			});
+			animal.services = scheduledServices;
+			res.status(200).json(buildJsonPayload(null, animal));
+		}).catch(function() {
+			res.status(400).json(buildJsonPayload("Algo inesperado aconteceu", null));
+		});
+	} else {
+		res.status(400).json(buildJsonPayload("Animal não encontrado", null));
+	}
+});
+
+//Delete animal
+app.delete('/animals/:animalId', function(req, res) {
+	console.log("DELETE /animals/" + req.params.animalId);
+
+	if (ObjectId.isValid(req.params.animalId)) {
+		const animalId = ObjectId(req.params.animalId);
+
+		const animalQuery = {_id : animalId};
+		let deleteAnimalPromise = new Promise(function(resolve, reject) {
+			dbps.collection(databaseConstants.databasePetsName).deleteOne(animalQuery, function(err, result) {
+				if (err || result.result.n == 0) {
+					reject();
+				} else {
+					resolve();
+				}
+			});
+		});
+
+		deleteAnimalPromise.then(function() {
+			const scheduledServicesQuery = {animalId : animalId};
+			dbps.collection(databaseConstants.databaseScheduledServicesName).deleteMany(scheduledServicesQuery, function(err, result) {
+				res.status(200).json(buildJsonPayload("Animal deletado", null));
+			});
+		}).catch(function(err) {
+			res.status(400).json(buildJsonPayload("Erro ao deletar animal", null));
+		});
+	} else {
+		res.status(400).json(buildJsonPayload("Erro ao deletar animal", null));
+	}
+});
+
+//Get owner animals
+app.get('/users/:user/animals', function(req, res) {
+	console.log("GET /users/" + req.params.user + "/animals/");
+
+	const user = req.params.user;
+	const query = {owner : user};
+	dbps.collection(databaseConstants.databasePetsName).find(query).toArray(function(err, result) {
+		if (err) {
+			res.status(400).json(buildJsonPayload("Algo inesperado aconteceu", null));
+		} else {
+			result.forEach(function(animal) {
+				purifyAnimal(animal);
+			});
+			res.status(200).json(buildJsonPayload(null, result));
+		}
+	});
 });
