@@ -533,6 +533,58 @@ app.delete('/products/:productId', function(req, res) {
 	}
 });
 
+//Buy products
+app.post('/buy', function(req, res) {
+	console.log("POST /buy");
+
+	const cart = req.body.cart;
+
+	if (typeof cart != 'undefined') {
+		let validKeys = Object.keys(cart).filter(function(productId) {
+			return ObjectId.isValid(productId);
+		});
+		if (validKeys.length > 0) {
+			let quantityPromises = [];
+			let unavailableProducts = false;
+
+			validKeys.map(function(productId) {
+				return {productId: productId, quantity: cart[productId]};
+			}).forEach(function(productInfo) {
+				const query = {_id : ObjectId(productInfo.productId)};
+				let promise = new Promise(function(resolve, reject) {
+					dbps.collection(databaseConstants.databaseProductsName).findOne(query, function(err, product) {
+						if (err) {
+							resolve();
+						} else if (product.quantity < productInfo.quantity) {
+							unavailableProducts = true;
+							resolve();
+						} else {
+							const quantity = {
+								quantity: -Number(productInfo.quantity)
+							};
+							dbps.collection(databaseConstants.databaseProductsName).findOneAndUpdate(query, {$inc : quantity}, function(err, response) {
+								resolve();
+							});
+						}
+					});
+				});
+			});
+
+			Promise.all([quantityPromises]).then(function() {
+				if (unavailableProducts) {
+					res.status(200).json(buildJsonPayload("Compra finalizada! Porém alguns produtos estavam indisponiveis", null));
+				} else {
+					res.status(200).json(buildJsonPayload("Obrigado por finalizar a compra!", null));
+				}
+			});
+		} else {
+			res.status(400).json(buildJsonPayload("Produtos inválidos", null));
+		}
+	} else {
+		res.status(400).json(buildJsonPayload("Faltam informafasfsações", null));
+	}
+});
+
 //Scheduled Services
 //All scheduled services
 app.get('/scheduled_services', function(req, res) {
