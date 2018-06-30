@@ -228,10 +228,10 @@ let siteContent = {
 		</div>
 		<div id="filter_div" style="margin-bottom: 16px;">
 			<select id="service_type_select">
-				<option value="-1">Tipo de serviço</option>
+				<option value="">Tipo de serviço</option>
 			</select>
 			<select id="animal_select">
-				<option value="-1">Animal</option>
+				<option value="">Animal</option>
 			</select>
 			<select id="user_select">
 				<option value="">Dono</option>

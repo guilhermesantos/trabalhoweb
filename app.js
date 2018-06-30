@@ -80,8 +80,8 @@ MongoClient.connect(url, function(err, db) {
 			Promise.all([usersPromise, productsPromise, serviceTypesPromise, petsPromise]).then(function() {
 				let scheduledServicesData = databaseConstants.DadosServicosAgendados;
 				for (let i = 0; i < scheduledServicesData.length; i++) {
-					scheduledServicesData[i].serviceType = serviceTypeIds[i % serviceTypeIds.length];
-					scheduledServicesData[i].animal = animalIds[i % animalIds.length];
+					scheduledServicesData[i].serviceTypeId = serviceTypeIds[i % serviceTypeIds.length];
+					scheduledServicesData[i].animalId = animalIds[i % animalIds.length];
 				}
 				dbps.collection(databaseConstants.databaseScheduledServicesName).insertMany(scheduledServicesData, function(err, res) {
 					if (err) {
@@ -119,6 +119,35 @@ function purifyUser(user) {
 function purifyProduct(product) {
 	product.id = product._id;
 	delete product._id;
+}
+
+function purifyServiceType(serviceType) {
+	serviceType.id = serviceType._id;
+	delete serviceType._id;
+}
+
+function purifyAnimal(animal) {
+	animal.id = animal._id;
+	delete animal._id;
+}
+
+function purifyScheduledService(scheduledService) {
+	scheduledService.id = scheduledService._id;
+	delete scheduledService._id;
+	delete scheduledService.serviceTypeId;
+	delete scheduledService.animalId;
+
+	let serviceType = scheduledService.serviceType[0];
+	purifyServiceType(serviceType);
+	scheduledService.serviceType = serviceType;
+
+	let animal = scheduledService.animal[0];
+	purifyAnimal(animal);
+	scheduledService.animal = animal;
+
+	let animalOwner = scheduledService.animalOwner[0];
+	purifyUser(animalOwner);
+	scheduledService.animalOwner = animalOwner;
 }
 
 //Returns wheter or not the body has all the requested parameters
@@ -455,5 +484,54 @@ app.delete('/products/:productId', function(req, res) {
 		});
 	} else {
 		res.status(400).json(buildJsonPayload("Erro ao deletar produto", null));
+	}
+});
+
+//Scheduled Services
+//All scheduled services
+app.get('/scheduled_services', function(req, res) {
+	console.log("GET /scheduled_services");
+
+	const cursor = dbps.collection(databaseConstants.databaseScheduledServicesName).aggregate([{$lookup: {from: databaseConstants.databaseServiceTypesName,
+																									      localField: "serviceTypeId",
+																									      foreignField: "_id",
+																									      as: "serviceType" }},
+																							   {$lookup: {from: databaseConstants.databasePetsName,
+																									      localField: "animalId",
+																									      foreignField: "_id",
+																									      as: "animal" }},
+																							   {$lookup: {from: databaseConstants.databaseUsersName,
+																									      localField: "animal.owner",
+																									      foreignField: "user",
+																									      as: "animalOwner" }}]);
+	cursor.toArray(function(err, scheduledServices) {
+		if (err) {
+			res.status(404).json(buildJsonPayload("Algo inesperado aconteceu", null));
+		} else {
+			scheduledServices.forEach(function(scheduledService) {
+				purifyScheduledService(scheduledService);
+			});
+			res.status(200).json(buildJsonPayload(null, scheduledServices));
+		}
+	});
+});
+
+//Delete scheduled service
+app.delete('/scheduled_services/:scheduledServiceId', function(req, res) {
+	console.log("DELETE /scheduled_services/" + req.params.scheduledServiceId);
+
+	if (ObjectId.isValid(req.params.scheduledServiceId)) {
+		const scheduledServiceId = ObjectId(req.params.scheduledServiceId);
+
+		const query = {_id : scheduledServiceId};
+		dbps.collection(databaseConstants.databaseScheduledServicesName).deleteOne(query, function(err, result) {
+			if (err || result.result.n == 0) {
+				res.status(400).json(buildJsonPayload("Erro ao deletar serviço agendado", null));
+			} else {
+				res.status(200).json(buildJsonPayload("Serviço agendado deletado", null));
+			}
+		});
+	} else {
+		res.status(400).json(buildJsonPayload("Erro ao deletar serviço agendado", null));
 	}
 });

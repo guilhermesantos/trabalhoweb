@@ -68,12 +68,16 @@ const DadosTiposServicos = [
 ];
 const DadosServicosAgendados = [
 	{
+		//serviceTypeId: "id",
 		date: "2018-06-04",
 		time: "14:30"
+		//animalId: "id",
 	},
 	{
+		//serviceTypeId: "id",
 		date: "2019-01-02",
 		time: "08:00"
+		//animalId: "id",
 	}
 ];
 const DadosAnimais = [

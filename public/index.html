@@ -34,9 +34,6 @@
 
 	// Admin Variables
 	let adminScheduledServices = [];
-	let adminUsers = [];
-	let adminServiceTypes = [];
-	let adminAnimals = [];
 	let adminProducts = [];
 
 	// User Variables
@@ -83,9 +80,6 @@
 	function logoutClick() {
 		connectedUser = null;
 		adminScheduledServices = [];
-		adminUsers = [];
-		adminServiceTypes = [];
-		adminAnimals = [];
 		adminProducts = [];
 
 		userCart = {};
@@ -294,99 +288,66 @@
 
 	function adminShowScheduledServices() {
 		$(".content").html(siteContent.admin.servicosAgendados);
-		let usersPromise = new Promise(function(resolve, reject) {
-			let tx = connection.transaction(databaseUsersName, "readonly");
-			let objectStore = tx.objectStore(databaseUsersName);
-			let request = objectStore.getAll();
-			request.onsuccess = function(e) {
-				let users = e.target.result;
-				if (typeof users != 'undefined') {
-					let usersSelect = document.getElementById("user_select");
-					users.forEach(function(user) {
-						let option = document.createElement('option');
-						option.value = user.usuario;
-						option.text = user.nome;
 
-						usersSelect.append(option);
-					});
-					resolve(users);
-				} else {
-					resolve([]);
-				}
-			};
+		$.ajax({
+	        type: 'get',
+	        contentType: 'application/json',
+	        url: 'scheduled_services',
+	        success: function(response) {
+	        	adminScheduledServices = response.data;
+	        	let serviceTypes = {};
+				let animals = {};
+	        	let animalOwners = {};
+				adminScheduledServices.forEach(function(scheduledService) {
+					serviceTypes[scheduledService.serviceType.id] = scheduledService.serviceType.name;
+					animals[scheduledService.animal.id] = scheduledService.animal.name;
+					animalOwners[scheduledService.animalOwner.user] = scheduledService.animalOwner.name;
+				});
 
-			request.onerror = function(e) {
-				resolve([]);
-			};
-		});
+				serviceTypes = Object.keys(serviceTypes).map(function(serviceTypeId) {
+					return {name: serviceTypes[serviceTypeId], id: serviceTypeId};
+				}).sort(function(serviceType1, serviceType2) {
+					return serviceType1.name > serviceType2.name;
+				});
 
-		let serviceTypesPromise = new Promise(function(resolve, reject) {
-			let tx = connection.transaction(databaseServiceTypesName, "readonly");
-			let objectStore = tx.objectStore(databaseServiceTypesName);
-			let request = objectStore.getAll();
-			request.onsuccess = function(e) {
-				let serviceTypes = e.target.result;
-				if (typeof serviceTypes != 'undefined') {
-					let serviceTypeSelect = document.getElementById("service_type_select");
-					serviceTypes.forEach(function(serviceType) {
-						let option = document.createElement('option');
-						option.value = serviceType.id;
-						option.text = serviceType.nome;
+				animals = Object.keys(animals).map(function(animalId) {
+					return {name: animals[animalId], id: animalId};
+				}).sort(function(animal1, animal2) {
+					return animal1.name > animal2.name;
+				});
 
-						serviceTypeSelect.append(option);
-					});
-					resolve(serviceTypes);
-				} else {
-					resolve([]);
-				}
-			};
+				animalOwners = Object.keys(animalOwners).map(function(user) {
+					return {name: animalOwners[user], user: user};
+				}).sort(function(user1, user2) {
+					return user1.name > user2.name;
+				});
 
-			request.onerror = function(e) {
-				resolve([]);
-			};
-		});
+				let serviceTypeSelect = document.getElementById("service_type_select");
+				serviceTypes.forEach(function(serviceType) {
+					let option = document.createElement('option');
+					option.value = serviceType.id;
+					option.text = serviceType.name;
 
-		let animalsPromise = new Promise(function(resolve, reject) {
-			let tx = connection.transaction(databasePetsName, "readonly");
-			let objectStore = tx.objectStore(databasePetsName);
-			let request = objectStore.getAll();
+					serviceTypeSelect.append(option);
+				});
 
-			request.onsuccess = function(e) {
-				let animals = e.target.result;
-				if (typeof animals != 'undefined') {
-					let animalSelect = document.getElementById("animal_select");
-					animals.forEach(function(animal) {
-						let option = document.createElement('option');
-						option.value = animal.id;
-						option.text = animal.nome;
+				let animalSelect = document.getElementById("animal_select");
+				animals.forEach(function(animal) {
+					let option = document.createElement('option');
+					option.value = animal.id;
+					option.text = animal.name;
 
-						animalSelect.append(option);
-					});
-					resolve(animals);
-				} else {
-					resolve([]);
-				}
-			};
+					animalSelect.append(option);
+				});
 
-			request.onerror = function(e) {
-				resolve([]);
-			};
-		});
+				let usersSelect = document.getElementById("user_select");
+				animalOwners.forEach(function(user) {
+					let option = document.createElement('option');
+					option.value = user.user;
+					option.text = user.name;
 
-		Promise.all([usersPromise, serviceTypesPromise, animalsPromise]).then(function(values) {
-			adminUsers = values[0];
-			adminServiceTypes = values[1];
-			adminAnimals = values[2];
-			let tx = connection.transaction(databaseScheduledServicesName, "readwrite");
-			let objectStore = tx.objectStore(databaseScheduledServicesName);
-			let request = objectStore.getAll();
-			request.onsuccess = function(e) {
-				let scheduledServicesAux = e.target.result;
-				if (typeof scheduledServicesAux == 'undefined') {
-					adminScheduledServices = [];
-					return;
-				}
-				adminScheduledServices = scheduledServicesAux;
+					usersSelect.append(option);
+				});
 
 				adminBuildScheduledServiceTable();
 
@@ -401,34 +362,31 @@
 				$("#animal_select").change(function() {
 					adminBuildScheduledServiceTable();
 				});
-			};
-		});
+	        },
+	        error: function(response) {
+	        	alert(response.responseJSON.message);
+	        }
+        });
 	}
 
 	function adminBuildScheduledServiceTable() {
-		let usuario = $("#user_select").val();
-		let serviceTypeId = Number($("#service_type_select").val());
-		let animalId = Number($("#animal_select").val());
+		let user = $("#user_select").val();
+		let serviceTypeId = $("#service_type_select").val();
+		let animalId = $("#animal_select").val();
 		let scheduledServicesAux = adminScheduledServices;
-		if (serviceTypeId != null && serviceTypeId >= 0) {
+		if (serviceTypeId != null && serviceTypeId.length > 0) {
 			scheduledServicesAux = scheduledServicesAux.filter(function(scheduledService) {
-				return scheduledService.servico == serviceTypeId;
+				return scheduledService.serviceType.id == serviceTypeId;
 			});
 		}
-		if (animalId != null && animalId >= 0) {
+		if (animalId != null && animalId.length > 0) {
 			scheduledServicesAux = scheduledServicesAux.filter(function(scheduledService) {
-				return scheduledService.animal == animalId;
+				return scheduledService.animal.id == animalId;
 			});
 		}
-		if (usuario != null && usuario.length > 0) {
+		if (user != null && user.length > 0) {
 			scheduledServicesAux = scheduledServicesAux.filter(function(scheduledService) {
-				let animal = adminAnimals.find(function(animal) {
-					return animal.id == scheduledService.animal;
-				});
-				if (typeof animal == 'undefined') {
-					return false;
-				}
-				return animal.dono == usuario;
+				return scheduledService.animalOwner.user == user;
 			});
 		}
 
@@ -461,50 +419,31 @@
 			tableHeaderRow.append(tableHeaderServiceTime);
 
 			scheduledServicesAux.forEach(function (scheduledService) {
-				let serviceType = adminServiceTypes.find(function(service) {
-					return scheduledService.servico == service.id;
-				});
-				let animal = adminAnimals.find(function(animal) {
-					return scheduledService.animal == animal.id;
-				});
-
-				if (typeof serviceType == 'undefined' || typeof animal == 'undefined') {
-					return;
-				}
-
-				let dono = adminUsers.find(function(user) {
-					return user.usuario == animal.dono;
-				});
-
-				if (typeof dono == 'undefined') {
-					return;
-				}
-
 				let tableRow = document.createElement('tr');
 				tableRow.setAttribute('class', "service_table_row");
 
 				let tableDataAnimalName = document.createElement('td');
 				tableDataAnimalName.setAttribute('class', "service_table_data");
-				tableDataAnimalName.innerHTML = animal.nome;
+				tableDataAnimalName.innerHTML = scheduledService.animal.name;
 
 				let tableDataAnimalDono = document.createElement('td');
 				tableDataAnimalDono.setAttribute('class', "service_table_data");
-				tableDataAnimalDono.innerHTML = dono.nome;
+				tableDataAnimalDono.innerHTML = scheduledService.animalOwner.name;
 
 				let tableDataServiceName = document.createElement('td');
 				tableDataServiceName.setAttribute('class', "service_table_data");
-				tableDataServiceName.innerHTML = serviceType.nome;
+				tableDataServiceName.innerHTML = scheduledService.serviceType.name;
 
 				let tableDataServiceDate = document.createElement('td');
 				tableDataServiceDate.setAttribute('class', "service_table_data");
-				tableDataServiceDate.innerHTML = scheduledService.data;
+				tableDataServiceDate.innerHTML = scheduledService.date;
 
 				let tableDataServiceTime = document.createElement('td');
 				tableDataServiceTime.setAttribute('class', "service_table_data");
-				tableDataServiceTime.innerHTML = scheduledService.hora;
+				tableDataServiceTime.innerHTML = scheduledService.time;
 
 				let serviceA = document.createElement('a');
-				serviceA.setAttribute('onclick','adminDeleteScheduledService(' + scheduledService.id + ')');
+				serviceA.setAttribute('onclick','adminDeleteScheduledService("' + scheduledService.id + '")');
 
 				let serviceDeleteImage = document.createElement('img');
 				serviceDeleteImage.src = "icons/delete.png";
@@ -539,19 +478,20 @@
 		}
 
 		if (window.confirm("Deseja deletar esse agendamento?")) {
-			let tx = connection.transaction(databaseScheduledServicesName, "readwrite");
-			let objectStore = tx.objectStore(databaseScheduledServicesName);
-			let request = objectStore.delete(scheduledServiceId);
-			request.onsuccess = function(e) {
-				adminScheduledServices = adminScheduledServices.filter(function(scheduledService) {
-					return scheduledService.id != scheduledServiceId;
-				});
-				adminBuildScheduledServiceTable();
-			};
-
-			request.onerror = function(e) {
-				alert("Falha ao deletar agendamento")
-			}
+			$.ajax({
+		        type: 'delete',
+		        contentType: 'application/json',
+		        url: "/scheduled_services/" + scheduledServiceId,
+		        success: function(response) {
+		        	adminScheduledServices = adminScheduledServices.filter(function(scheduledService) {
+						return scheduledService.id != scheduledServiceId;
+					});
+					adminBuildScheduledServiceTable();
+		        },
+		        error: function(response) {
+		        	alert(response.responseJSON.message);
+		        }
+	        });
 		}
 	}
 
