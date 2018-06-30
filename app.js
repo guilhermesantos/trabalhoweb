@@ -31,10 +31,14 @@ MongoClient.connect(url, function(err, db) {
 			throw err;
 		}
 		if (collections.length == 0) {
+			let serviceTypeIds = [];
+			let animalIds = [];
 			console.log("Initializing database with data");
 			const usersPromise = new Promise(function(resolve, reject) {
 				dbps.collection(databaseConstants.databaseUsersName).insertMany(databaseConstants.DadosUsuarios, function(err, res) {
-					if(err) throw err;
+					if (err) {
+						throw err;
+					}
 					console.log(databaseConstants.databaseUsersName + " collection created!");
 					dbps.collection(databaseConstants.databaseUsersName).createIndex({"user" : 1}, {unique : true});
 					resolve();
@@ -42,34 +46,50 @@ MongoClient.connect(url, function(err, db) {
 			});
 			const productsPromise = new Promise(function(resolve, reject) {
 				dbps.collection(databaseConstants.databaseProductsName).insertMany(databaseConstants.DadosProdutos, function(err, res) {
-					if(err) throw err;
+					if (err) {
+						throw err;
+					}
 					console.log(databaseConstants.databaseProductsName + " collection created!");
 					resolve();
 				});
 			});
 			const serviceTypesPromise = new Promise(function(resolve, reject) {
 				dbps.collection(databaseConstants.databaseServiceTypesName).insertMany(databaseConstants.DadosTiposServicos, function(err, res) {
-					if(err) throw err;
+					if (err) {
+						throw err;
+					}
 					console.log(databaseConstants.databaseServiceTypesName + " collection created!");
-					resolve();
-				});
-			});
-			const scheduledServicesPromise = new Promise(function(resolve, reject) {
-				dbps.collection(databaseConstants.databaseScheduledServicesName).insertMany(databaseConstants.DadosServicosAgendados, function(err, res) {
-					if(err) throw err;
-					console.log(databaseConstants.databaseScheduledServicesName + " collection created!");
+					res.ops.forEach(function(serviceType) {
+						serviceTypeIds.push(serviceType._id);
+					});
 					resolve();
 				});
 			});
 			const petsPromise = new Promise(function(resolve, reject) {
 				dbps.collection(databaseConstants.databasePetsName).insertMany(databaseConstants.DadosAnimais, function(err, res) {
-					if(err) throw err;	
+					if (err) {
+						throw err;
+					}
 					console.log(databaseConstants.databasePetsName + " collection created!");
+					res.ops.forEach(function(animal) {
+						animalIds.push(animal._id);
+					});
 					resolve();
 				});
 			});
-			Promise.all([usersPromise, productsPromise, serviceTypesPromise, scheduledServicesPromise, petsPromise]).then(function() {
-				startServer();
+			Promise.all([usersPromise, productsPromise, serviceTypesPromise, petsPromise]).then(function() {
+				let scheduledServicesData = databaseConstants.DadosServicosAgendados;
+				for (let i = 0; i < scheduledServicesData.length; i++) {
+					scheduledServicesData[i].serviceType = serviceTypeIds[i % serviceTypeIds.length];
+					scheduledServicesData[i].animal = animalIds[i % animalIds.length];
+				}
+				dbps.collection(databaseConstants.databaseScheduledServicesName).insertMany(scheduledServicesData, function(err, res) {
+					if (err) {
+						throw err;
+					}
+					console.log(databaseConstants.databaseScheduledServicesName + " collection created!");
+					startServer();
+				});
 			});
 		} else {
 			startServer();
@@ -101,6 +121,7 @@ function purifyProduct(product) {
 	delete product._id;
 }
 
+//Returns wheter or not the body has all the requested parameters
 function validBody(params, body) {
 	for (let i = 0; i < params.length; i++) {
 		const param = params[i];
@@ -189,6 +210,7 @@ app.post('/users', function(req, res) {
 	} else {
 		const userObject = {
 			user: user,
+			password: password,
 			name: name,
 			email: email,
 			phone: phone,
@@ -265,9 +287,10 @@ app.post('/users/:user', function(req, res) {
 	}
 });
 
+//Service Types
 //New Service Type
-app.post('/new_service_type', function(req, res) {
-	console.log("POST /new_service_type");
+app.post('/service_type', function(req, res) {
+	console.log("POST /service_type");
 
 	if (!validBody(['name', {'price' : 'number'}], req.body)) {
 		res.status(400).json(buildJsonPayload("Faltam informações", null));
@@ -300,6 +323,7 @@ app.post('/new_service_type', function(req, res) {
 });
 
 //Products
+//All products
 app.get('/products', function(req, res) {
 	console.log("GET /products");
 
@@ -316,28 +340,9 @@ app.get('/products', function(req, res) {
 	});
 });
 
-app.get('/products/:productId', function(req, res) {
-	console.log("GET /products/" + req.params.productId);
-
-	if (ObjectId.isValid(req.params.productId)) {
-		const productId = ObjectId(req.params.productId);
-
-		const query = {_id : productId};
-		dbps.collection(databaseConstants.databaseProductsName).findOne(query, function(err, product) {
-			if (err || typeof product == 'undefined' || product == null) {
-				res.status(400).json(buildJsonPayload("Produto não encontrado", null));
-			} else {
-				purifyProduct(product);
-				res.status(200).json(buildJsonPayload(null, product));
-			}
-		});
-	} else {
-		res.status(400).json(buildJsonPayload("Produto não encontrado", null));
-	}
-});
-
-app.post('/new_product', function(req, res) {
-	console.log("POST /new_product");
+//New product
+app.post('/products', function(req, res) {
+	console.log("POST /products");
 
 	if (!validBody(['name', 'description', {'price' : 'number'}, {'quantity' : 'number'}], req.body)) {
 		res.status(400).json(buildJsonPayload("Faltam informações", null));
@@ -373,6 +378,28 @@ app.post('/new_product', function(req, res) {
 	}
 });
 
+//Get specific product
+app.get('/products/:productId', function(req, res) {
+	console.log("GET /products/" + req.params.productId);
+
+	if (ObjectId.isValid(req.params.productId)) {
+		const productId = ObjectId(req.params.productId);
+
+		const query = {_id : productId};
+		dbps.collection(databaseConstants.databaseProductsName).findOne(query, function(err, product) {
+			if (err || typeof product == 'undefined' || product == null) {
+				res.status(400).json(buildJsonPayload("Produto não encontrado", null));
+			} else {
+				purifyProduct(product);
+				res.status(200).json(buildJsonPayload(null, product));
+			}
+		});
+	} else {
+		res.status(400).json(buildJsonPayload("Produto não encontrado", null));
+	}
+});
+
+//Edit product
 app.post('/products/:productId', function(req, res) {
 	if (!validBody(['name', 'description', {'price' : 'number'}, {'quantity' : 'number'}], req.body)) {
 		res.status(400).json(buildJsonPayload("Faltam informações", null));
@@ -411,6 +438,7 @@ app.post('/products/:productId', function(req, res) {
 	}
 });
 
+//Delete product
 app.delete('/products/:productId', function(req, res) {
 	console.log("DELETE /products/" + req.params.productId);
 

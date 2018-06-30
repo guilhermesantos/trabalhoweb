@@ -68,16 +68,12 @@ const DadosTiposServicos = [
 ];
 const DadosServicosAgendados = [
 	{
-		servico: 1,
 		date: "2018-06-04",
-		time: "14:30",
-		animal: 2
+		time: "14:30"
 	},
 	{
-		servico: 4,
 		date: "2019-01-02",
-		time: "08:00",
-		animal: 1
+		time: "08:00"
 	}
 ];
 const DadosAnimais = [
