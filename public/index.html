@@ -642,7 +642,7 @@
 				tableDataProductQuantity.innerHTML = product.quantity;
 
 				let productEditA = document.createElement('a');
-				productEditA.setAttribute('onclick','adminEditProduct(' + product.id + ')');
+				productEditA.setAttribute('onclick','adminEditProduct("' + product.id + '")');
 
 				let productEditImage = document.createElement('img');
 				productEditImage.src = "icons/edit.png";
@@ -652,7 +652,7 @@
 				productEditImage.style.paddingRight = "4px";
 
 				let productDeleteA = document.createElement('a');
-				productDeleteA.setAttribute('onclick','adminDeleteProduct(' + product.id + ')');
+				productDeleteA.setAttribute('onclick','adminDeleteProduct("' + product.id + '")');
 
 				let productDeleteImage = document.createElement('img');
 				productDeleteImage.src = "icons/delete.png";
@@ -688,64 +688,67 @@
 		}
 
 		$(".content").html(siteContent.admin.editarProduto);
-		let tx = connection.transaction(databaseProductsName, "readwrite");
-		let objectStore = tx.objectStore(databaseProductsName);
-		let request = objectStore.index("id").get(productId);
 
-		request.onsuccess = function(e) {
-			let productInfo = e.target.result;
-			if (typeof productInfo == 'undefined') {
-				return;
-			}
-
-			$("#edit_product_name").val(productInfo.nome);
-			$("#edit_product_description").val(productInfo.descricao);
-			$("#edit_product_price").val(productInfo.preco);
-			$("#edit_product_quantity").val(productInfo.quantidade);
-
-			$("#edit_product_form").on('submit', function(e) {
-				e.preventDefault();
-
-				let name = $("#edit_product_name").val();
-				let description = $("#edit_product_description").val();
-				let price = $("#edit_product_price").val();
-				let quantity = $("#edit_product_quantity").val();
-
-				if (name.length == 0) {
-					alert("Insira um nome para o produto");
-					return;
-				} else if (typeof price == 'undefined' || price == null || price.length == 0) {
-					alert("Insira um preço");
-					return;
-				} else if (typeof quantity == 'undefined' || quantity == null || quantity.length == 0) {
-					alert("Insira uma quantidade");
+		$.ajax({
+	        type: 'get',
+	        contentType: 'application/json',
+	        url: "products/" + productId,
+	        success: function(response) {
+	        	let productInfo = response.data;
+				if (typeof productInfo == 'undefined') {
 					return;
 				}
 
-				productInfo.nome = name;
-				productInfo.descricao = description;
-				productInfo.preco = price;
-				productInfo.quantidade = quantity;
+				$("#edit_product_name").val(productInfo.name);
+				$("#edit_product_description").val(productInfo.description);
+				$("#edit_product_price").val(productInfo.price);
+				$("#edit_product_quantity").val(productInfo.quantity);
 
-				let tx = connection.transaction(databaseProductsName, "readwrite");
-				let objectStore = tx.objectStore(databaseProductsName);
-				let request = objectStore.put(productInfo);
+				$("#edit_product_form").on('submit', function(e) {
+					e.preventDefault();
 
-				request.onsuccess = function(e) {
-					alert("Produto atualizado");
-					adminShowProducts();
-				};
+					const name = $("#edit_product_name").val();
+					const description = $("#edit_product_description").val();
+					const price = $("#edit_product_price").val();
+					const quantity = $("#edit_product_quantity").val();
 
-				request.onerror = function(e) {
-					alert("Erro ao editar produto, tente novamente")
-				};
-			});
-		};
+					if (name.length == 0) {
+						alert("Insira um nome para o produto");
+						return;
+					} else if (typeof price == 'undefined' || price == null || price.length == 0) {
+						alert("Insira um preço");
+						return;
+					} else if (typeof quantity == 'undefined' || quantity == null || quantity.length == 0) {
+						alert("Insira uma quantidade");
+						return;
+					}
 
-		request.onerror = function(e) {
-			alert("Erro ao buscar produto");
-			adminShowProducts();
-		};
+					const product = {
+						name: name,
+						description: description,
+						price: Number(price),
+						quantity: Number(quantity)
+					}
+					const data = JSON.stringify(product);
+					$.ajax({
+				        type: 'post',
+				        contentType: 'application/json',
+				        url: "products/" + productId,
+				        data: data,
+				        success: function(response) {
+				        	alert(response.message);
+				        	adminShowProducts();
+				        }, error: function(response) {
+				        	alert(response.responseJSON.message);
+				        }
+				    });
+				});
+	        },
+	        error: function(response) {
+	        	alert(response.responseJSON.message);
+	        	adminShowProducts();
+	        }
+        });
 	}
 
 	function adminDeleteProduct(productId) {
@@ -754,19 +757,19 @@
 		}
 
 		if (window.confirm("Deseja deletar esse produto?")) {
-			let tx = connection.transaction(databaseProductsName, "readwrite");
-			let objectStore = tx.objectStore(databaseProductsName);
-			let request = objectStore.delete(productId);
-			request.onsuccess = function(e) {
-				adminProducts = adminProducts.filter(function(product) {
-					return product.id != productId;
-				});
-				adminBuildProductsTable();
-			};
-
-			request.onerror = function(e) {
-				alert("Falha ao deletar produto")
-			}
+			$.ajax({
+		        type: 'delete',
+		        contentType: 'application/json',
+		        url: "products/" + productId,
+		        success: function(response) {
+		        	adminProducts = adminProducts.filter(function(product) {
+						return product.id != productId;
+					});
+		        	adminBuildProductsTable();
+		        }, error: function(response) {
+		        	alert(response.responseJSON.message);
+		        }
+		    });
 		}
 	}
 

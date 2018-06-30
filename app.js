@@ -3,6 +3,7 @@ const fs = require('fs');
 const bodyParser = require('body-parser');
 
 const MongoClient = require('mongodb').MongoClient;
+const ObjectId = require('mongodb').ObjectID;
 const url = "mongodb://localhost:27017/";
 
 const app = express();
@@ -101,6 +102,11 @@ function purifyUser(user) {
 			isAdmin: user.isAdmin};
 }
 
+function purifyProduct(product) {
+	product.id = product._id;
+	delete product._id;
+}
+
 function validBody(params, body) {
 	for (let i = 0; i < params.length; i++) {
 		const param = params[i];
@@ -132,7 +138,7 @@ app.post('/login', function(req, res) {
 	console.log("POST /login");
 
 	if (!validBody(['user', 'password'], req.body)) {
-		res.status(400).json(buildJsonPayload("Missing credentials", null));
+		res.status(400).json(buildJsonPayload("Faltam credenciais", null));
 		return;
 	}
 
@@ -142,9 +148,9 @@ app.post('/login', function(req, res) {
 	const query = {user: user, password: password};
 	dbps.collection(databaseConstants.databaseUsersName).find(query).toArray(function(err, result) {
 		if (err) {
-			res.status(404).json(buildJsonPayload("An error ocurred. Please try again.", null));
+			res.status(404).json(buildJsonPayload("Algo inesperado aconteceu", null));
 		} else if (result.length == 0) {
-			res.status(404).json(buildJsonPayload("Username or password is incorrect.", null));
+			res.status(404).json(buildJsonPayload("Nome de usuário ou senha incorreta", null));
 		} else {
 			const user = result[0];
 			res.status(200).json(buildJsonPayload(null, purifyUser(user)));
@@ -157,7 +163,7 @@ app.post('/new_user', function(req, res) {
 	console.log("POST /new_user");
 
 	if (!validBody(['user', 'name', 'phone', 'email', 'city', 'neighborhood', 'street', 'password', 'repeatPassword', {'isAdmin' : 'boolean'}], req.body)) {
-		res.status(400).json(buildJsonPayload("Missing information", null));
+		res.status(400).json(buildJsonPayload("Faltam informações", null));
 		return;
 	}
 
@@ -217,7 +223,7 @@ app.post('/new_product', function(req, res) {
 	console.log("POST /new_product");
 
 	if (!validBody(['name', 'description', {'price' : 'number'}, {'quantity' : 'number'}], req.body)) {
-		res.status(400).json(buildJsonPayload("Missing information", null));
+		res.status(400).json(buildJsonPayload("Faltam informações", null));
 		return;
 	}
 
@@ -255,7 +261,7 @@ app.post('/new_service_type', function(req, res) {
 	console.log("POST /new_service_type");
 
 	if (!validBody(['name', {'price' : 'number'}], req.body)) {
-		res.status(400).json(buildJsonPayload("Missing information", null));
+		res.status(400).json(buildJsonPayload("Faltam informações", null));
 		return;
 	}
 
@@ -289,14 +295,91 @@ app.get('/products', function(req, res) {
 	console.log("GET /products");
 
 	let products = [];
-	const cursor = dbps.collection(databaseConstants.databaseProductsName).find();
-	cursor.each(function(err, product) {
-		if (product != null) {
-			product.id = product._id;
-			product._id = undefined;
-			products.push(product);
+	const cursor = dbps.collection(databaseConstants.databaseProductsName).find().toArray(function(err, products) {
+		if (err) {
+			res.status(400).json(buildJsonPayload("Algo inesperado aconteceu", null));
 		} else {
+			products.forEach(function(product) {
+				purifyProduct(product);
+			});
 			res.status(200).json(buildJsonPayload(null, products));
 		}
 	});
+});
+
+app.get('/products/:productId', function(req, res) {
+	console.log("GET /products/" + req.params.productId);
+
+	if (ObjectId.isValid(req.params.productId)) {
+		const productId = ObjectId(req.params.productId);
+
+		const query = {_id : productId};
+		dbps.collection(databaseConstants.databaseProductsName).findOne(query, function(err, product) {
+			if (err || typeof product == 'undefined' || product == null) {
+				res.status(400).json(buildJsonPayload("Produto não encontrado", null));
+			} else {
+				purifyProduct(product);
+				res.status(200).json(buildJsonPayload(null, product));
+			}
+		});
+	} else {
+		res.status(400).json(buildJsonPayload("Produto não encontrado", null));
+	}
+});
+
+app.post('/products/:productId', function(req, res) {
+	if (!validBody(['name', 'description', {'price' : 'number'}, {'quantity' : 'number'}], req.body)) {
+		res.status(400).json(buildJsonPayload("Faltam informações", null));
+		return;
+	}
+
+	const id = req.params.productId;
+	const name = req.body.name;
+	const description = req.body.description;
+	const price = Number(req.body.price);
+	const quantity = Number(req.body.quantity);
+
+	if (ObjectId.isValid(id)) {
+		const productId = ObjectId(id);
+
+		if (name.length == 0) {
+			res.status(400).json(buildJsonPayload("Nome do produto não informado", null));
+		} else {
+			const query = {_id : productId};
+			const productObject = {
+				name: name,
+				description: description,
+				price: price,
+				quantity: quantity
+			}
+			dbps.collection(databaseConstants.databaseProductsName).updateOne(query, {$set : productObject}, function(err, response) {
+				if (err) {
+					res.status(400).json(buildJsonPayload("Algo inesperado aconteceu", null));
+				} else {
+					res.status(200).json(buildJsonPayload("Produto editado com sucesso", null));
+				}
+			});
+		}
+	} else {
+		res.status(400).json(buildJsonPayload("Produto não encontrado", null));
+	}
+});
+
+app.delete('/products/:productId', function(req, res) {
+	console.log("DELETE /products/" + req.params.productId);
+
+	if (ObjectId.isValid(req.params.productId)) {
+		const productId = ObjectId(req.params.productId);
+
+		const query = {_id : productId};
+		dbps.collection(databaseConstants.databaseProductsName).deleteOne(query, function(err, result) {
+			if (err || result.result.n == 0) {
+				res.status(400).json(buildJsonPayload("Erro ao deletar produto", null));
+			} else {
+				res.status(200).json(buildJsonPayload("Produto deletado", null));
+			}
+		});
+	} else {
+		res.status(400).json(buildJsonPayload("Erro ao deletar produto", null));
+	}
 });
