@@ -92,14 +92,8 @@ function buildJsonPayload(message, data) {
 }
 
 function purifyUser(user) {
-	return {user: user.user,
-			name: user.name, 
-			email: user.email,
-			phone: user.phone,
-			city: user.city,
-			street: user.street,
-			neighborhood: user.neighborhood, 
-			isAdmin: user.isAdmin};
+	delete user._id;
+	delete user.password;
 }
 
 function purifyProduct(product) {
@@ -153,14 +147,16 @@ app.post('/login', function(req, res) {
 			res.status(404).json(buildJsonPayload("Nome de usuário ou senha incorreta", null));
 		} else {
 			const user = result[0];
-			res.status(200).json(buildJsonPayload(null, purifyUser(user)));
+			purifyUser(user);
+			res.status(200).json(buildJsonPayload(null, user));
 		}
 	});
 });
 
-//New User
-app.post('/new_user', function(req, res) {
-	console.log("POST /new_user");
+//Users
+//New user
+app.post('/users', function(req, res) {
+	console.log("POST /users");
 
 	if (!validBody(['user', 'name', 'phone', 'email', 'city', 'neighborhood', 'street', 'password', 'repeatPassword', {'isAdmin' : 'boolean'}], req.body)) {
 		res.status(400).json(buildJsonPayload("Faltam informações", null));
@@ -194,7 +190,6 @@ app.post('/new_user', function(req, res) {
 		const userObject = {
 			user: user,
 			name: name,
-			password: password,
 			email: email,
 			phone: phone,
 			city: city,
@@ -218,39 +213,53 @@ app.post('/new_user', function(req, res) {
 	}
 });
 
-//New Product
-app.post('/new_product', function(req, res) {
-	console.log("POST /new_product");
+//Edit user
+app.post('/users/:user', function(req, res) {
+	console.log("POST /users/" + req.params.user);
 
-	if (!validBody(['name', 'description', {'price' : 'number'}, {'quantity' : 'number'}], req.body)) {
+	if (!validBody(['name', 'phone', 'email', 'city', 'neighborhood', 'street', 'password', 'repeatPassword'], req.body)) {
 		res.status(400).json(buildJsonPayload("Faltam informações", null));
 		return;
 	}
 
+	const user = req.params.user;
 	const name = req.body.name;
-	const description = req.body.description;
-	const price = Number(req.body.price);
-	const quantity = Number(req.body.quantity);
+	const phone = req.body.phone;
+	const email = req.body.email;
+	const city = req.body.city;
+	const neighborhood = req.body.neighborhood;
+	const street = req.body.street;
+	const password = req.body.password;
+	const repeatPassword = req.body.repeatPassword;
 
 	if (name.length == 0) {
-		res.status(400).json(buildJsonPayload("Nome do produto não informado", null));
+		res.status(400).json(buildJsonPayload("Nome não informado", null));
+	} else if (phone.length == 0) {
+		res.status(400).json(buildJsonPayload("Telefone não informado", null));
+	} else if (email.length == 0) {
+		res.status(400).json(buildJsonPayload("Email não informado", null));
+	} else if (password.length > 0 && password != repeatPassword) {
+		res.status(400).json(buildJsonPayload("As senhas são diferentes", null));
 	} else {
-		const productObject = {
+		const query = {user: user};
+		const userObject = {
 			name: name,
-			description: description,
-			price: price,
-			quantity: quantity
+			email: email,
+			phone: phone,
+			city: city,
+			street: street,
+			neighborhood: neighborhood
 		}
-		dbps.collection(databaseConstants.databaseProductsName).insertOne(productObject, function(err, response) {
+		if (password.length > 0) {
+			userObject.password = password;
+		}
+		dbps.collection(databaseConstants.databaseUsersName).findOneAndUpdate(query, {$set : userObject}, {returnOriginal : false}, function(err, response) {
 			if (err) {
-				console.log(err);
-				if (err.code == 11000) {
-					res.status(400).json(buildJsonPayload("Este produto já existe", null));
-				} else {
-					res.status(400).json(buildJsonPayload("Algo inesperado aconteceu", null));
-				}
+				res.status(400).json(buildJsonPayload("Algo inesperado aconteceu", null));
 			} else {
-				res.status(200).json(buildJsonPayload("Produto criado com sucesso", null));
+				const user = response.value;
+				purifyUser(user);
+				res.status(200).json(buildJsonPayload("Informações alterada com sucesso", user));
 			}
 		});
 	}
@@ -290,7 +299,7 @@ app.post('/new_service_type', function(req, res) {
 	}
 });
 
-//All Products
+//Products
 app.get('/products', function(req, res) {
 	console.log("GET /products");
 
@@ -324,6 +333,43 @@ app.get('/products/:productId', function(req, res) {
 		});
 	} else {
 		res.status(400).json(buildJsonPayload("Produto não encontrado", null));
+	}
+});
+
+app.post('/new_product', function(req, res) {
+	console.log("POST /new_product");
+
+	if (!validBody(['name', 'description', {'price' : 'number'}, {'quantity' : 'number'}], req.body)) {
+		res.status(400).json(buildJsonPayload("Faltam informações", null));
+		return;
+	}
+
+	const name = req.body.name;
+	const description = req.body.description;
+	const price = Number(req.body.price);
+	const quantity = Number(req.body.quantity);
+
+	if (name.length == 0) {
+		res.status(400).json(buildJsonPayload("Nome do produto não informado", null));
+	} else {
+		const productObject = {
+			name: name,
+			description: description,
+			price: price,
+			quantity: quantity
+		}
+		dbps.collection(databaseConstants.databaseProductsName).insertOne(productObject, function(err, response) {
+			if (err) {
+				console.log(err);
+				if (err.code == 11000) {
+					res.status(400).json(buildJsonPayload("Este produto já existe", null));
+				} else {
+					res.status(400).json(buildJsonPayload("Algo inesperado aconteceu", null));
+				}
+			} else {
+				res.status(200).json(buildJsonPayload("Produto criado com sucesso", null));
+			}
+		});
 	}
 });
 

@@ -64,7 +64,6 @@
 	        url: 'login',
 	        data: data,
 	        success: function(response) {
-	       		console.log(response);
 	       		connectedUser = response.data;
 	       		if (connectedUser.isAdmin) {
 					$(".horizontal_menu").html(horizontalMenu.admin);
@@ -73,7 +72,7 @@
 					$(".horizontal_menu").html(horizontalMenu.client);
 					showAnimalManager();
 				}
-				setWelcomeMessageName(connectedUser.nome);
+				setWelcomeMessageName(connectedUser.name);
 	        },
 	        error: function(response) {
 	        	alert(response.responseJSON.message);
@@ -209,7 +208,7 @@
 				$.ajax({
 			        type: 'post',
 			        contentType: 'application/json',
-			        url: 'new_user',
+			        url: 'users',
 			        data: data,
 			        success: function(response) {
 						alert(response.message);
@@ -1266,70 +1265,66 @@
 
 	function showEditUser() {
 		$(".content").html(siteContent.client.editarRegistro);
-		var tx = connection.transaction(databaseUsersName, "readonly");
-		var objectStore = tx.objectStore(databaseUsersName);
-		var request = objectStore.index("usuario").get(connectedUser.usuario);
-    	request.onsuccess = function(event) {
-    		let userInfo = event.target.result;
-		    if (typeof userInfo != 'undefined') {
-		    	$("#register_name").val(userInfo.nome);
-				$("#register_address_phone").val(userInfo.telefone);
-				$("#register_address_email").val(userInfo.email);
-				$("#register_address_city").val(userInfo.cidade);
-				$("#register_address_neighborhood").val(userInfo.bairro);
-				$("#register_address_street").val(userInfo.rua);
-				$("#editar_registro_form").on('submit', function(e){
-					e.preventDefault();
-					let nome = $("#register_name").val();
-					let telefone = $("#register_address_phone").val();
-					let email = $("#register_address_email").val();
-					let cidade = $("#register_address_city").val();
-					let bairro = $("#register_address_neighborhood").val();
-					let rua = $("#register_address_street").val();
-					let senha = $("#register_password").val();
-					let repetirSenha = $("#register_repeat_password").val();
 
-					if (nome.length == 0) {
-						alert("Por favor insira um nome");
-						return;
-					} else if (telefone.length == 0) {
-						alert("Por favor insira um telefone");
-						return;
-					} else if (email.length == 0) {
-						alert("Por favor insira um email");
-						return;
-					}
+    	$("#register_name").val(connectedUser.name);
+		$("#register_address_phone").val(connectedUser.phone);
+		$("#register_address_email").val(connectedUser.email);
+		$("#register_address_city").val(connectedUser.city);
+		$("#register_address_neighborhood").val(connectedUser.neighborhood);
+		$("#register_address_street").val(connectedUser.street);
+		$("#editar_registro_form").on('submit', function(e){
+			e.preventDefault();
+			let name = $("#register_name").val();
+			let phone = $("#register_address_phone").val();
+			let email = $("#register_address_email").val();
+			let city = $("#register_address_city").val();
+			let neighborhood = $("#register_address_neighborhood").val();
+			let street = $("#register_address_street").val();
+			let password = $("#register_password").val();
+			let repeatPassword = $("#register_repeat_password").val();
 
-					if (senha.length > 0 && senha != repetirSenha) {
-						alert("As senhas estão diferentes.");
-						return;
-					}
+			if (name.length == 0) {
+				alert("Por favor insira um nome");
+				return;
+			} else if (phone.length == 0) {
+				alert("Por favor insira um telefone");
+				return;
+			} else if (email.length == 0) {
+				alert("Por favor insira um email");
+				return;
+			}
 
-					userInfo.nome = nome;
-					userInfo.telefone = telefone;
-					userInfo.email = email;
-					userInfo.cidade = cidade;
-					userInfo.bairro = bairro;
-					userInfo.rua = rua;
-					if (senha.length > 0) {
-						userInfo.senha = senha;
-					}
+			if (password.length > 0 && password != repeatPassword) {
+				alert("As senhas estão diferentes.");
+				return;
+			}
 
-					let request = connection.transaction(databaseUsersName, "readwrite").objectStore(databaseUsersName).put(userInfo);
-					request.onsuccess = function(e){
-			            alert("Cadastro atualizado!");
-			            setWelcomeMessageName(userInfo.nome);
-			            connectedUser = userInfo;
-			        };
-
-			        request.onerror = function(e){
-			            alert("Erro ao atualizar cadastro, tente novamente.");
-			        };
-				});
-		    } else {
-		    	alert("Erro ao recuperar informações do usuário, por favor tente novamente.");
-		    }
-		};
+			let user = {
+				name: name,
+				password: password,
+				repeatPassword: repeatPassword,
+				email: email,
+				phone: phone,
+				city: city,
+				street: street,
+				neighborhood: neighborhood
+			};
+			const data = JSON.stringify(user);
+			$.ajax({
+		        type: 'post',
+		        contentType: 'application/json',
+		        url: "users/" + connectedUser.user,
+		        data: data,
+		        success: function(response) {
+					alert(response.message);
+					connectedUser = response.data;
+		            setWelcomeMessageName(connectedUser.name);
+		        },
+		        error: function(response) {
+		        	alert(response.responseJSON.message);
+		        }
+	        });
+		});
 	}
 
 	function showAnimalManager() {
