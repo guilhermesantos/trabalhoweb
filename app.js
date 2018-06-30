@@ -87,6 +87,8 @@ MongoClient.connect(url, function(err, db) {
 					if (err) {
 						throw err;
 					}
+					dbps.collection(databaseConstants.databaseScheduledServicesName).createIndex({"serviceTypeId" : 1, "date" : 1, "time" : 1}, {unique : true});
+					dbps.collection(databaseConstants.databaseScheduledServicesName).createIndex({"animalId" : 1, "date" : 1, "time" : 1}, {unique : true});
 					console.log(databaseConstants.databaseScheduledServicesName + " collection created!");
 					startServer();
 				});
@@ -342,9 +344,28 @@ app.post('/users/:user', function(req, res) {
 });
 
 //Service Types
+//Get all service types
+app.get('/service_types', function(req, res) {
+	console.log("GET /service_types");
+
+	dbps.collection(databaseConstants.databaseServiceTypesName).find().toArray(function(err, serviceTypes) {
+		if (err) {
+			res.status(400).json(buildJsonPayload("Algo inesperado aconteceu", null));
+		} else {
+			serviceTypes.forEach(function(serviceType) {
+				purifyServiceType(serviceType);
+			});
+			serviceTypes.sort(function(serviceType1, serviceType2) {
+				return serviceType1.name > serviceType2.name;
+			});
+			res.status(200).json(buildJsonPayload(null, serviceTypes));
+		}
+	});
+});
+
 //New Service Type
-app.post('/service_type', function(req, res) {
-	console.log("POST /service_type");
+app.post('/service_types', function(req, res) {
+	console.log("POST /service_types");
 
 	if (!validBody(['name', {'price' : 'number'}], req.body)) {
 		res.status(400).json(buildJsonPayload("Faltam informações", null));
@@ -539,6 +560,44 @@ app.get('/scheduled_services', function(req, res) {
 			res.status(200).json(buildJsonPayload(null, scheduledServices));
 		}
 	});
+});
+
+app.post('/scheduled_services', function(req, res) {
+	console.log("POST /scheduled_services");
+
+	if (!validBody(['date', 'time', 'serviceTypeId', 'animalId'], req.body)) {
+		res.status(400).json(buildJsonPayload("Faltam informações", null));
+		return;
+	}
+
+	if (ObjectId.isValid(req.body.serviceTypeId) && ObjectId.isValid(req.body.animalId)) {
+		const date = req.body.date;
+		const time = req.body.time;
+		const serviceTypeId = ObjectId(req.body.serviceTypeId);
+		const animalId = ObjectId(req.body.animalId);
+
+		const scheduledServiceObject = {
+			date: date,
+			time: time,
+			serviceTypeId: serviceTypeId,
+			animalId: animalId
+		}
+		dbps.collection(databaseConstants.databaseScheduledServicesName).insertOne(scheduledServiceObject, function(err, response) {
+			if (err) {
+				if (err.code == 11000) {
+					res.status(400).json(buildJsonPayload("Já existe outro serviço agendado nesta data", null));
+				} else {
+					res.status(400).json(buildJsonPayload("Algo inesperado aconteceu", null));
+				}
+			} else {
+				res.status(200).json(buildJsonPayload("Serviço agendado com sucesso", null));
+			}
+		});
+	} else if (!ObjectId.isValid(req.body.serviceTypeId)) {
+		res.status(400).json(buildJsonPayload("Tipo de serviço não encontrado"));
+	} else {
+		res.status(400).json(buildJsonPayload("Animal não encontrado"));
+	}
 });
 
 //Delete scheduled service

@@ -273,7 +273,7 @@
 				$.ajax({
 			        type: 'post',
 			        contentType: 'application/json',
-			        url: 'service_type',
+			        url: 'service_types',
 			        data: data,
 			        success: function(response) {
 						alert(response.message);
@@ -735,22 +735,48 @@
 
 	function showScheduleService() {
 		$(".content").html(siteContent.client.agendarHorario);
-		getAllServiceTypes();
-		var tx = connection.transaction(databasePetsName, "readonly");
-		var objectStore = tx.objectStore(databasePetsName);
-		var request = objectStore.index("dono").getAll(connectedUser.usuario);
-		request.onsuccess = function(event) {
-			let animalsData = event.target.result;
-			if (typeof animalsData != 'undefined') {
+		
+		$.ajax({
+	        type: 'get',
+	        contentType: 'application/json',
+	        url: '/service_types',
+	        success: function(response) {
+	        	let serviceTypes = response.data;
+				let serviceSelect = document.getElementById("select_service");
+				while (serviceSelect.options.length) {
+			        serviceSelect.remove(0);
+			    }
+				serviceTypes.forEach(function(serviceType) {
+					let option = document.createElement('option');
+					option.text = serviceType.name + " (R$" + serviceType.price + ")";
+					option.value = serviceType.id;
+
+					serviceSelect.append(option);
+				});
+	        },
+	        error: function(response) {
+	        	alert(response.responseJSON.message);
+	        }
+        });
+
+        $.ajax({
+	        type: 'get',
+	        contentType: 'application/json',
+	        url: "/users/" + connectedUser.user + "/animals",
+	        success: function(response) {
+	        	let animals = response.data;
 				let animalsSelect = document.getElementById("select_animal");
-				animalsData.forEach(function (animal) {
+				animals.forEach(function (animal) {
 					let option = document.createElement('option');
 					option.value = animal.id;
-					option.text = animal.nome;
+					option.text = animal.name;
 					animalsSelect.append(option);
 				});
-			}
-		}
+	        },
+	        error: function(response) {
+	        	alert(response.responseJSON.message);
+	        }
+        });
 
 		var today = new Date();
 		var dd = today.getDate();
@@ -767,6 +793,7 @@
 
 		$("#agendar_horario_form").on('submit', function(e) {
 			e.preventDefault();
+
 			let serviceId = $("#select_service").val();
 			let animalId = $("#select_animal").val();
 			let date = $("#date_input").val();
@@ -780,52 +807,27 @@
 			} else if (time == null) {
 				alert("Por favor escolha um horário");
 			} else {
-				let servicoAgendado = {
-					servico: Number(serviceId),
-					data: date,
-					hora: time,
-					animal: Number(animalId)
+				const scheduledService = {
+					serviceTypeId: serviceId,
+					date: date,
+					time: time,
+					animalId: animalId
 				};
-				let tx = connection.transaction(databaseScheduledServicesName, "readwrite");
-				let objectStore = tx.objectStore(databaseScheduledServicesName);
-				let request = objectStore.put(servicoAgendado);
-
-				request.onsuccess = function(e) {
-					alert("Serviço agendado com sucesso");
-				};
-
-				request.onerror = function(e) {
-					alert("Já existe outro serviço agendado nesta data");
-				};
+				const data = JSON.stringify(scheduledService);
+				$.ajax({
+			        type: 'post',
+			        contentType: 'application/json',
+			        url: '/scheduled_services/',
+			        data: data,
+			        success: function(response) {
+			        	alert(response.message);
+			        },
+			        error: function(response) {
+			        	alert(response.responseJSON.message);
+			        }
+		        });
 			}
 		});
-	}
-
-	function getAllServiceTypes() {
-		let tx = connection.transaction(databaseServiceTypesName, "readonly");
-		let objectStore = tx.objectStore(databaseServiceTypesName);
-		let request = objectStore.getAll();
-
-		request.onsuccess = function(e) {
-			let serviceTypes = e.target.result;
-			if (typeof serviceTypes != 'undefined') {
-				let serviceSelect = document.getElementById("select_service");
-				while (serviceSelect.options.length) {
-			        serviceSelect.remove(0);
-			    }
-				serviceTypes.forEach(function(serviceType) {
-					let option = document.createElement('option');
-					option.text = serviceType.nome + " (R$" + serviceType.preco + ")";
-					option.value = serviceType.id;
-
-					serviceSelect.append(option);
-				});
-			}
-		}
-
-		request.onerror = function(e) {
-			console.log(e);
-		}
 	}
 
 	function showBuyProduct() {
