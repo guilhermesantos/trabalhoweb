@@ -1432,23 +1432,26 @@
 		let race = document.getElementById("animal_race_field").value;
 
 		if (name.length > 0 && race.length > 0) {
-			animal = {
-				nome: name,
-				especie: race,
-				dono: connectedUser.usuario
+			let animal = {
+				name: name,
+				species: race,
+				owner: connectedUser.user
 			};
-			let tx = connection.transaction(databasePetsName, "readwrite");
-			let objectStore = tx.objectStore(databasePetsName);
-			let request = objectStore.put(animal);
-			request.onsuccess = function(event) {
-				hideAnimalRegisterForm();
-				getAllUserAnimals();
-				alert("Animal registrado com sucesso");
-			};
-
-			request.onerror = function(event) {
-				alert("Falha ao salvar animal, por favor tente novamente.")
-			};
+			const data = JSON.stringify(animal);
+			$.ajax({
+		        type: 'post',
+		        contentType: 'application/json',
+		        url: 'animals/',
+		        data: data,
+		        success: function(response) {
+					hideAnimalRegisterForm();
+					getAllUserAnimals();
+					alert(response.message);
+		        },
+		        error: function(response) {
+		        	alert(response.responseJSON.message);
+		        }
+	        });
 		} else if (name.length == 0 && race.length == 0) {
 			hideAnimalRegisterForm();
 		} else if (name.length == 0) {

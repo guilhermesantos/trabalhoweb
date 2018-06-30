@@ -619,6 +619,44 @@ app.get('/animals/:animalId', function(req, res) {
 	}
 });
 
+//New animal
+app.post('/animals', function(req, res) {
+	console.log("POST /animals");
+
+	if (!validBody(['name', 'species', 'owner'], req.body)) {
+		res.status(400).json(buildJsonPayload("Faltam informações", null));
+		return;
+	}
+
+	const name = req.body.name;
+	const species = req.body.name;
+	const user = req.body.owner;
+
+	if (name.length == 0) {
+		res.status(400).json(buildJsonPayload("Nome do animal não informado", null));
+	} else if (species.length == 0) {
+		res.status(400).json(buildJsonPayload("Espécie não informada", null));
+	} else {
+		const animalObject = {
+			name: name,
+			species: species,
+			owner: user
+		}
+		dbps.collection(databaseConstants.databasePetsName).insertOne(animalObject, function(err, response) {
+			if (err) {
+				if (err.code == 11000) {
+					res.status(400).json(buildJsonPayload("Este animal já existe", null));
+				} else {
+					res.status(400).json(buildJsonPayload("Algo inesperado aconteceu", null));
+				}
+			} else {
+				res.status(200).json(buildJsonPayload("Animal cadastrado com sucesso", null));
+			}
+		});
+	}
+});
+
+
 //Delete animal
 app.delete('/animals/:animalId', function(req, res) {
 	console.log("DELETE /animals/" + req.params.animalId);
