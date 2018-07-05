@@ -84,16 +84,22 @@ const DadosAnimais = [
 	{
 		name: "Billy",
 		species: "Cachorro",
+		age: 5,
+		imagePath: null,
 		owner: "client"
 	},
 	{
 		name: "Lua",
 		species: "Gato",
+		age: 2,
+		imagePath: null,
 		owner: "client"
 	},
 	{
 		name: "Per",
 		species: "Gato",
+		age: 9,
+		imagePath: null,
 		owner: "client"
 	}
 ];

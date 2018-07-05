@@ -533,6 +533,8 @@ let siteContent = {
 		`
 		<h3 class="page_title">Painel de controle</h3>
 
+		<img id="animal_image">
+
 		<form id="gerenciar_animais_form">
 			<h4 class="section_title">Gerenciar animais</h4>
 			<div id="gerenciar_animais_list"></div>
@@ -555,6 +557,20 @@ let siteContent = {
                 <input type="text" id="animal_race_field">
             </div>
 
+            <div class="label_container">
+                <label for="animal_age_field"><span>Idade: </span></label>
+            </div>
+            <div class="field_container">
+                <input type="number" min="0" step="1" id="animal_age_field">
+            </div>
+
+            <div class="label_container">
+                <label for="animal_image_field"><span>Foto: </span></label>
+            </div>
+            <div class="field_container">
+                <input type="file" id="animal_image_field" accept="image/png, image/jpeg"/>
+            </div>
+
             <div class="submit_container">
                 <input id="register_animal_input" type="submit" value="Enviar">
             </div>
@@ -565,7 +581,10 @@ let siteContent = {
 		<h3 class="page_title">Painel de controle</h3>
 
 		<h4 id="animal_name_title"></h4>
-		<h5 id="animal_race_title"></h5>
+		<img id="animal_image" src="assets/no_image.png" height="200">
+		<h5 id="animal_race_title">Espécie: </h5>
+		<h5 id="animal_age_title">Idade: </h5>
+		<h5>Serviços: </h5>
 
 		<div class="services_container">
 			<table id="service_table" class="service_table">

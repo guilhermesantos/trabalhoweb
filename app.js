@@ -13,10 +13,10 @@ const databaseConstants = require('./database_constants.js');
 let server;
 
 app.use(express.static('public'));
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: '50mb'}));
 
 //MongoDB Connection
-MongoClient.connect(url, function(err, db) {
+MongoClient.connect(url, {useNewUrlParser: true}, function(err, db) {
 	if (err) {
 		console.log("Failed to connect to MongoDB");
 		throw err;
@@ -146,6 +146,7 @@ function purifyAnimal(animal) {
 
 	animal.id = animal._id;
 	delete animal._id;
+	delete animal.imagePath;
 }
 
 function purifyScheduledService(scheduledService) {
@@ -730,28 +731,53 @@ app.get('/animals/:animalId', function(req, res) {
 	}
 });
 
+app.get('/animals/:animalId/image', function(req, res) {
+	console.log("GET /animals/" + req.params.animalId + "/image");
+
+	if (ObjectId.isValid(req.params.animalId)) {
+		const animalId = ObjectId(req.params.animalId);
+
+		const animalQuery = {_id : animalId};
+		dbps.collection(databaseConstants.databasePetsName).findOne(animalQuery, function(err, animal) {
+			if (err || !animal.imagePath || animal.imagePath.length == 0) {
+				res.status(400).json(buildJsonPayload("No image", null));
+			} else {
+				res.sendFile(animal.imagePath);
+			}
+		});
+	} else {
+		res.status(400).json(buildJsonPayload("Animal não encontrado", null));
+	}
+});
+
 //New animal
 app.post('/animals', function(req, res) {
 	console.log("POST /animals");
 
-	if (!validBody(['name', 'species', 'owner'], req.body)) {
+	if (!validBody(['name', 'species', {'age' : 'number'}, 'owner'], req.body)) {
 		res.status(400).json(buildJsonPayload("Faltam informações", null));
 		return;
 	}
 
 	const name = req.body.name;
-	const species = req.body.name;
+	const species = req.body.species;
 	const user = req.body.owner;
+	const age = req.body.age;
+	const imageData = req.body.imageData;
 
 	if (name.length == 0) {
 		res.status(400).json(buildJsonPayload("Nome do animal não informado", null));
 	} else if (species.length == 0) {
 		res.status(400).json(buildJsonPayload("Espécie não informada", null));
 	} else {
-		const animalObject = {
+		let animalObject = {
 			name: name,
 			species: species,
+			age: age,
 			owner: user
+		}
+		if (imageData) {
+			animalObject.imageData = imageData;
 		}
 		dbps.collection(databaseConstants.databasePetsName).insertOne(animalObject, function(err, response) {
 			if (err) {
