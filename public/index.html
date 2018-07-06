@@ -818,7 +818,7 @@
 		        	});
 					products.forEach(function(product) {
 						adminGains.push(product);
-						totalGains += product.price * product.sold;
+						totalGains += product.totalSold;
 					});
 					resolve();
 		        },
