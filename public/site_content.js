@@ -418,12 +418,11 @@ let siteContent = {
 			</select>
 		</div>
 		<div class="services_container">
-			<table id="cart_table" class="service_table">
+			<table id="cart_table" class="service_table" style="float: none;">
 			</table>
 		</div>
-		<form id="complete_buy" style="clear: both;">
-			<input type="submit" class="buy_button" value="Finalizar Compra">
-		</form>
+		<button id="buy_button" class="buy_button">Finalizar Compra</button>
+		<button id="clear_cart_button" class="buy_button">Limpar Carrinho</button>
 		`,
 		detalhesProduto:
 		`

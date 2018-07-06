@@ -51,6 +51,19 @@
 		}
 	);
 
+	function getImageSrcFromImageData(imageData, callback) {
+		var png = imageData.split(',')[1];
+	    var binary = window.atob(png);
+	    
+	    var blob = new Blob([binary],  {type: 'image/png'});
+	    
+	    var fr = new FileReader();
+	    fr.onload = function ( oFREvent ) {
+	        callback("data:image/png;base64," + btoa(oFREvent.target.result));
+	    };
+	    fr.readAsText(blob, "utf-8");
+	}
+
 	function loginClick() {
 		const usernameValue = document.getElementById("login_username").value;
 		const passwordValue = document.getElementById("login_password").value;
@@ -1002,7 +1015,7 @@
 					buildCartTable();
 				});
 
-				$("#complete_buy").on('submit', function(e) {
+				$("#buy_button").on('click', function(e) {
 					e.preventDefault();
 
 					const data = JSON.stringify({cart: userCart});
@@ -1073,6 +1086,12 @@
 
 		productsTable.innerHTML = "";
 		if (products.length > 0) {
+			$("#clear_cart_button").on('click', function(e) {
+				if (window.confirm("Deseja limpar o carrinho?")) {
+					userCart = {};
+					buildCartTable();
+				}
+			});
 			let totalPrice = 0.0;
 
 			let tableHeaderRow = document.createElement('tr');
@@ -1150,7 +1169,8 @@
 			productsTable.append(tableDataTotal);
 			productsTable.append(tableDataTotalPrice);
 		} else {
-			$("#complete_buy").css('display', 'none');
+			$("#buy_button").css('display', 'none');
+			$("#clear_cart_button").css('display', 'none');
 
 			let tableRow = document.createElement('tr');
 			tableRow.setAttribute('class', "service_table_row");
@@ -1313,16 +1333,9 @@
 				document.getElementById("animal_age_title").innerText += animal.age;
 
 				if (animal.imageData) {
-					var png = animal.imageData.split(',')[1];
-				    var binary = window.atob(png);
-				    
-				    var blob = new Blob([binary],  {type: 'image/png'});
-				    
-				    var fr = new FileReader();
-				    fr.onload = function ( oFREvent ) {
-				        document.getElementById("animal_image").src = "data:image/png;base64," + btoa(oFREvent.target.result);
-				    };
-				    fr.readAsText(blob, "utf-8");
+					getImageSrcFromImageData(animal.imageData, function(src) {
+						document.getElementById("animal_image").src = src;
+					});
 				}
 
 				let servicesTable = document.getElementById("service_table");
