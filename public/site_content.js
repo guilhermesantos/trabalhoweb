@@ -286,6 +286,7 @@ let siteContent = {
 				<option value="nome">Nome</option>
 				<option value="preco">Preço</option>
 				<option value="quantidade">Quantidade</option>
+				<option value="vendidos">Vendidos</option>
 			</select>
 			<select id="sort_order_select">
 				<option value="crescente">Crescente</option>

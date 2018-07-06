@@ -36,6 +36,7 @@ const DadosProdutos = [
 		description: "Ideal para seu cachorro!",
 		price: 10.00,
 		quantity: 50,
+		sold: 3,
 		imageData: null
 	},
 	{
@@ -43,6 +44,7 @@ const DadosProdutos = [
 		description: "Cachorros gostam muito",
 		price: 5.00,
 		quantity: 20,
+		sold: 7,
 		imageData: null
 	},
 	{
@@ -50,6 +52,7 @@ const DadosProdutos = [
 		description: "Para a higiene de seu gato",
 		price: 20.00,
 		quantity: 15,
+		sold: 0,
 		imageData: null
 	}
 ];

@@ -603,6 +603,10 @@
 				case "quantidade":
 					return (sortPriority == "crescente") ? product1.quantity > product2.quantity : product1.quantity < product2.quantity;
 					break;
+
+				case "vendidos":
+					return (sortPriority == "crescente") ? product1.sold > product2.sold : product1.sold < product2.sold;
+					break;
 			}
 		});
 
@@ -623,11 +627,15 @@
 			let tableHeaderProductQuantity = document.createElement('th');
 			tableHeaderProductQuantity.innerHTML = "Quantidade";
 
+			let tableHeaderProductQuantitySold = document.createElement('th');
+			tableHeaderProductQuantitySold.innerHTML = "Vendidos";
+
 			productsTable.append(tableHeaderRow);
 			tableHeaderRow.append(tableHeaderProductImage);
 			tableHeaderRow.append(tableHeaderProductName);
 			tableHeaderRow.append(tableHeaderProductPrice);
 			tableHeaderRow.append(tableHeaderProductQuantity);
+			tableHeaderRow.append(tableHeaderProductQuantitySold);
 
 			products.forEach(function(product) {
 				let tableRow = document.createElement('tr');
@@ -655,6 +663,10 @@
 				tableDataProductQuantity.setAttribute('class', "service_table_data");
 				tableDataProductQuantity.innerHTML = product.quantity;
 
+				let tableDataProductQuantitySold = document.createElement('td');
+				tableDataProductQuantitySold.setAttribute('class', "service_table_data");
+				tableDataProductQuantitySold.innerHTML = product.sold;
+
 				let tableDataProductEdit = document.createElement('td');
 				tableDataProductEdit.setAttribute('class', "service_table_data");
 				tableDataProductEdit.setAttribute('onclick','adminEditProduct("' + product.id + '")');
@@ -670,6 +682,7 @@
 				tableRow.append(tableDataProductName);
 				tableRow.append(tableDataProductPrice);
 				tableRow.append(tableDataProductQuantity);
+				tableRow.append(tableDataProductQuantitySold);
 				tableRow.append(tableDataProductEdit);
 				tableRow.append(tableDataProductDelete);
 			});

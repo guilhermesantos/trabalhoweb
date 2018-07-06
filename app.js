@@ -574,7 +574,8 @@ app.post('/buy', function(req, res) {
 							resolve();
 						} else {
 							const quantity = {
-								quantity: -Number(productInfo.quantity)
+								quantity: -Number(productInfo.quantity),
+								sold: +Number(productInfo.quantity)
 							};
 							dbps.collection(databaseConstants.databaseProductsName).findOneAndUpdate(query, {$inc : quantity}, function(err, response) {
 								resolve();
