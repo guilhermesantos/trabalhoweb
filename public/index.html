@@ -432,11 +432,17 @@
 			let tableHeaderRow = document.createElement('tr');
 			tableHeaderRow.setAttribute('class', "service_table_row");
 
+			let tableHeaderAnimalImage = document.createElement('th');
+			tableHeaderAnimalImage.innerHTML = "";
+
 			let tableHeaderAnimalName = document.createElement('th');
 			tableHeaderAnimalName.innerHTML = "Animal";
 
 			let tableHeaderAnimalDono = document.createElement('th');
 			tableHeaderAnimalDono.innerHTML = "Dono";
+
+			let tableHeaderServiceImage = document.createElement('th');
+			tableHeaderServiceImage.innerHTML = "";
 
 			let tableHeaderServiceName = document.createElement('th');
 			tableHeaderServiceName.innerHTML = "Serviço";
@@ -448,8 +454,10 @@
 			tableHeaderServiceTime.innerHTML = "Hora";
 
 			servicesTable.append(tableHeaderRow);
+			tableHeaderRow.append(tableHeaderAnimalImage);
 			tableHeaderRow.append(tableHeaderAnimalName);
 			tableHeaderRow.append(tableHeaderAnimalDono);
+			tableHeaderRow.append(tableHeaderServiceImage);
 			tableHeaderRow.append(tableHeaderServiceName);
 			tableHeaderRow.append(tableHeaderServiceDate);
 			tableHeaderRow.append(tableHeaderServiceTime);
@@ -458,6 +466,16 @@
 				let tableRow = document.createElement('tr');
 				tableRow.setAttribute('class', "service_table_row");
 
+				let tableDataAnimalImage = document.createElement('td');
+				tableDataAnimalImage.setAttribute('class', "service_table_data");
+				if (scheduledService.animal.imageData) {
+					getImageSrcFromImageData(scheduledService.animal.imageData, function(src) {
+						tableDataAnimalImage.innerHTML = '<img src="' + src + '" style="height: 40px;">';
+					});
+				} else {
+					tableDataAnimalImage.innerHTML = '<img src="assets/no_image.png" style="height: 40px;">';
+				}
+
 				let tableDataAnimalName = document.createElement('td');
 				tableDataAnimalName.setAttribute('class', "service_table_data");
 				tableDataAnimalName.innerHTML = scheduledService.animal.name;
@@ -465,6 +483,16 @@
 				let tableDataAnimalDono = document.createElement('td');
 				tableDataAnimalDono.setAttribute('class', "service_table_data");
 				tableDataAnimalDono.innerHTML = scheduledService.animalOwner.name;
+
+				let tableDataServiceImage = document.createElement('td');
+				tableDataServiceImage.setAttribute('class', "service_table_data");
+				if (scheduledService.serviceType.imageData) {
+					getImageSrcFromImageData(scheduledService.serviceType.imageData, function(src) {
+						tableDataServiceImage.innerHTML = '<img src="' + src + '" style="height: 40px;">';
+					});
+				} else {
+					tableDataServiceImage.innerHTML = '<img src="assets/no_image.png" style="height: 40px;">';
+				}
 
 				let tableDataServiceName = document.createElement('td');
 				tableDataServiceName.setAttribute('class', "service_table_data");
@@ -478,23 +506,20 @@
 				tableDataServiceTime.setAttribute('class', "service_table_data");
 				tableDataServiceTime.innerHTML = scheduledService.time;
 
-				let serviceA = document.createElement('a');
-				serviceA.setAttribute('onclick','adminDeleteScheduledService("' + scheduledService.id + '")');
-
-				let serviceDeleteImage = document.createElement('img');
-				serviceDeleteImage.src = "icons/delete.png";
-				serviceDeleteImage.width = 18;
-				serviceDeleteImage.height = 18;
-				serviceDeleteImage.style.paddingTop = "4px";
+				let tableDataServiceDelete = document.createElement('td');
+				tableDataServiceDelete.setAttribute('class', "service_table_data");
+				tableDataServiceDelete.setAttribute('onclick','adminDeleteScheduledService("' + scheduledService.id + '")');
+				tableDataServiceDelete.innerHTML = '<img src="icons/delete.png" style="width: 18px; height: 18px;">';
 
 				servicesTable.append(tableRow);
+				tableRow.append(tableDataAnimalImage);
 				tableRow.append(tableDataAnimalName);
 				tableRow.append(tableDataAnimalDono);
+				tableRow.append(tableDataServiceImage);
 				tableRow.append(tableDataServiceName);
 				tableRow.append(tableDataServiceDate);
 				tableRow.append(tableDataServiceTime);
-				tableRow.append(serviceA);
-				serviceA.append(serviceDeleteImage);
+				tableRow.append(tableDataServiceDelete);
 			});
 		} else {
 			let tableRow = document.createElement('tr');
