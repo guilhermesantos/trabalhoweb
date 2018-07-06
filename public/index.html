@@ -817,8 +817,9 @@
 		        		return product.sold > 0;
 		        	});
 					products.forEach(function(product) {
-						adminGains.push(product);
+						product.type = "product";
 						totalGains += product.totalSold;
+						adminGains.push(product);
 					});
 					resolve();
 		        },
@@ -837,8 +838,9 @@
 		        success: function(response) {
 		        	let products = response.data;
 					products.forEach(function(serviceType) {
-						adminGains.push(serviceType);
+						serviceType.type = "service";
 						totalGains += serviceType.totalSold;
+						adminGains.push(serviceType);
 					});
 					resolve();
 		        },
@@ -851,6 +853,10 @@
 
         Promise.all([productsPromise, serviceGainsPromise]).then(function() {
         	adminBuildGainsTable();
+
+        	$("#filter_type_select").change(function() {
+				adminBuildGainsTable();
+			});
 
 			$("#sort_by_select").change(function() {
 				adminBuildGainsTable();
@@ -866,10 +872,26 @@
 
 	function adminBuildGainsTable() {
 		let gainsTable = document.getElementById("table");
+		let filterType = $("#filter_type_select").val();
 		let sortBy = $("#sort_by_select").val();
 		let sortPriority = $("#sort_order_select").val();
 
-		let gains = adminGains.sort(function(product1, product2) {
+		let gains = adminGains.filter(function(product) {
+			switch (filterType) {
+				case "all":
+					return true;
+					break;
+
+				case "produtos":
+					return product.type == "product";
+					break;
+
+				case "servicos":
+					return product.type == "service";
+					break;
+			}
+		});
+		gains = gains.sort(function(product1, product2) {
 			switch (sortBy) {
 				case "nome":
 					return (sortPriority == "crescente") ? product1.name > product2.name : product1.name < product2.name;
@@ -881,6 +903,10 @@
 
 				case "vendidos":
 					return (sortPriority == "crescente") ? product1.sold > product2.sold : product1.sold < product2.sold;
+					break;
+
+				case "total_vendas":
+					return (sortPriority == "crescente") ? product1.totalSold > product2.totalSold : product1.totalSold < product2.totalSold;
 					break;
 			}
 		});

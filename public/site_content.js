@@ -357,10 +357,16 @@ let siteContent = {
 			<label>Ordenar por:</label>
 		</div>
 		<div id="sort_div" style="margin-bottom: 16px;">
+			<select id="filter_type_select">
+				<option value="all">Todos</option>
+				<option value="produtos">Produtos</option>
+				<option value="servicos">Serviços</option>
+			</select>
 			<select id="sort_by_select">
 				<option value="nome">Nome</option>
 				<option value="preco">Preço</option>
 				<option value="vendidos">Vendidos</option>
+				<option value="total_vendas">Total de Vendas</option>
 			</select>
 			<select id="sort_order_select">
 				<option value="crescente">Crescente</option>
