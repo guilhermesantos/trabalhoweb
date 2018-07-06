@@ -1453,6 +1453,11 @@
 		$("#register_address_city").val(connectedUser.city);
 		$("#register_address_neighborhood").val(connectedUser.neighborhood);
 		$("#register_address_street").val(connectedUser.street);
+		if (connectedUser.imageData) {
+			getImageSrcFromImageData(connectedUser.imageData, function(src) {
+				document.getElementById("user_image").src = src;
+			});
+		}
 		$("#editar_registro_form").on('submit', function(e){
 			e.preventDefault();
 			let name = $("#register_name").val();
@@ -1480,31 +1485,34 @@
 				return;
 			}
 
-			let user = {
-				name: name,
-				password: password,
-				repeatPassword: repeatPassword,
-				email: email,
-				phone: phone,
-				city: city,
-				street: street,
-				neighborhood: neighborhood
-			};
-			const data = JSON.stringify(user);
-			$.ajax({
-		        type: 'post',
-		        contentType: 'application/json',
-		        url: "users/" + connectedUser.user,
-		        data: data,
-		        success: function(response) {
-					alert(response.message);
-					connectedUser = response.data;
-		            setWelcomeMessageName(connectedUser.name);
-		        },
-		        error: function(response) {
-		        	alert(response.responseJSON.message);
-		        }
-	        });
+			getFileAsDataURL(document.getElementById("image").files, function(imageData) {
+				const user = {
+					name: name,
+					password: password,
+					repeatPassword: repeatPassword,
+					email: email,
+					phone: phone,
+					city: city,
+					street: street,
+					neighborhood: neighborhood,
+					imageData: imageData
+				};
+				const data = JSON.stringify(user);
+				$.ajax({
+			        type: 'post',
+			        contentType: 'application/json',
+			        url: "users/" + connectedUser.user,
+			        data: data,
+			        success: function(response) {
+						alert(response.message);
+						connectedUser = response.data;
+			            setWelcomeMessageName(connectedUser.name);
+			        },
+			        error: function(response) {
+			        	alert(response.responseJSON.message);
+			        }
+		        });
+			});
 		});
 	}
 

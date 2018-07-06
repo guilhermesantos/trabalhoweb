@@ -532,9 +532,9 @@ let siteContent = {
 		editarRegistro:
 		`
 		<h3 class="page_title">Painel de controle</h3>
-
+		<h4 class="section_title">Editar registro</h4>
+		<img id="user_image" src="assets/no_image.png" height="200px">
 		<form id="editar_registro_form">
-			<h4 class="section_title">Editar registro</h4>
 			<div class="form_row_container">
 				<div class="label_container">
 					<label for="register_name"><span>Nome: </span></label>
@@ -599,6 +599,12 @@ let siteContent = {
 					<input type="password" id="register_repeat_password">
 				</div>
 			</div>
+			<div class="label_container">
+                <label for="image"><span>Foto: </span></label>
+            </div>
+            <div class="field_container">
+                <input type="file" id="image" accept="image/png, image/jpeg"/>
+            </div>
 			<div class="submit_container">
 				<input type="submit" value="Enviar">
 			</div>

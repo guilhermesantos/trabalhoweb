@@ -311,6 +311,7 @@ app.post('/users/:user', function(req, res) {
 	const street = req.body.street;
 	const password = req.body.password;
 	const repeatPassword = req.body.repeatPassword;
+	const imageData = req.body.imageData;
 
 	if (name.length == 0) {
 		res.status(400).json(buildJsonPayload("Nome não informado", null));
@@ -329,6 +330,9 @@ app.post('/users/:user', function(req, res) {
 			city: city,
 			street: street,
 			neighborhood: neighborhood
+		}
+		if (imageData) {
+			userObject.imageData = imageData;
 		}
 		if (password.length > 0) {
 			userObject.password = password;
