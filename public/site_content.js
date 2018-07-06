@@ -436,6 +436,16 @@ let siteContent = {
 					</select>
 				</div>
 			</div>
+
+			<div class="form_row_container">
+				<div class="label_container">
+					<label for="card_input"><span>Número do Cartão:</span></label>
+				</div>
+				<div class="field_container">
+					<input id="card_input" type="text">
+				</div>							
+			</div>
+
 			<div class="submit_container">
 				<button type="submit">Enviar</button>
 			</div>

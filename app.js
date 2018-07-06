@@ -676,8 +676,14 @@ app.get('/scheduled_services', function(req, res) {
 app.post('/scheduled_services', function(req, res) {
 	console.log("POST /scheduled_services");
 
-	if (!validBody(['date', 'time', 'serviceTypeId', 'animalId'], req.body)) {
+	if (!validBody(['date', 'time', 'serviceTypeId', 'animalId', 'cardNumber'], req.body)) {
 		res.status(400).json(buildJsonPayload("Faltam informações", null));
+		return;
+	}
+
+	const cardNumber = req.body.cardNumber;
+	if (cardNumber.length != 16 || !(new RegExp("[0-9]{16}")).test(cardNumber)) {
+		res.status(400).json(buildJsonPayload("Cartão de crédito invalido", null));
 		return;
 	}
 

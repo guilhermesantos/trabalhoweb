@@ -1037,6 +1037,7 @@
 			let animalId = $("#select_animal").val();
 			let date = $("#date_input").val();
 			let time = $("#select_time").val();
+			let cardNumber = $("#card_input").val();
 			if (serviceId == null) {
 				alert("Por favor escolha um serviço");
 			} else if (animalId == null) {
@@ -1045,12 +1046,15 @@
 				alert("Por favor escolha uma data");
 			} else if (time == null) {
 				alert("Por favor escolha um horário");
+			} else if (cardNumber.length != 16 || !(new RegExp("[0-9]{16}")).test(cardNumber)) {
+				alert("Por favor digite o número do seu cartão de crédito");
 			} else {
 				const scheduledService = {
 					serviceTypeId: serviceId,
 					date: date,
 					time: time,
-					animalId: animalId
+					animalId: animalId,
+					cardNumber: cardNumber
 				};
 				const data = JSON.stringify(scheduledService);
 				$.ajax({
