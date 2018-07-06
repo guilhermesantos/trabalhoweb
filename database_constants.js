@@ -37,6 +37,7 @@ const DadosProdutos = [
 		price: 10.00,
 		quantity: 50,
 		sold: 3,
+		totalSold: 30,
 		imageData: null
 	},
 	{
@@ -45,6 +46,7 @@ const DadosProdutos = [
 		price: 5.00,
 		quantity: 20,
 		sold: 7,
+		totalSold: 35,
 		imageData: null
 	},
 	{
@@ -53,6 +55,7 @@ const DadosProdutos = [
 		price: 20.00,
 		quantity: 15,
 		sold: 0,
+		totalSold: 0,
 		imageData: null
 	}
 ];
@@ -86,13 +89,15 @@ const DadosServicosAgendados = [
 	{
 		//serviceTypeId: "id",
 		date: "2018-06-04",
-		time: "14:30"
+		time: "14:30",
+		price: 120
 		//animalId: "id",
 	},
 	{
 		//serviceTypeId: "id",
 		date: "2019-01-02",
-		time: "08:00"
+		time: "08:00",
+		price: 40
 		//animalId: "id",
 	}
 ];

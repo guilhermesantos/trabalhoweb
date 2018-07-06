@@ -813,7 +813,9 @@
 		        contentType: 'application/json',
 		        url: 'products',
 		        success: function(response) {
-		        	let products = response.data;
+		        	let products = response.data.filter(function(product) {
+		        		return product.sold > 0;
+		        	});
 					products.forEach(function(product) {
 						adminGains.push(product);
 						totalGains += product.price * product.sold;
@@ -836,7 +838,7 @@
 		        	let products = response.data;
 					products.forEach(function(serviceType) {
 						adminGains.push(serviceType);
-						totalGains += serviceType.price * serviceType.sold;
+						totalGains += serviceType.totalSold;
 					});
 					resolve();
 		        },
@@ -858,7 +860,7 @@
 				adminBuildGainsTable();
 			});
 
-			document.getElementById('total_gains_header').innerText += "R$" + totalGains;
+			document.getElementById('total_gains_header').innerText += "R$ " + totalGains;
         });
 	}
 
@@ -895,16 +897,20 @@
 			tableHeaderProductName.innerHTML = "Nome";
 
 			let tableHeaderProductPrice = document.createElement('th');
-			tableHeaderProductPrice.innerHTML = "Preço";
+			tableHeaderProductPrice.innerHTML = "Preço Atual";
 
 			let tableHeaderProductQuantitySold = document.createElement('th');
 			tableHeaderProductQuantitySold.innerHTML = "Vendidos";
+
+			let tableHeaderProductSoldTotal = document.createElement('th');
+			tableHeaderProductSoldTotal.innerHTML = "Total de Vendas";
 
 			gainsTable.append(tableHeaderRow);
 			tableHeaderRow.append(tableHeaderProductImage);
 			tableHeaderRow.append(tableHeaderProductName);
 			tableHeaderRow.append(tableHeaderProductPrice);
 			tableHeaderRow.append(tableHeaderProductQuantitySold);
+			tableHeaderRow.append(tableHeaderProductSoldTotal);
 
 			gains.forEach(function(product) {
 				let tableRow = document.createElement('tr');
@@ -932,11 +938,16 @@
 				tableDataProductQuantitySold.setAttribute('class', "service_table_data");
 				tableDataProductQuantitySold.innerHTML = product.sold;
 
+				let tableDataProductSoldTotal = document.createElement('td');
+				tableDataProductSoldTotal.setAttribute('class', "service_table_data");
+				tableDataProductSoldTotal.innerHTML = "R$ " + Number(product.totalSold).toFixed(2);
+
 				gainsTable.append(tableRow);
 				tableRow.append(tableDataProductImage);
 				tableRow.append(tableDataProductName);
 				tableRow.append(tableDataProductPrice);
 				tableRow.append(tableDataProductQuantitySold);
+				tableRow.append(tableDataProductSoldTotal);
 			});
 		} else {
 			let tableRow = document.createElement('tr');

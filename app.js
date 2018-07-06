@@ -279,7 +279,6 @@ app.post('/users', function(req, res) {
 		}
 		dbps.collection(databaseConstants.databaseUsersName).insertOne(userObject, function(err, response) {
 			if (err) {
-				console.log(err);
 				if (err.code == 11000) {
 					res.status(400).json(buildJsonPayload("Este usuário já existe", null));
 				} else {
@@ -380,9 +379,10 @@ app.get('/service_gains', function(req, res) {
 			let serviceQuantities = {};
 			scheduledServices.forEach(function(scheduledService) {
 				if (serviceQuantities[scheduledService.serviceTypeId] == undefined) {
-					serviceQuantities[scheduledService.serviceTypeId] = 1;
+					serviceQuantities[scheduledService.serviceTypeId] = {sold: 1, price: scheduledService.price};
 				} else {
-					serviceQuantities[scheduledService.serviceTypeId]++;
+					serviceQuantities[scheduledService.serviceTypeId].sold++;
+					serviceQuantities[scheduledService.serviceTypeId].price += scheduledService.price;
 				}
 			});
 
@@ -391,13 +391,15 @@ app.get('/service_gains', function(req, res) {
 				if (ObjectId.isValid(serviceTypeId)) {
 					const serviceTypeObjectId = ObjectId(serviceTypeId);
 					const serviceTypePromise = new Promise(function(resolve, reject) {
-						const quantity = serviceQuantities[serviceTypeId];
+						const quantity = serviceQuantities[serviceTypeId].sold;
+						const price = serviceQuantities[serviceTypeId].price;
 						const query = {_id : serviceTypeObjectId};
 						dbps.collection(databaseConstants.databaseServiceTypesName).findOne(query, function(err, serviceType) {
 							if (err) {
 								reject();
 							} else {
 								serviceType.sold = quantity;
+								serviceType.totalSold = price;
 								resolve(serviceType);
 							}
 						});
@@ -438,7 +440,6 @@ app.post('/service_types', function(req, res) {
 		}
 		dbps.collection(databaseConstants.databaseServiceTypesName).insertOne(serviceTypeObject, function(err, response) {
 			if (err) {
-				console.log(err);
 				if (err.code == 11000) {
 					res.status(400).json(buildJsonPayload("Este tipo de serviço já existe", null));
 				} else {
@@ -496,7 +497,6 @@ app.post('/products', function(req, res) {
 		}
 		dbps.collection(databaseConstants.databaseProductsName).insertOne(productObject, function(err, response) {
 			if (err) {
-				console.log(err);
 				if (err.code == 11000) {
 					res.status(400).json(buildJsonPayload("Este produto já existe", null));
 				} else {
@@ -623,7 +623,8 @@ app.post('/buy', function(req, res) {
 						} else {
 							const quantity = {
 								quantity: -Number(productInfo.quantity),
-								sold: +Number(productInfo.quantity)
+								sold: +Number(productInfo.quantity),
+								totalSold: +Number(productInfo.quantity) * Number(product.price)
 							};
 							dbps.collection(databaseConstants.databaseProductsName).findOneAndUpdate(query, {$inc : quantity}, function(err, response) {
 								resolve();
@@ -697,21 +698,28 @@ app.post('/scheduled_services', function(req, res) {
 		const serviceTypeId = ObjectId(req.body.serviceTypeId);
 		const animalId = ObjectId(req.body.animalId);
 
-		const scheduledServiceObject = {
-			date: date,
-			time: time,
-			serviceTypeId: serviceTypeId,
-			animalId: animalId
-		}
-		dbps.collection(databaseConstants.databaseScheduledServicesName).insertOne(scheduledServiceObject, function(err, response) {
+		dbps.collection(databaseConstants.databaseServiceTypesName).findOne({_id : serviceTypeId}, function(err, serviceType) {
 			if (err) {
-				if (err.code == 11000) {
-					res.status(400).json(buildJsonPayload("Já existe outro serviço agendado nesta data", null));
-				} else {
-					res.status(400).json(buildJsonPayload("Algo inesperado aconteceu", null));
-				}
+				res.status(400).json(buildJsonPayload("Tipo de serviço não encontrado"));
 			} else {
-				res.status(200).json(buildJsonPayload("Serviço agendado com sucesso", null));
+				const scheduledServiceObject = {
+					date: date,
+					time: time,
+					serviceTypeId: serviceTypeId,
+					price: serviceType.price,
+					animalId: animalId
+				}
+				dbps.collection(databaseConstants.databaseScheduledServicesName).insertOne(scheduledServiceObject, function(err, response) {
+					if (err) {
+						if (err.code == 11000) {
+							res.status(400).json(buildJsonPayload("Já existe outro serviço agendado nesta data", null));
+						} else {
+							res.status(400).json(buildJsonPayload("Algo inesperado aconteceu", null));
+						}
+					} else {
+						res.status(200).json(buildJsonPayload("Serviço agendado com sucesso", null));
+					}
+				});
 			}
 		});
 	} else if (!ObjectId.isValid(req.body.serviceTypeId)) {
