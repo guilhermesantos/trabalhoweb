@@ -1298,10 +1298,12 @@
 
 				$("#buy_button").on('click', function(e) {
 					e.preventDefault();
-
-					const data = JSON.stringify({cart: userCart});
-					console.log(data);
-
+					const cardNumber = document.getElementById("card_input").value;
+					if (cardNumber.length != 16 || !(new RegExp("[0-9]{16}")).test(cardNumber)) {
+						alert("Por favor digite o número do seu cartão de crédito");
+						return;
+					}
+					const data = JSON.stringify({cart: userCart, cardNumber: cardNumber});
 					$.ajax({
 				        type: 'post',
 				        contentType: 'application/json',
@@ -1369,6 +1371,7 @@
 		if (products.length > 0) {
 			$("#buy_button").css('display', 'initial');
 			$("#clear_cart_button").css('display', 'initial');
+			$("#card_div").css('display', 'initial');
 			$("#clear_cart_button").on('click', function(e) {
 				if (window.confirm("Deseja limpar o carrinho?")) {
 					userCart = {};

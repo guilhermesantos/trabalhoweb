@@ -599,7 +599,18 @@ app.delete('/products/:productId', function(req, res) {
 app.post('/buy', function(req, res) {
 	console.log("POST /buy");
 
+	if (!validBody(['cardNumber'], req.body)) {
+		res.status(400).json(buildJsonPayload("Faltam informações", null));
+		return;
+	}
+
 	const cart = req.body.cart;
+	const cardNumber = req.body.cardNumber;
+
+	if (cardNumber.length != 16 || !(new RegExp("[0-9]{16}")).test(cardNumber)) {
+		res.status(400).json(buildJsonPayload("Cartão de crédito invalido", null));
+		return;
+	}
 
 	if (typeof cart != 'undefined') {
 		let validKeys = Object.keys(cart).filter(function(productId) {
@@ -638,7 +649,7 @@ app.post('/buy', function(req, res) {
 				if (unavailableProducts) {
 					res.status(200).json(buildJsonPayload("Compra finalizada! Porém alguns produtos estavam indisponiveis", null));
 				} else {
-					res.status(200).json(buildJsonPayload("Obrigado por finalizar a compra!", null));
+					res.status(200).json(buildJsonPayload("Compra finalizada!", null));
 				}
 			});
 		} else {

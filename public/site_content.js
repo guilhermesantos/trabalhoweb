@@ -502,6 +502,14 @@ let siteContent = {
 			<table id="cart_table" class="service_table" style="float: none;">
 			</table>
 		</div>
+		<div id="card_div" class="form_row_container" style="display: none;">
+			<div class="label_container" style="width: 14%;">
+				<label for="card_input"><span>Número do Cartão:</span></label>
+			</div>
+			<div class="field_container">
+				<input id="card_input" type="text">
+			</div>							
+		</div>
 		<button id="buy_button" class="buy_button" style="display: none;">Finalizar Compra</button>
 		<button id="clear_cart_button" class="buy_button" style="display: none;">Limpar Carrinho</button>
 		`,
