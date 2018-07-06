@@ -35,6 +35,7 @@
 	// Admin Variables
 	let adminScheduledServices = [];
 	let adminProducts = [];
+	let adminGains = [];
 
 	// User Variables
 	let userCart = {};
@@ -139,6 +140,9 @@
 				break;
 			case "controleDeEstoque":
 				adminShowProducts();
+				break;
+			case "ganhos":
+				adminShowGains();
 				break;
 		}
 	}
@@ -796,6 +800,154 @@
 		        	alert(response.responseJSON.message);
 		        }
 		    });
+		}
+	}
+
+	function adminShowGains() {
+		$(".content").html(siteContent.admin.gains);
+		adminGains = [];
+		let totalGains = 0;
+		const productsPromise = new Promise(function(resolve, reject) {
+			$.ajax({
+		        type: 'get',
+		        contentType: 'application/json',
+		        url: 'products',
+		        success: function(response) {
+		        	let products = response.data;
+					products.forEach(function(product) {
+						adminGains.push(product);
+						totalGains += product.price * product.sold;
+					});
+					resolve();
+		        },
+		        error: function(response) {
+		        	alert(response.responseJSON.message);
+		        	reject();
+		        }
+	        });
+		});
+
+		const serviceGainsPromise = new Promise(function(resolve, reject) {
+			$.ajax({
+		        type: 'get',
+		        contentType: 'application/json',
+		        url: 'service_gains',
+		        success: function(response) {
+		        	let products = response.data;
+					products.forEach(function(serviceType) {
+						adminGains.push(serviceType);
+						totalGains += serviceType.price * serviceType.sold;
+					});
+					resolve();
+		        },
+		        error: function(response) {
+		        	alert(response.responseJSON.message);
+		        	reject();
+		        }
+	        });
+		});
+
+        Promise.all([productsPromise, serviceGainsPromise]).then(function() {
+        	adminBuildGainsTable();
+
+			$("#sort_by_select").change(function() {
+				adminBuildGainsTable();
+			});
+
+			$("#sort_order_select").change(function() {
+				adminBuildGainsTable();
+			});
+
+			document.getElementById('total_gains_header').innerText += "R$" + totalGains;
+        });
+	}
+
+	function adminBuildGainsTable() {
+		let gainsTable = document.getElementById("table");
+		let sortBy = $("#sort_by_select").val();
+		let sortPriority = $("#sort_order_select").val();
+
+		let gains = adminGains.sort(function(product1, product2) {
+			switch (sortBy) {
+				case "nome":
+					return (sortPriority == "crescente") ? product1.name > product2.name : product1.name < product2.name;
+					break;
+
+				case "preco":
+					return (sortPriority == "crescente") ? product1.price > product2.price : product1.price < product2.price;
+					break;
+
+				case "vendidos":
+					return (sortPriority == "crescente") ? product1.sold > product2.sold : product1.sold < product2.sold;
+					break;
+			}
+		});
+
+		gainsTable.innerHTML = "";
+		if (gains.length > 0) {
+			let tableHeaderRow = document.createElement('tr');
+			tableHeaderRow.setAttribute('class', "service_table_row");
+
+			let tableHeaderProductImage = document.createElement('th');
+			tableHeaderProductImage.innerHTML = "";
+
+			let tableHeaderProductName = document.createElement('th');
+			tableHeaderProductName.innerHTML = "Nome";
+
+			let tableHeaderProductPrice = document.createElement('th');
+			tableHeaderProductPrice.innerHTML = "Preço";
+
+			let tableHeaderProductQuantitySold = document.createElement('th');
+			tableHeaderProductQuantitySold.innerHTML = "Vendidos";
+
+			gainsTable.append(tableHeaderRow);
+			tableHeaderRow.append(tableHeaderProductImage);
+			tableHeaderRow.append(tableHeaderProductName);
+			tableHeaderRow.append(tableHeaderProductPrice);
+			tableHeaderRow.append(tableHeaderProductQuantitySold);
+
+			gains.forEach(function(product) {
+				let tableRow = document.createElement('tr');
+				tableRow.setAttribute('class', "service_table_row");
+
+				let tableDataProductImage = document.createElement('td');
+				tableDataProductImage.setAttribute('class', "service_table_data");
+				if (product.imageData) {
+					getImageSrcFromImageData(product.imageData, function(src) {
+						tableDataProductImage.innerHTML = '<img src="' + src + '" height="40px">';
+					});
+				} else {
+					tableDataProductImage.innerHTML = '<img src="assets/no_image.png" height="40px">';
+				}
+
+				let tableDataProductName = document.createElement('td');
+				tableDataProductName.setAttribute('class', "service_table_data");
+				tableDataProductName.innerHTML = product.name;
+
+				let tableDataProductPrice = document.createElement('td');
+				tableDataProductPrice.setAttribute('class', "service_table_data");
+				tableDataProductPrice.innerHTML = "R$ " + Number(product.price).toFixed(2);
+
+				let tableDataProductQuantitySold = document.createElement('td');
+				tableDataProductQuantitySold.setAttribute('class', "service_table_data");
+				tableDataProductQuantitySold.innerHTML = product.sold;
+
+				gainsTable.append(tableRow);
+				tableRow.append(tableDataProductImage);
+				tableRow.append(tableDataProductName);
+				tableRow.append(tableDataProductPrice);
+				tableRow.append(tableDataProductQuantitySold);
+			});
+		} else {
+			let tableRow = document.createElement('tr');
+			tableRow.setAttribute('class', "service_table_row");
+
+			let tableDataNoProducts = document.createElement('td');
+			tableDataNoProducts.setAttribute('class', "service_table_data");
+			tableDataNoProducts.innerHTML = "Nenhum produto/serviço encontrado";
+
+			gainsTable.append(tableRow);
+			tableRow.append(tableDataNoProducts);
 		}
 	}
 

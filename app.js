@@ -365,6 +365,50 @@ app.get('/service_types', function(req, res) {
 	});
 });
 
+//Services gains
+app.get('/service_gains', function(req, res) {
+	console.log("GET /service_gains");
+
+	dbps.collection(databaseConstants.databaseScheduledServicesName).find().toArray(function(err, scheduledServices) {
+		if (err) {
+			res.status(400).json(buildJsonPayload("Algo inesperado aconteceu"), null);
+		} else {
+			let serviceQuantities = {};
+			scheduledServices.forEach(function(scheduledService) {
+				if (serviceQuantities[scheduledService.serviceTypeId] == undefined) {
+					serviceQuantities[scheduledService.serviceTypeId] = 1;
+				} else {
+					serviceQuantities[scheduledService.serviceTypeId]++;
+				}
+			});
+
+			let serviceTypePromises = [];
+			Object.keys(serviceQuantities).forEach(function(serviceTypeId) {
+				if (ObjectId.isValid(serviceTypeId)) {
+					const serviceTypeObjectId = ObjectId(serviceTypeId);
+					const serviceTypePromise = new Promise(function(resolve, reject) {
+						const quantity = serviceQuantities[serviceTypeId];
+						const query = {_id : serviceTypeObjectId};
+						dbps.collection(databaseConstants.databaseServiceTypesName).findOne(query, function(err, serviceType) {
+							if (err) {
+								reject();
+							} else {
+								serviceType.sold = quantity;
+								resolve(serviceType);
+							}
+						});
+					});
+					serviceTypePromises.push(serviceTypePromise);
+				}
+			});
+
+			Promise.all(serviceTypePromises).then(function(serviceTypes) {
+				res.status(200).json(buildJsonPayload(null, serviceTypes));
+			});
+		}
+	});
+});
+
 //New Service Type
 app.post('/service_types', function(req, res) {
 	console.log("POST /service_types");

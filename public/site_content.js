@@ -15,6 +15,7 @@ let horizontalMenu = {
 		<li class="horizontal_menu_item" tab="novosCadastros" onclick="adminMenuClick(this)">Cadastros</li>
 		<li class="horizontal_menu_item" tab="servicosAgendados" onclick="adminMenuClick(this)">Serviços Agendados</li>
 		<li class="horizontal_menu_item" tab="controleDeEstoque" onclick="adminMenuClick(this)">Controle de Estoque</li>
+		<li class="horizontal_menu_item" tab="ganhos" onclick="adminMenuClick(this)">Ganhos</li>
 		<li class="horizontal_menu_item" tab="editarRegistro" onclick="menuClick(this)">Editar registro</li>
 	`
 };
@@ -346,6 +347,30 @@ let siteContent = {
 				<input type="submit" value="Salvar">
 			</div>
 		</form>
+		`,
+		gains:
+		`
+		<h3 class="page_title">Painel de controle</h3>
+		<h4 class="section_title">Ganhos</h4>
+		<h5 id="total_gains_header" class="section_title">Total: </h5>
+		<div>
+			<label>Ordenar por:</label>
+		</div>
+		<div id="sort_div" style="margin-bottom: 16px;">
+			<select id="sort_by_select">
+				<option value="nome">Nome</option>
+				<option value="preco">Preço</option>
+				<option value="vendidos">Vendidos</option>
+			</select>
+			<select id="sort_order_select">
+				<option value="crescente">Crescente</option>
+				<option value="decrescente">Decrescente</option>
+			</select>
+		</div>
+		<div class="services_container">
+			<table id="table" class="service_table">
+			</table>
+		</div>
 		`
 	},
 
