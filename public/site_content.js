@@ -502,8 +502,8 @@ let siteContent = {
 			<table id="cart_table" class="service_table" style="float: none;">
 			</table>
 		</div>
-		<button id="buy_button" class="buy_button">Finalizar Compra</button>
-		<button id="clear_cart_button" class="buy_button">Limpar Carrinho</button>
+		<button id="buy_button" class="buy_button" style="display: none;">Finalizar Compra</button>
+		<button id="clear_cart_button" class="buy_button" style="display: none;">Limpar Carrinho</button>
 		`,
 		detalhesProduto:
 		`

@@ -1367,6 +1367,8 @@
 
 		productsTable.innerHTML = "";
 		if (products.length > 0) {
+			$("#buy_button").css('display', 'initial');
+			$("#clear_cart_button").css('display', 'initial');
 			$("#clear_cart_button").on('click', function(e) {
 				if (window.confirm("Deseja limpar o carrinho?")) {
 					userCart = {};
@@ -1459,9 +1461,6 @@
 			productsTable.append(tableDataTotal);
 			productsTable.append(tableDataTotalPrice);
 		} else {
-			$("#buy_button").css('display', 'none');
-			$("#clear_cart_button").css('display', 'none');
-
 			let tableRow = document.createElement('tr');
 			tableRow.setAttribute('class', "service_table_row");
 
