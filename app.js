@@ -484,6 +484,8 @@ app.get('/products/:productId', function(req, res) {
 
 //Edit product
 app.post('/products/:productId', function(req, res) {
+	console.log("POST /products/" + req.params.productId);
+
 	if (!validBody(['name', 'description', {'price' : 'number'}, {'quantity' : 'number'}], req.body)) {
 		res.status(400).json(buildJsonPayload("Faltam informações", null));
 		return;
@@ -494,6 +496,7 @@ app.post('/products/:productId', function(req, res) {
 	const description = req.body.description;
 	const price = Number(req.body.price);
 	const quantity = Number(req.body.quantity);
+	const imageData = req.body.imageData;
 
 	if (ObjectId.isValid(id)) {
 		const productId = ObjectId(id);
@@ -502,11 +505,14 @@ app.post('/products/:productId', function(req, res) {
 			res.status(400).json(buildJsonPayload("Nome do produto não informado", null));
 		} else {
 			const query = {_id : productId};
-			const productObject = {
+			let productObject = {
 				name: name,
 				description: description,
 				price: price,
 				quantity: quantity
+			}
+			if (imageData) {
+				productObject.imageData = imageData;
 			}
 			dbps.collection(databaseConstants.databaseProductsName).updateOne(query, {$set : productObject}, function(err, response) {
 				if (err) {

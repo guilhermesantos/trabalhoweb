@@ -611,6 +611,9 @@
 			let tableHeaderRow = document.createElement('tr');
 			tableHeaderRow.setAttribute('class', "service_table_row");
 
+			let tableHeaderProductImage = document.createElement('th');
+			tableHeaderProductImage.innerHTML = "";
+
 			let tableHeaderProductName = document.createElement('th');
 			tableHeaderProductName.innerHTML = "Produto";
 
@@ -621,6 +624,7 @@
 			tableHeaderProductQuantity.innerHTML = "Quantidade";
 
 			productsTable.append(tableHeaderRow);
+			tableHeaderRow.append(tableHeaderProductImage);
 			tableHeaderRow.append(tableHeaderProductName);
 			tableHeaderRow.append(tableHeaderProductPrice);
 			tableHeaderRow.append(tableHeaderProductQuantity);
@@ -628,6 +632,16 @@
 			products.forEach(function(product) {
 				let tableRow = document.createElement('tr');
 				tableRow.setAttribute('class', "service_table_row");
+
+				let tableDataProductImage = document.createElement('td');
+				tableDataProductImage.setAttribute('class', "service_table_data");
+				if (product.imageData) {
+					getImageSrcFromImageData(product.imageData, function(src) {
+						tableDataProductImage.innerHTML = '<img src="' + src + '" height="40px">';
+					});
+				} else {
+					tableDataProductImage.innerHTML = '<img src="assets/no_image.png" height="40px">';
+				}
 
 				let tableDataProductName = document.createElement('td');
 				tableDataProductName.setAttribute('class', "service_table_data");
@@ -641,33 +655,23 @@
 				tableDataProductQuantity.setAttribute('class', "service_table_data");
 				tableDataProductQuantity.innerHTML = product.quantity;
 
-				let productEditA = document.createElement('a');
-				productEditA.setAttribute('onclick','adminEditProduct("' + product.id + '")');
+				let tableDataProductEdit = document.createElement('td');
+				tableDataProductEdit.setAttribute('class', "service_table_data");
+				tableDataProductEdit.setAttribute('onclick','adminEditProduct("' + product.id + '")');
+				tableDataProductEdit.innerHTML = '<img src="icons/edit.png" style="width: 18px; height: 18px;">';
 
-				let productEditImage = document.createElement('img');
-				productEditImage.src = "icons/edit.png";
-				productEditImage.width = 18;
-				productEditImage.height = 18;
-				productEditImage.style.paddingTop = "4px";
-				productEditImage.style.paddingRight = "4px";
-
-				let productDeleteA = document.createElement('a');
-				productDeleteA.setAttribute('onclick','adminDeleteProduct("' + product.id + '")');
-
-				let productDeleteImage = document.createElement('img');
-				productDeleteImage.src = "icons/delete.png";
-				productDeleteImage.width = 18;
-				productDeleteImage.height = 18;
-				productDeleteImage.style.paddingTop = "4px";
+				let tableDataProductDelete = document.createElement('td');
+				tableDataProductDelete.setAttribute('class', "service_table_data");
+				tableDataProductDelete.setAttribute('onclick','adminDeleteProduct("' + product.id + '")');
+				tableDataProductDelete.innerHTML = '<img src="icons/delete.png" style="width: 18px; height: 18px;">';
 
 				productsTable.append(tableRow);
+				tableRow.append(tableDataProductImage);
 				tableRow.append(tableDataProductName);
 				tableRow.append(tableDataProductPrice);
 				tableRow.append(tableDataProductQuantity);
-				tableRow.append(productEditA);
-				productEditA.append(productEditImage);
-				tableRow.append(productDeleteA);
-				productDeleteA.append(productDeleteImage);
+				tableRow.append(tableDataProductEdit);
+				tableRow.append(tableDataProductDelete);
 			});
 		} else {
 			let tableRow = document.createElement('tr');
@@ -704,6 +708,12 @@
 				$("#edit_product_price").val(productInfo.price);
 				$("#edit_product_quantity").val(productInfo.quantity);
 
+				if (productInfo.imageData) {
+					getImageSrcFromImageData(productInfo.imageData, function(src) {
+						$("#edit_product_image").attr('src', src);
+					});
+				}
+
 				$("#edit_product_form").on('submit', function(e) {
 					e.preventDefault();
 
@@ -723,25 +733,28 @@
 						return;
 					}
 
-					const product = {
-						name: name,
-						description: description,
-						price: Number(price),
-						quantity: Number(quantity)
-					}
-					const data = JSON.stringify(product);
-					$.ajax({
-				        type: 'post',
-				        contentType: 'application/json',
-				        url: "products/" + productId,
-				        data: data,
-				        success: function(response) {
-				        	alert(response.message);
-				        	adminShowProducts();
-				        }, error: function(response) {
-				        	alert(response.responseJSON.message);
-				        }
-				    });
+					getFileAsDataURL(document.getElementById("edit_product_image_input").files, function(imageData) {
+						const product = {
+							name: name,
+							description: description,
+							price: Number(price),
+							quantity: Number(quantity),
+							imageData: imageData
+						}
+						const data = JSON.stringify(product);
+						$.ajax({
+					        type: 'post',
+					        contentType: 'application/json',
+					        url: "products/" + productId,
+					        data: data,
+					        success: function(response) {
+					        	alert(response.message);
+					        	adminShowProducts();
+					        }, error: function(response) {
+					        	alert(response.responseJSON.message);
+					        }
+					    });
+					});
 				});
 	        },
 	        error: function(response) {
@@ -938,6 +951,9 @@
 			let tableHeaderRow = document.createElement('tr');
 			tableHeaderRow.setAttribute('class', "service_table_row");
 
+			let tableHeaderProductImage = document.createElement('th');
+			tableHeaderProductImage.innerHTML = "";
+
 			let tableHeaderProductName = document.createElement('th');
 			tableHeaderProductName.innerHTML = "Produto";
 
@@ -948,6 +964,7 @@
 			tableHeaderProductPrice.innerHTML = "Preço";
 
 			productsTable.append(tableHeaderRow);
+			tableHeaderRow.append(tableHeaderProductImage);
 			tableHeaderRow.append(tableHeaderProductName);
 			tableHeaderRow.append(tableHeaderProductDescription);
 			tableHeaderRow.append(tableHeaderProductPrice);
@@ -955,6 +972,16 @@
 			products.forEach(function(product) {
 				let tableRow = document.createElement('tr');
 				tableRow.setAttribute('class', "service_table_row");
+
+				let tableDataProductImage = document.createElement('td');
+				tableDataProductImage.setAttribute('class', "service_table_data");
+				if (product.imageData) {
+					getImageSrcFromImageData(product.imageData, function(src) {
+						tableDataProductImage.innerHTML = '<img src="' + src + '" height="40px">';
+					});
+				} else {
+					tableDataProductImage.innerHTML = '<img src="assets/no_image.png" height="40px">';
+				}
 
 				let tableDataProductName = document.createElement('td');
 				tableDataProductName.setAttribute('class', "service_table_data");
@@ -968,22 +995,17 @@
 				tableDataProductPrice.setAttribute('class', "service_table_data");
 				tableDataProductPrice.innerHTML = "R$ " + Number(product.price).toFixed(2);
 
-				let productDetailtA = document.createElement('a');
-				productDetailtA.setAttribute('onclick','showProductInfo("' + product.id + '")');
-
-				let productDetailImage = document.createElement('img');
-				productDetailImage.src = "icons/clipboard.png";
-				productDetailImage.width = 18;
-				productDetailImage.height = 18;
-				productDetailImage.style.paddingTop = "4px";
-				productDetailImage.style.paddingRight = "4px";
+				let tableDataProductDetail = document.createElement('td');
+				tableDataProductDetail.setAttribute('class', "service_table_data");
+				tableDataProductDetail.setAttribute('onclick','showProductInfo("' + product.id + '")');
+				tableDataProductDetail.innerHTML = '<img src="icons/clipboard.png" style="width: 18px; height: 18px;">';
 
 				productsTable.append(tableRow);
+				tableRow.append(tableDataProductImage);
 				tableRow.append(tableDataProductName);
 				tableRow.append(tableDataProductDescription);
 				tableRow.append(tableDataProductPrice);
-				tableRow.append(productDetailtA);
-				productDetailtA.append(productDetailImage);
+				tableRow.append(tableDataProductDetail);
 			});
 		} else {
 			let tableRow = document.createElement('tr');
@@ -1013,6 +1035,11 @@
 	        	let product = response.data;
 				$("#product_name_header").html(product.name);
 				$("#description_div").html(product.description);
+				if (product.imageData) {
+					getImageSrcFromImageData(product.imageData, function(src) {
+						$("#product_image").attr("src", src);
+					});
+				}
 				let max = product.quantity;
 				if (userCart[product.id] != null) {
 					max -= userCart[product.id];
@@ -1145,6 +1172,9 @@
 			let tableHeaderRow = document.createElement('tr');
 			tableHeaderRow.setAttribute('class', "service_table_row");
 
+			let tableHeaderProductImage = document.createElement('th');
+			tableHeaderProductImage.innerHTML = "";
+
 			let tableHeaderProductName = document.createElement('th');
 			tableHeaderProductName.innerHTML = "Produto";
 
@@ -1158,6 +1188,7 @@
 			tableHeaderProductTotalPrice.innerHTML = "Total";
 
 			productsTable.append(tableHeaderRow);
+			tableHeaderRow.append(tableHeaderProductImage);
 			tableHeaderRow.append(tableHeaderProductName);
 			tableHeaderRow.append(tableHeaderProductQuantity);
 			tableHeaderRow.append(tableHeaderProductPrice);
@@ -1166,6 +1197,16 @@
 			products.forEach(function(product) {
 				let tableRow = document.createElement('tr');
 				tableRow.setAttribute('class', "service_table_row");
+
+				let tableDataProductImage = document.createElement('td');
+				tableDataProductImage.setAttribute('class', "service_table_data");
+				if (product.imageData) {
+					getImageSrcFromImageData(product.imageData, function(src) {
+						tableDataProductImage.innerHTML = '<img src="' + src + '" height="40px">';
+					});
+				} else {
+					tableDataProductImage.innerHTML = '<img src="assets/no_image.png" height="40px">';
+				}
 
 				let tableDataProductName = document.createElement('td');
 				tableDataProductName.setAttribute('class', "service_table_data");
@@ -1184,23 +1225,18 @@
 				tableDataProductTotalPrice.innerHTML = "R$ " + Number(product.price * Number(product.quantity)).toFixed(2);
 				totalPrice += product.price * Number(product.quantity);
 
-				let productRemoveA = document.createElement('a');
-				productRemoveA.setAttribute('onclick','removeProductFromCart("' + product.id + '")');
-
-				let productRemoveImage = document.createElement('img');
-				productRemoveImage.src = "icons/delete.png";
-				productRemoveImage.width = 18;
-				productRemoveImage.height = 18;
-				productRemoveImage.style.paddingTop = "4px";
-				productRemoveImage.style.paddingRight = "4px";
+				let tableDataProductRemove = document.createElement('td');
+				tableDataProductRemove.setAttribute('class', "service_table_data");
+				tableDataProductRemove.setAttribute('onclick','removeProductFromCart("' + product.id + '")');
+				tableDataProductRemove.innerHTML = '<img src="icons/delete.png" style="width: 18px; height: 18px;">';
 
 				productsTable.append(tableRow);
+				tableRow.append(tableDataProductImage);
 				tableRow.append(tableDataProductName);
 				tableRow.append(tableDataProductQuantity);
 				tableRow.append(tableDataProductPrice);
 				tableRow.append(tableDataProductTotalPrice);
-				tableRow.append(productRemoveA);
-				productRemoveA.append(productRemoveImage);
+				tableRow.append(tableDataProductRemove);
 			});
 			let tableRow = document.createElement('tr');
 			tableRow.setAttribute('class', "service_table_row");
