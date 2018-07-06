@@ -14,6 +14,7 @@ const DadosUsuarios = [
 		city:"São Carlos",
 		street: "Av. São Carlos",
 		neighborhood: "",
+		imageData: null,
 		isAdmin: true
 	},
 	{
@@ -25,6 +26,7 @@ const DadosUsuarios = [
 		city:"São Carlos",
 		street: "Av. Francisco Pereira Lopes",
 		neighborhood: "Arnold Schimidt",
+		imageData: null,
 		isAdmin: false
 	}
 ];
@@ -33,37 +35,48 @@ const DadosProdutos = [
 		name: "Bolinha",
 		description: "Ideal para seu cachorro!",
 		price: 10.00,
-		quantity: 50
+		quantity: 50,
+		imageData: null
 	},
 	{
 		name: "Osso",
 		description: "Cachorros gostam muito",
 		price: 5.00,
-		quantity: 20
+		quantity: 20,
+		imageData: null
 	},
 	{
 		name: "Areia",
 		description: "Para a higiene de seu gato",
 		price: 20.00,
-		quantity: 15
+		quantity: 15,
+		imageData: null
 	}
 ];
 const DadosTiposServicos = [
 	{
 		name: "Consulta",
-		price: 150
+		description: "consulta",
+		price: 150,
+		imageData: null
 	},
 	{
 		name: "Tosa",
-		price: 50
+		description: "Tosa",
+		price: 50,
+		imageData: null
 	},
 	{
 		name: "Banho",
-		price: 50
+		description: "Banho",
+		price: 50,
+		imageData: null
 	},
 	{
 		name: "Banho e Tosa",
-		price: 80
+		description: "Kit banho e tosa",
+		price: 80,
+		imageData: null
 	}
 ];
 const DadosServicosAgendados = [
@@ -85,21 +98,21 @@ const DadosAnimais = [
 		name: "Billy",
 		species: "Cachorro",
 		age: 5,
-		imagePath: null,
+		imageData: null,
 		owner: "client"
 	},
 	{
 		name: "Lua",
 		species: "Gato",
 		age: 2,
-		imagePath: null,
+		imageData: null,
 		owner: "client"
 	},
 	{
 		name: "Per",
 		species: "Gato",
 		age: 9,
-		imagePath: null,
+		imageData: null,
 		owner: "client"
 	}
 ];

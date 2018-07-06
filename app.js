@@ -146,7 +146,6 @@ function purifyAnimal(animal) {
 
 	animal.id = animal._id;
 	delete animal._id;
-	delete animal.imagePath;
 }
 
 function purifyScheduledService(scheduledService) {
@@ -250,6 +249,7 @@ app.post('/users', function(req, res) {
 	const street = req.body.street;
 	const password = req.body.password;
 	const repeatPassword = req.body.repeatPassword;
+	const imageData = req.body.imageData;
 	const isAdmin = req.body.isAdmin;
 
 	if (user.length == 0) {
@@ -274,6 +274,7 @@ app.post('/users', function(req, res) {
 			city: city,
 			street: street,
 			neighborhood: neighborhood,
+			imageData: imageData,
 			isAdmin: isAdmin
 		}
 		dbps.collection(databaseConstants.databaseUsersName).insertOne(userObject, function(err, response) {
@@ -368,20 +369,24 @@ app.get('/service_types', function(req, res) {
 app.post('/service_types', function(req, res) {
 	console.log("POST /service_types");
 
-	if (!validBody(['name', {'price' : 'number'}], req.body)) {
+	if (!validBody(['name', 'description', {'price' : 'number'}], req.body)) {
 		res.status(400).json(buildJsonPayload("Faltam informações", null));
 		return;
 	}
 
 	const name = req.body.name;
+	const description = req.body.description;
 	const price = Number(req.body.price);
+	const imageData = req.body.imageData;
 
 	if (name.length == 0) {
 		res.status(400).json(buildJsonPayload("Nome do produto não informado", null));
 	} else {
 		const serviceTypeObject = {
 			name: name,
-			price: price
+			description: description,
+			price: price,
+			imageData: imageData
 		}
 		dbps.collection(databaseConstants.databaseServiceTypesName).insertOne(serviceTypeObject, function(err, response) {
 			if (err) {
@@ -429,6 +434,7 @@ app.post('/products', function(req, res) {
 	const description = req.body.description;
 	const price = Number(req.body.price);
 	const quantity = Number(req.body.quantity);
+	const imageData = req.body.imageData;
 
 	if (name.length == 0) {
 		res.status(400).json(buildJsonPayload("Nome do produto não informado", null));
@@ -437,7 +443,8 @@ app.post('/products', function(req, res) {
 			name: name,
 			description: description,
 			price: price,
-			quantity: quantity
+			quantity: quantity,
+			imageData: imageData
 		}
 		dbps.collection(databaseConstants.databaseProductsName).insertOne(productObject, function(err, response) {
 			if (err) {
@@ -731,25 +738,6 @@ app.get('/animals/:animalId', function(req, res) {
 	}
 });
 
-app.get('/animals/:animalId/image', function(req, res) {
-	console.log("GET /animals/" + req.params.animalId + "/image");
-
-	if (ObjectId.isValid(req.params.animalId)) {
-		const animalId = ObjectId(req.params.animalId);
-
-		const animalQuery = {_id : animalId};
-		dbps.collection(databaseConstants.databasePetsName).findOne(animalQuery, function(err, animal) {
-			if (err || !animal.imagePath || animal.imagePath.length == 0) {
-				res.status(400).json(buildJsonPayload("No image", null));
-			} else {
-				res.sendFile(animal.imagePath);
-			}
-		});
-	} else {
-		res.status(400).json(buildJsonPayload("Animal não encontrado", null));
-	}
-});
-
 //New animal
 app.post('/animals', function(req, res) {
 	console.log("POST /animals");
@@ -774,10 +762,8 @@ app.post('/animals', function(req, res) {
 			name: name,
 			species: species,
 			age: age,
+			imageData: imageData,
 			owner: user
-		}
-		if (imageData) {
-			animalObject.imageData = imageData;
 		}
 		dbps.collection(databaseConstants.databasePetsName).insertOne(animalObject, function(err, response) {
 			if (err) {

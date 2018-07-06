@@ -64,6 +64,18 @@
 	    fr.readAsText(blob, "utf-8");
 	}
 
+	function getFileAsDataURL(files, callback) {
+		if (files && files.length > 0) {
+	        const reader = new FileReader();
+        	reader.onload = function(e) {
+	            callback(e.target.result);
+	        };
+	        reader.readAsDataURL(files[0]);
+		} else {
+			callback(null);
+		}
+	}
+
 	function loginClick() {
 		const usernameValue = document.getElementById("login_username").value;
 		const passwordValue = document.getElementById("login_password").value;
@@ -199,31 +211,34 @@
 			} else if (password != repeatPassword) {
 				alert("As senhas inseridas são diferentes");
 			} else {
-				let user = {
-					user: username.toLowerCase(),
-					name: name,
-					password: password,
-					repeatPassword: repeatPassword,
-					email: email,
-					phone: phone,
-					city: city,
-					street: street,
-					neighborhood: neighborhood,
-					isAdmin: isAdmin
-				};
-				const data = JSON.stringify(user);
-				$.ajax({
-			        type: 'post',
-			        contentType: 'application/json',
-			        url: 'users',
-			        data: data,
-			        success: function(response) {
-						alert(response.message);
-			        },
-			        error: function(response) {
-			        	alert(response.responseJSON.message);
-			        }
-		        });
+				getFileAsDataURL(document.getElementById("register_image").files, function(imageData) {
+					const user = {
+						user: username.toLowerCase(),
+						name: name,
+						password: password,
+						repeatPassword: repeatPassword,
+						email: email,
+						phone: phone,
+						city: city,
+						street: street,
+						neighborhood: neighborhood,
+						imageData: imageData,
+						isAdmin: isAdmin
+					};
+					const data = JSON.stringify(user);
+					$.ajax({
+				        type: 'post',
+				        contentType: 'application/json',
+				        url: 'users',
+				        data: data,
+				        success: function(response) {
+							alert(response.message);
+				        },
+				        error: function(response) {
+				        	alert(response.responseJSON.message);
+				        }
+			        });
+				});
 			}
 		});
 
@@ -242,59 +257,67 @@
 			} else if (typeof quantity == 'undefined' || quantity == null || quantity.length == 0) {
 				alert("Insira uma quantidade");
 			} else {
-				let productInfo = {
-					name: name,
-					description: description,
-					price: Number(price),
-					quantity: Number(quantity)
-				};
-				const data = JSON.stringify(productInfo);
-				$.ajax({
-			        type: 'post',
-			        contentType: 'application/json',
-			        url: 'products',
-			        data: data,
-			        success: function(response) {
-						alert(response.message);
-						$("#new_product_name").val("");
-						$("#new_product_description").val("");
-						$("#new_product_price").val("");
-						$("#new_product_quantity").val("");
-			        },
-			        error: function(response) {
-			        	alert(response.responseJSON.message);
-			        }
-		        });
+				getFileAsDataURL(document.getElementById("register_product_image").files, function(imageData) {
+					const productInfo = {
+						name: name,
+						description: description,
+						price: Number(price),
+						quantity: Number(quantity),
+						imageData: imageData
+					};
+					const data = JSON.stringify(productInfo);
+					$.ajax({
+				        type: 'post',
+				        contentType: 'application/json',
+				        url: 'products',
+				        data: data,
+				        success: function(response) {
+							alert(response.message);
+							$("#new_product_name").val("");
+							$("#new_product_description").val("");
+							$("#new_product_price").val("");
+							$("#new_product_quantity").val("");
+				        },
+				        error: function(response) {
+				        	alert(response.responseJSON.message);
+				        }
+			        });
+			    });
 			}
 		});
 
 		$("#new_service_form").on('submit', function(e) {
 			e.preventDefault();
-			let name = document.getElementById("register_service_name").value;
-			let price = document.getElementById("register_service_price").value;
+			const name = document.getElementById("register_service_name").value;
+			const description = document.getElementById("register_service_description").value;
+			const price = document.getElementById("register_service_price").value;
 
 			if (name.length == 0) {
 				alert("Por favor insira um nome")
 			} else if (price.length == 0) {
 				alert("Por favor insira um preço")
 			} else {
-				let serviceTypeInfo = {
-					name: name,
-					price: Number(price)
-				};
-				const data = JSON.stringify(serviceTypeInfo);
-				$.ajax({
-			        type: 'post',
-			        contentType: 'application/json',
-			        url: 'service_types',
-			        data: data,
-			        success: function(response) {
-						alert(response.message);
-			        },
-			        error: function(response) {
-			        	alert(response.responseJSON.message);
-			        }
-		        });
+				getFileAsDataURL(document.getElementById("register_service_image").files, function(imageData) {
+					const serviceTypeInfo = {
+						name: name,
+						description: description,
+						price: Number(price),
+						imageData: imageData
+					};
+					const data = JSON.stringify(serviceTypeInfo);
+					$.ajax({
+				        type: 'post',
+				        contentType: 'application/json',
+				        url: 'service_types',
+				        data: data,
+				        success: function(response) {
+							alert(response.message);
+				        },
+				        error: function(response) {
+				        	alert(response.responseJSON.message);
+				        }
+			        });
+				});
 			}
 		});
 	}
@@ -1426,9 +1449,6 @@
 		const name = document.getElementById("animal_name_field").value;
 		const race = document.getElementById("animal_race_field").value;
 		const age = Number(document.getElementById("animal_age_field").value);
-		const files = document.getElementById("animal_image_field").files;
-		let imageData = null;
-		let imagePromise = null;
 
 		if (name.length == 0 && race.length == 0) {
 			hideAnimalRegisterForm();
@@ -1441,36 +1461,14 @@
 			return;
 		}
 
-		if (files && files.length > 0) {
-			image = files[0];
-	        const reader = new FileReader();
-
-	        imagePromise = new Promise(function(resolve, reject) {
-	        	reader.onload = function(e) {
-		            const binaryString = e.target.result;
-		            console.log(binaryString);
-		            imageData = binaryString;
-		            resolve();
-		        };
-	        });
-	        reader.readAsDataURL(image);
-		}
-
-		let promises = [];
-		if (imagePromise != null) {
-			promises.push(imagePromise);
-		}
-
-		Promise.all(promises).then(function() {
-			let animal = {
+		getFileAsDataURL(document.getElementById("animal_image_field").files, function(imageData) {
+			const animal = {
 				name: name,
 				species: race,
 				age: age,
+				imageData: imageData,
 				owner: connectedUser.user
 			};
-			if (imageData) {
-				animal.imageData = imageData;
-			}
 			const data = JSON.stringify(animal);
 			$.ajax({
 		        type: 'post',

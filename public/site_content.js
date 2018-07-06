@@ -148,6 +148,14 @@ let siteContent = {
 			</div>
 			<div class="form_row_container">
 				<div class="label_container">
+					<label for="register_image"><span>Foto: </span></label>
+				</div>
+				<div class="field_container">														
+					<input type="file" id="register_image" accept="image/png, image/jpeg"/>
+				</div>
+			</div>
+			<div class="form_row_container">
+				<div class="label_container">
 					<label for="register_is_admin"><span>Administrador: </span></label>
 				</div>
 				<div class="field_container">														
@@ -192,6 +200,14 @@ let siteContent = {
 					<input type="number" id="register_product_quantity" min="0" step="1">
 				</div>
 			</div>
+			<div class="form_row_container">
+				<div class="label_container">
+					<label for="register_product_image"><span>Foto: </span></label>
+				</div>
+				<div class="field_container">														
+					<input type="file" id="register_product_image" accept="image/png, image/jpeg"/>
+				</div>
+			</div>
 			<div class="submit_container">
 				<input type="submit" value="Salvar">
 			</div>
@@ -208,10 +224,26 @@ let siteContent = {
 			</div>
 			<div class="form_row_container">
 				<div class="label_container">
+					<label for="register_service_description"><span>Descrição: </span></label>
+				</div>
+				<div class="field_container">														
+					<input type="text" id="register_service_description">
+				</div>
+			</div>
+			<div class="form_row_container">
+				<div class="label_container">
 					<label for="register_service_price"><span>Preço: </span></label>
 				</div>
 				<div class="field_container">													
 					<input type="number" id="register_service_price" min="0" step="0.01">
+				</div>
+			</div>
+			<div class="form_row_container">
+				<div class="label_container">
+					<label for="register_service_image"><span>Foto: </span></label>
+				</div>
+				<div class="field_container">														
+					<input type="file" id="register_service_image" accept="image/png, image/jpeg"/>
 				</div>
 			</div>
 			<div class="submit_container">
