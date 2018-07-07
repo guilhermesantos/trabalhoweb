@@ -1,3 +1,11 @@
+Instalação:
+1. Instalar o MongoDB (https://www.mongodb.com/)
+2. Instalar NodeJS (https://nodejs.org/en/)
+3. Instalar os pacotes express, body-parser e mongodb com o comando: npm install express body-parser mongodb --save
+4. Executar o MongoDB
+5. Executar o servidor com o comando: node app.js
+
+Testes de funcionalidade:
 1. Login:
 i)
 Conta: admin
@@ -21,6 +29,9 @@ Cadastro de cliente: sucesso
 
 ii)
 Cadastro de administrador: sucesso
+
+iii)
+Cadastrar usuario com um nome de usuario ja existente: falha
 
 3. Cadastrar Produto:
 Cadastrar novo produto: sucesso
@@ -53,12 +64,25 @@ Edição do produto funciona: sucesso
 iiii)
 Deletar o produto funciona: sucesso
 
-7. Editar Registro:
+7. Ganhos:
+i)
+Como cliente, compre um produto e, como administrador, verifique se a quantidade vendida aumentou corretamente, assim como o Total de Vendas do produto: sucesso
+
+ii)
+Altere o valor do produto comprado no item i) e verifique se o Total de Vendas permanece o mesmo: sucesso
+
+iii)
+Como cliente, compre o mesmo produto do item anterior e, como administrador, verifique se a quantidade vendida a Total de Vendas aumentaram corretamente: sucesso
+
+iiii)
+Como cliente, agende um serviço e, como administrador, verifique se a quantidade vendida e o Total de Vendas aumentaram corretamente: sucesso
+
+8. Editar Registro:
 i)
 Edição funciona corretamente: sucesso
 
 /* Funções do Cliente */
-8. Gerenciar Animais:
+9. Gerenciar Animais:
 i)
 Animais cadastrados aparecem na lista: sucesso
 
@@ -72,7 +96,7 @@ Clique em detalhes do animal, os detalhes aparecem corretamente: sucesso
 iiii)
 Deletar um animal funciona corretamente: sucesso
 
-9. Agendar Horário:
+10. Agendar Horário:
 i)
 Agende um serviço: sucesso
 Verifique se o serviço agendado aparece nos detalhes do animal correspondente: sucesso
@@ -86,7 +110,7 @@ Não deve ser possível agendar um serviço em um horário que o animal já tem 
 iiii)
 Delete um animal que tem serviços agendados e, como um Administrador, verifique se os serviços agendados para aquele animal foram excluidos: sucesso
 
-10. Comprar Produto:
+11. Comprar Produto:
 i)
 Os produtos aparecem na lista e a ordenação funciona corretamente: sucesso
 
@@ -96,7 +120,7 @@ Ao clicar em detalhes do produto, os mesmos aparecem corretamente: sucesso
 iii)
 Nos detalhes do produto, é possível adicionar itens no carrinho: sucesso
 
-11. Carrinho:
+12. Carrinho:
 i)
 Se nenhum produto foi adicionado ao carrinho, o botão "Finalizar Compra" deve estar escondido: sucesso
 
@@ -109,6 +133,6 @@ Adicione um produto no carrinho: sucesso
 Finalize a compra: sucesso
 Como Administrador, verifique se a quantidade de produtos em estoque está correta: sucesso
 
-12. Editar Registro:
+13. Editar Registro:
 i)
 Edição funciona corretamente: sucesso

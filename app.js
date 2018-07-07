@@ -493,7 +493,9 @@ app.post('/products', function(req, res) {
 			description: description,
 			price: price,
 			quantity: quantity,
-			imageData: imageData
+			imageData: imageData,
+			sold: 0,
+			totalSold: 0
 		}
 		dbps.collection(databaseConstants.databaseProductsName).insertOne(productObject, function(err, response) {
 			if (err) {

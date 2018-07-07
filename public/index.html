@@ -1464,6 +1464,9 @@
 			productsTable.append(tableDataTotal);
 			productsTable.append(tableDataTotalPrice);
 		} else {
+			$("#buy_button").css('display', 'none');
+			$("#clear_cart_button").css('display', 'none');
+			$("#card_div").css('display', 'none');
 			let tableRow = document.createElement('tr');
 			tableRow.setAttribute('class', "service_table_row");
 
